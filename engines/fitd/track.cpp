@@ -101,9 +101,10 @@ int GetAngle(int X1, int Y1, int X2, int Y2)
     }
   }while(--currentAngle);
   */
+	// Can't cast pointers to integers TODO
 
-  esi = (int) tab3;
-  edi = esi + 0x200;
+  //esi = (int)tab3;
+/*  edi = esi + 0x200;
 
   do
   {
@@ -149,7 +150,8 @@ int GetAngle(int X1, int Y1, int X2, int Y2)
     eax += 0x100;
   }
 
-  return (eax & 0x3FF);
+  return (eax & 0x3FF);*/
+  return 0;
 }
 
 int makeProportional(int x1, int x2, int y1, int y2)

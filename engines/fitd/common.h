@@ -74,22 +74,22 @@ typedef signed long int s32;
 
 enum enumCVars
 {
-  SAMPLE_PAGE,
-  BODY_FLAMME,
-  MAX_WEIGHT_LOADABLE,
-	TEXTE_CREDITS,
-	SAMPLE_TONNERRE,
-	INTRO_DETECTIVE,
-	INTRO_HERITIERE,
-	WORLD_NUM_PERSO,
-	CHOOSE_PERSO,
-	SAMPLE_CHOC,
-	SAMPLE_PLOUF,
-	REVERSE_OBJECT,
-	KILLED_SORCERER,
-	LIGHT_OBJECT,
-	FOG_FLAG,
-	DEAD_PERSO,
+  SAMPLE_PAGE = 0,
+  BODY_FLAMME = 1,
+  MAX_WEIGHT_LOADABLE = 2,
+	TEXTE_CREDITS = 3,
+	SAMPLE_TONNERRE = 4,
+	INTRO_DETECTIVE = 5,
+	INTRO_HERITIERE = 6,
+	WORLD_NUM_PERSO = 7,
+	CHOOSE_PERSO = 8,
+	SAMPLE_CHOC = 9,
+	SAMPLE_PLOUF = 10,
+	REVERSE_OBJECT = 11,
+	KILLED_SORCERER = 12,
+	LIGHT_OBJECT = 13,
+	FOG_FLAG = 14,
+	DEAD_PERSO = 15,
   JET_SARBACANE,
   TIR_CANON,
   JET_SCALPEL,
@@ -105,10 +105,10 @@ enum enumCVars
   MATRICE_FORME,
   MATRICE_COULEUR,
 
-  UNKNOWN_CVAR // for table padding, shouldn't be called !
+  UNKNOWN_CVAR = -1 // for table padding, shouldn't be called !
 };
 
-typedef enum enumCVars enumCVars;
+//typedef enum enumCVars enumCVars;
 
 extern enumCVars AITD1KnownCVars[];
 extern enumCVars AITD2KnownCVars[];
@@ -118,7 +118,7 @@ extern enumCVars* currentCVarTable;
 int getCVarsIdx(enumCVars);
 
 //////////////////////
-
+/*
 #define	SAMPLE_PAGE				0
 #define	BODY_FLAMME				1
 #define	MAX_WEIGHT_LOADABLE		2
@@ -135,10 +135,10 @@ int getCVarsIdx(enumCVars);
 #define	LIGHT_OBJECT			13
 #define	FOG_FLAG				14
 #define	DEAD_PERSO				15
-
+*/
 
 //////////////////
-
+/*
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned long uint32;
@@ -148,7 +148,7 @@ typedef unsigned int uint;
 typedef signed char int8;
 typedef signed short int16;
 typedef signed long int32;
-
+*/
 typedef unsigned char U8;
 typedef unsigned short U16;
 typedef unsigned long U32;
@@ -170,34 +170,34 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 #include "room.h"
 #include "vars.h"
 #include "main.h"
-#include "fileAccess.h"
+#include "file_access.h"
 #include "screen.h"
-#include "videoMode.h"
+#include "video_mode.h"
 #include "pak.h"
 #include "unpack.h"
 #include "tatou.h"
-#include "threadCode.h"
+#include "thread_code.h"
 #include "renderer.h"
 #include "input.h"
 #include "version.h"
-#include "cosTable.h"
+#include "cos_table.h"
 #include "hqr.h"
 #include "time.h"
 #include "font.h"
-#include "aitdBox.h"
+#include "aitd_box.h"
 #include "save.h"
 #include "anim.h"
-#include "animAction.h"
-#include "actorList.h"
-#include "mainLoop.h"
+#include "anim_action.h"
+#include "actor_list.h"
+#include "main_loop.h"
 #include "inventory.h"
-#include "startupMenu.h"
-#include "systemMenu.h"
+#include "startup_menu.h"
+#include "system_menu.h"
 #include "floor.h"
 #include "object.h"
 #include "zv.h"
 #include "music.h"
-#include "fmopl.h"
+//#include "fmopl.h"
 
 // debugger
 #ifdef INTERNAL_DEBUGGER
@@ -208,7 +208,7 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 #include "track.h"
 #include "life.h"
 #include "life_2.h"
-#include "evalVar.h"
+#include "eval_var.h"
 
 #include "osystem.h"
 

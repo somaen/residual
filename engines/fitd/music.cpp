@@ -485,10 +485,11 @@ u8* currentMusicPtr2 = NULL;
 u8* currentMusicPtr3 = NULL;
 u8 generalVolume = 0;
 
+//FIXME
 void sendAdlib(int regIdx, int value)
 {
-  YM3812Write(0,0,regIdx);
-  YM3812Write(0,1,value);
+//YM3812Write(0,0,regIdx);
+//YM3812Write(0,1,value);
 }
 
 #define musicSync 1500
@@ -515,7 +516,7 @@ int musicUpdate(void *udata, uint8 *stream, int len)
 
       if(timeBeforNextUpdate) // generate
       {
-        YM3812UpdateOne(0,(int16*)(stream+fillStatus),(timeBeforNextUpdate)/2);
+		//YM3812UpdateOne(0,(int16*)(stream+fillStatus),(timeBeforNextUpdate)/2);
         fillStatus+=timeBeforNextUpdate;
         musicTimer+=timeBeforNextUpdate;
       }
@@ -680,8 +681,8 @@ int initialialize(void* dummy)
 
   //OPLBuildTables(FMOPL_ENV_BITS_HQ, FMOPL_EG_ENT_HQ);
 
-  YM3812Init(1,OPL_INTERNAL_FREQ,44100);
-/*  virtualOpl = OPLCreate(OPL_TYPE_YM3812, OPL_INTERNAL_FREQ, 44100);
+  //YM3812Init(1,OPL_INTERNAL_FREQ,44100);
+/*  virtualOpl = OPLCreate(OPL_TYPE_//YM3812, OPL_INTERNAL_FREQ, 44100);
 
   if(!virtualOpl)
     return 0; */
@@ -1290,5 +1291,5 @@ void callMusicUpdate(void)
 
 void destroyMusicDriver(void)
 {
-  YM3812Shutdown();
+  //YM3812Shutdown();
 }

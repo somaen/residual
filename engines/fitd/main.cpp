@@ -30,7 +30,7 @@ enumCVars AITD1KnownCVars[]=
   LIGHT_OBJECT,
   FOG_FLAG,
   DEAD_PERSO,
-  -1
+  UNKNOWN_CVAR
 };
 
 enumCVars AITD2KnownCVars[]=
@@ -52,7 +52,7 @@ enumCVars AITD2KnownCVars[]=
   TYPE_INVENTAIRE,
   PROLOGUE,
   POIGNARD,
-  -1
+  UNKNOWN_CVAR
 };
 
 enumCVars* currentCVarTable = NULL;
@@ -177,6 +177,7 @@ const unsigned char defaultPaletteAITD3[0x30]=
   0xF8
 };
 
+int fileExists(char* name);
 
 //short int inventory[30];
 
@@ -392,11 +393,11 @@ void sysInit(void)
 {
   int i;
 
-#ifndef PCLIKE
+/*#ifndef PCLIKE
   unsigned long int ltime;
-#else
+#else*/
   time_t ltime;
-#endif
+//#endif
   FILE* fHandle;
 
   setupScreen();
@@ -1537,7 +1538,7 @@ void loadCamera(int cameraIdx)
     else
     {
       memcpy(palette,defaultPalette,0x30);
-      convertPaletteIfRequired(palette);
+	  convertPaletteIfRequired((unsigned char*)palette);
     }
 
     osystem_setPalette(palette);
@@ -5165,9 +5166,9 @@ void throwStoppedAt(int x, int z)
   ZVStruct zvLocal;
   u8* bodyPtr;
 
-  bodyPtr = HQR_Get(listBody,currentProcessedActorPtr->bodyNum);
+  bodyPtr = (unsigned char*)HQR_Get(listBody,currentProcessedActorPtr->bodyNum);
 
-  getZvNormal(bodyPtr,&zvLocal);
+  getZvNormal((char*)bodyPtr,&zvLocal);
 
   x2 = x;
   y2 = (currentProcessedActorPtr->roomY/2000)*2000;
@@ -5237,7 +5238,8 @@ void throwStoppedAt(int x, int z)
   currentProcessedActorPtr->speed = 0;
   currentProcessedActorPtr->gamma = 0;
 
-  getZvNormal(bodyPtr,&currentProcessedActorPtr->zv);
+  // TODO, sort out the unsigned-ness
+  getZvNormal((char*)bodyPtr,&currentProcessedActorPtr->zv);
 
   currentProcessedActorPtr->zv.ZVX1 += x2;
   currentProcessedActorPtr->zv.ZVX2 += x2;
@@ -5354,7 +5356,8 @@ void detectGame(void)
 }
 
 
-int main(int argc, char** argv)
+//int fitdmain(int argc, char** argv)
+int fitdmain()
 {
   int startupMenuResult;
 //  int protectionToBeDone = 1;

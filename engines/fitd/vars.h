@@ -15,7 +15,7 @@ enum gameTypeEnum
   JACK,
   AITD2,
   AITD3,
-  TIMEGATE,
+  TIMEGATE
 };
 
 extern enum gameTypeEnum gameId;

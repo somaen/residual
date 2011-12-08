@@ -1,5 +1,8 @@
 #include "common.h"
 
+// FIXME: Should get a header for that file
+void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar);
+
 int groundLevel;
 short int specialTable[4] = {144, 192, 48, 112};
 
@@ -1880,7 +1883,7 @@ processOpcode:
 
             loadPakToPtr("ITD_RESS",ressourceIdx,aux);
 
-            copyPalette(aux+64000,lpalette);
+			copyPalette((char*)aux+64000,(char*)lpalette);
             
             if(gameId < AITD3)
             convertPaletteIfRequired(lpalette);
@@ -1888,8 +1891,8 @@ processOpcode:
             fadeOut(0x10,0);
             fadeIn(lpalette);
 
-            osystem_setPalette(lpalette);
-            copyPalette(lpalette,palette);
+			osystem_setPalette((char*)lpalette);
+			copyPalette((char*)lpalette,(char*)palette);
 
             copyToScreen(aux,screen);
 
@@ -1901,7 +1904,7 @@ processOpcode:
               process_events();
               readKeyboard();
 
-              osystem_CopyBlockPhys(screen,0,0,320,200);
+			  osystem_CopyBlockPhys((unsigned char*)screen,0,0,320,200);
               osystem_startFrame();
               flipScreen();
               

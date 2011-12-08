@@ -110,7 +110,7 @@ enum enumLifeMacro
     LM_DEF_ABS_ZV,
     LM_DEF_SEQUENCE_SAMPLE,
     LM_READ_ON_PICTURE,
-    LM_FIRE_UP_DOWN, // AITD3 only
+	LM_FIRE_UP_DOWN // AITD3 only
 };
 
 typedef enum enumLifeMacro enumLifeMacro;

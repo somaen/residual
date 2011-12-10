@@ -23,6 +23,7 @@
 #define FITD_H
 
 #include "common/random.h"
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
@@ -32,7 +33,8 @@ enum FitdGameType {
 	GType_AITD1,
 	GType_AITD2,
 	GType_AITD3,
-	GType_JITD
+	GType_JITD,
+	GType_TIMEGATE
 };
 
 class FitdEngine : public Engine {
@@ -40,10 +42,32 @@ public:
 	FitdEngine(OSystem *sys, uint32 gameFlags, FitdGameType gameType, Common::Platform platform, Common::Language language);
 	~FitdEngine();
 	virtual Common::Error run();
+	uint32 getRandom() { return 42; } // TODO
 private:
 	Common::RandomSource *_rnd;
-};
 
+	bool _showFps;
+	bool _softRenderer;
+
+	uint32 _gameFlags;
+	FitdGameType _gameType;
+	Common::Platform _gamePlatform;
+	Common::Language _gameLanguage;
+};
+	// Temporaries from main.cpp
+	int makeIntroScreens();
+	void preloadResource();
+	void sysInit();
+	void initVars();
+	void initVarsSub1();
+	void initEngine();
+	void startGame(int startupFloor, int startupRoom, int allowSystemMenu);
+	void sysInitSub1(char* var0, char* var1);
+
+extern FitdEngine *g_fitd;
 }
+void allocTextes(void);
+
+
 
 #endif // FITD_H

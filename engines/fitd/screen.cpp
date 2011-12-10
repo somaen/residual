@@ -22,6 +22,7 @@
 // seg 048
 
 #include "common.h"
+#include "engines/fitd/gfx_base.h"
 
 void setupScreen(void)
 {
@@ -42,7 +43,7 @@ void flipScreen()
   char* outPtr = scaledScreen;
   char* inPtr = unkScreenVar;
 #ifdef USE_GL
-  osystem_flip(NULL);
+  Fitd::g_driver->flip(NULL);
   return;
 #endif
 
@@ -50,9 +51,9 @@ void flipScreen()
 
   for(i=0;i<256;i++)
   {
-    paletteRGBA[i*4] = palette[i*3];
-    paletteRGBA[i*4+1] = palette[i*3+1];
-    paletteRGBA[i*4+2] = palette[i*3+2];
+	  paletteRGBA[i*4] = Fitd::g_driver->_palette[i*3];
+    paletteRGBA[i*4+1] = Fitd::g_driver->_palette[i*3+1];
+    paletteRGBA[i*4+2] = Fitd::g_driver->_palette[i*3+2];
     paletteRGBA[i*4+3] = -1;
   }
 
@@ -78,8 +79,8 @@ void flipScreen()
     
   }
 
-  //osystem_setPalette(paletteRGBA);
-  osystem_flip((unsigned char*)scaledScreen);
+  //Fitd::g_driver->setPalette(paletteRGBA);
+  Fitd::g_driver->flip((unsigned char*)scaledScreen);
 }
 
 void flushScreen(void)

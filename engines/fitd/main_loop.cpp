@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/system.h"
 #include "common.h"
 
 int mainLoopSwitch = 0;
@@ -73,7 +74,7 @@ s32 q=0;                     /* Dummy */
   while(1)
   {
     frames++;
-    t_start=SDL_GetTicks();
+    t_start=g_system->getMillis();
 
     timeGlobal++;
 
@@ -326,12 +327,12 @@ s32 q=0;                     /* Dummy */
     updatePendingEvents();
 
     t_end=t_start+SPEED;
-    t_left=t_start-SDL_GetTicks()+SPEED;
+    t_left=t_start-g_system->getMillis()+SPEED;
 
     if(t_left>0){
         if(t_left>SLEEP_MIN)
-            SDL_Delay(t_left-SLEEP_GRAN);
-        while(SDL_GetTicks()<t_end){ q++; };
+            g_system->delayMillis(t_left-SLEEP_GRAN);
+        while(g_system->getMillis()<t_end){ q++; };
     }else{
        // printf("CPU to slow by %d ticks/round\n",-t_left);
     };

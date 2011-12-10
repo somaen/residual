@@ -19,7 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/system.h"
 #include "common.h"
+#include "engines/fitd/gfx_base.h"
 
 void convertPaletteIfRequired(unsigned char* lpalette)
 {
@@ -194,7 +196,7 @@ s32 q=0;
     {
       char buffer[256];
       frames++;
-      t_start=SDL_GetTicks();
+      t_start=g_system->getMillis();
 
       timeGlobal++;
 
@@ -236,8 +238,8 @@ s32 q=0;
             flipOtherPalette(palette);
           } */
 
-		  osystem_setPalette((char*)localPalette);
-		  copyPalette((char*)localPalette,(char*)palette);
+		  Fitd::g_driver->setPalette((char*)localPalette);
+			copyPalette((char*)localPalette,(char*)Fitd::g_driver->_palette);
         }
       }
       else // not first frame
@@ -267,8 +269,8 @@ s32 q=0;
       // TODO: here, timming management
       // TODO: fade management
 
-	  osystem_CopyBlockPhys((unsigned char*)aux,0,0,320,200);
-      osystem_startFrame();
+	  Fitd::g_driver->CopyBlockPhys((unsigned char*)aux,0,0,320,200);
+      Fitd::g_driver->startFrame();
       flipScreen();
 
       si++;
@@ -277,12 +279,12 @@ s32 q=0;
       readKeyboard();
 
       t_end=t_start+SPEED;
-      t_left=t_start-SDL_GetTicks()+SPEED;
+      t_left=t_start-g_system->getMillis()+SPEED;
 
       if(t_left>0){
           if(t_left>SLEEP_MIN)
-              SDL_Delay(t_left-SLEEP_GRAN);
-          while(SDL_GetTicks()<t_end){ q++; };
+              g_system->delayMillis(t_left-SLEEP_GRAN);
+          while(g_system->getMillis()<t_end){ q++; };
       }
     }
 

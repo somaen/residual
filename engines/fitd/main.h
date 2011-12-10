@@ -57,9 +57,9 @@ void printTextSub6(hqrEntryStruct* hqrPtr, int index);
 
 extern char scaledScreen[640*400];
 
-void sysInit(void);
+//void sysInit(void);
 void freeAll(void);
-void startGame(int startupEtage, int startupRoom, int allowSystemMenu);
+//void startGame(int startupEtage, int startupRoom, int allowSystemMenu);
 void fillBox(int x1, int y1, int x2, int y2, char color); // fast recode. No RE
 void copyZv(ZVStruct* source, ZVStruct* dest);
 void getZvRelativePosition(ZVStruct* zvPtr, int startRoom, int destRoom);

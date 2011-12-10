@@ -14,6 +14,8 @@ MODULE_OBJS := \
 	fitd.o \
 	floor.o \
 	font.o \
+	gfx_base.o \
+	gfx_opengl.o \
 	hqr.o \
 	input.o \
 	inventory.o \
@@ -25,9 +27,11 @@ MODULE_OBJS := \
 	music.o \
 	object.o \
 	osystemSDL.o \
+	osystemSDL_GL.o \
 	pak.o \
 	polys.o \
 	renderer.o \
+	registry.o \
 	room.o \
 	save.o \
 	screen.o \

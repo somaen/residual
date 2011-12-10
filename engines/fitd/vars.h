@@ -48,8 +48,6 @@ struct point3dStruct
   short int z;
 };
 
-typedef struct point3dStruct point3dStruct;
-
 struct textEntryStruct
 {
 	short int index;
@@ -57,15 +55,11 @@ struct textEntryStruct
 	short int width;
 };
 
-typedef struct textEntryStruct textEntryStruct;
-
 struct messageStruct
 {
 	textEntryStruct* string;
 	short int time;
 };
-
-typedef struct messageStruct messageStruct;
 
 struct saveEntry
 {
@@ -73,15 +67,11 @@ struct saveEntry
 	unsigned int size;
 };
 
-typedef struct saveEntry saveEntry;
-
 struct regularTextEntryStruct
 {
 	char* textPtr;
 	short int width;
 };
-
-typedef struct regularTextEntryStruct regularTextEntryStruct;
 
 struct hqrSubEntryStruct
 {
@@ -90,8 +80,6 @@ struct hqrSubEntryStruct
 	unsigned int lastTimeUsed;
   char* ptr;
 };
-
-typedef struct hqrSubEntryStruct hqrSubEntryStruct;
 
 struct hqrEntryStruct
 {
@@ -103,8 +91,6 @@ struct hqrEntryStruct
 	hqrSubEntryStruct* entries;
 };
 
-typedef struct hqrEntryStruct hqrEntryStruct;
-
 struct ZVStruct
 {
 	 s32 ZVX1;
@@ -115,8 +101,6 @@ struct ZVStruct
 	 s32 ZVZ2;
 };
 
-typedef struct ZVStruct ZVStruct;
-
 struct rotateStruct
 {
 	short int oldAngle;
@@ -124,8 +108,6 @@ struct rotateStruct
 	short int param;
 	short int timeOfRotate;
 };
-
-typedef struct rotateStruct rotateStruct;
 
 struct actorFlags
 {
@@ -146,9 +128,6 @@ struct actorFlags
   u16 flag0x4000:1;
   u16 flag0x8000:1;
 };
-
-
-typedef struct actorFlags actorFlags;
 
 struct actorStruct // used to read data from file too
 {
@@ -223,8 +202,6 @@ struct actorStruct // used to read data from file too
   short int hardMat;
 };
 
-typedef struct actorStruct actorStruct;
-
 struct objectStruct
 {
 	short int ownerIdx;
@@ -262,8 +239,6 @@ struct objectStruct
   short int mark;
 };
 
-typedef struct objectStruct objectStruct;
-
 struct boxStruct
 {
 	short int var0;
@@ -271,8 +246,6 @@ struct boxStruct
 	short int var2;
 	short int var3;
 };
-
-typedef struct boxStruct boxStruct;
 
 struct roomDefStruct
 {
@@ -283,8 +256,6 @@ struct roomDefStruct
 	short int worldZ;//8
 	short int numCameraInRoom;//0xA
 };
-
-typedef struct roomDefStruct roomDefStruct;
 
 extern hqrEntryStruct* hqrUnk;
 
@@ -312,8 +283,6 @@ extern char* priority;
 extern char* fontData;
 
 extern char* aitdBoxGfx;
-
-extern char palette[0x300];
 
 //extern OSystem osystem;
 

@@ -19,7 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
+
 #include "common.h"
+#include "common/textconsole.h"
 
 int getPosRelTable[] = {4,1,8,2,4,1,8,0};
 
@@ -237,7 +241,7 @@ int evalVar(void)
           }
         default:
           {
-            printf("Unsupported evalVar %X when actor not in room !\n", var1 & 0x7FFF);
+			warning("Unsupported evalVar %X when actor not in room !", var1 & 0x7FFF);
             exit(1);
           }
         }
@@ -565,7 +569,7 @@ int evalVar(void)
         }
       default:
         {
-          printf("Unhandled test type %X in evalVar\n",var1);
+		  warning("Unhandled test type %X in evalVar",var1);
           exit(1);
           break;
         }
@@ -628,7 +632,7 @@ int evalVar2(void)
           }
         default:
           {
-            printf("Unsupported evalVar %X when actor not in room !\n", var1 & 0x7FFF);
+			warning("Unsupported evalVar %X when actor not in room !", var1 & 0x7FFF);
             exit(1);
           }
         }
@@ -961,7 +965,7 @@ int evalVar2(void)
         }
       default:
         {
-          printf("Unhandled test type %X in evalVar\n",var1);
+		  warning("Unhandled test type %X in evalVar",var1);
           exit(1);
           break;
         }

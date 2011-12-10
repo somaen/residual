@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/scummsys.h"
+
 #ifndef _MUSIC_H_
 #define _MUSIC_H_
 extern unsigned int musicChrono;

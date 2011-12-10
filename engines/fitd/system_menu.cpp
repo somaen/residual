@@ -20,6 +20,7 @@
  */
 
 #include "common.h"
+#include "engines/fitd/gfx_base.h"
 
 void printString(int index, int textIndex, int selectedIndex)
 {
@@ -97,8 +98,8 @@ void processSystemMenu(void)
     flushScreen();
 
     drawSystemMenuLayout(currentSelectedEntry);
-	osystem_CopyBlockPhys((unsigned char*)screen,0,0,320,200);
-    osystem_startFrame();
+	Fitd::g_driver->CopyBlockPhys((unsigned char*)screen,0,0,320,200);
+    Fitd::g_driver->startFrame();
 
     if(lightVar1)
     {

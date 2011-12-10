@@ -22,7 +22,7 @@
 // seg 4
 
 #include "common.h"
-
+#include "engines/fitd/gfx_base.h"
 #ifdef PCLIKE
 #include "SDL.h"
 #endif
@@ -107,7 +107,7 @@ void blitPalette(char* palettePtr,unsigned char startColor,unsigned char nbColor
   char* outPtr = scaledScreen;
   char* inPtr = unkScreenVar;
 
-  osystem_getPalette(paletteRGBA);
+  Fitd::g_driver->getPalette(paletteRGBA);
 
   for(i=startColor;i<startColor+nbColor;i++)
   {
@@ -136,8 +136,8 @@ void blitPalette(char* palettePtr,unsigned char startColor,unsigned char nbColor
     
   }
 
-  osystem_setPalette(paletteRGBA);
-  osystem_flip((unsigned char*)scaledScreen);
+  Fitd::g_driver->setPalette(paletteRGBA);
+  Fitd::g_driver->flip((unsigned char*)scaledScreen);
 }
 
 void flipOtherPalette(char* palettePtr)
@@ -147,7 +147,7 @@ void flipOtherPalette(char* palettePtr)
   char* outPtr = scaledScreen;
   char* inPtr = unkScreenVar;
 
-  osystem_getPalette(paletteRGBA);
+  Fitd::g_driver->getPalette(paletteRGBA);
 
   for(i=0;i<256;i++)
   {
@@ -176,8 +176,8 @@ void flipOtherPalette(char* palettePtr)
     
   }
 
-  osystem_setPalette(paletteRGBA);
-  osystem_flip((unsigned char*)scaledScreen);
+  Fitd::g_driver->setPalette(paletteRGBA);
+  Fitd::g_driver->flip((unsigned char*)scaledScreen);
 }
 
 void computeProportionalPalette(unsigned char* inPalette, unsigned char* outPalette, int coef)
@@ -206,7 +206,7 @@ void make3dTatouUnk1(int var1,int var2)
   {
     for(i=0;i<256;i+=var1)
     {
-      computeProportionalPalette((unsigned char*)palette,(unsigned char*)localPalette,i);
+		computeProportionalPalette((unsigned char*)Fitd::g_driver->_palette,(unsigned char*)localPalette,i);
       fadeInSub1(localPalette);
       flipOtherPalette(localPalette);
     }
@@ -228,7 +228,7 @@ void fadeOut(int var1, int var2)
 
   for(i=256;i>=0;i-=var1)
   {
-    computeProportionalPalette((unsigned char*)palette,(unsigned char*)localPalette,i);
+    computeProportionalPalette((unsigned char*)Fitd::g_driver->_palette,(unsigned char*)localPalette,i);
     fadeInSub1(localPalette);
     flipOtherPalette(localPalette);
   }
@@ -255,15 +255,15 @@ void flip()
   char paletteRGBA[256*4];
 
 #ifdef USE_GL
-  osystem_flip(NULL);
+  Fitd::g_driver->flip(NULL);
   return;
 #endif
 
   for(i=0;i<256;i++)
   {
-    paletteRGBA[i*4] = palette[i*3];
-    paletteRGBA[i*4+1] = palette[i*3+1];
-    paletteRGBA[i*4+2] = palette[i*3+2];
+	  paletteRGBA[i*4] = Fitd::g_driver->_palette[i*3];
+    paletteRGBA[i*4+1] = Fitd::g_driver->_palette[i*3+1];
+    paletteRGBA[i*4+2] = Fitd::g_driver->_palette[i*3+2];
     paletteRGBA[i*4+3] = -1;
   }
 
@@ -286,8 +286,8 @@ void flip()
     
   }
 
-  osystem_setPalette(paletteRGBA);
-  osystem_flip((unsigned char*)scaledScreen);
+  Fitd::g_driver->setPalette(paletteRGBA);
+  Fitd::g_driver->flip((unsigned char*)scaledScreen);
 }
 
 #ifdef PCLIKE
@@ -369,7 +369,8 @@ void playSound(int num)
   char* ptr = HQR_Get(listSamp,num);
 
 #ifndef NO_SOUND
-  osystem_playSample(ptr,size);
+	// TODO fixsound
+	// Fitd::g_driver->playSample(ptr,size);
 #endif
 }
 
@@ -398,18 +399,18 @@ int make3dTatou(void)
 
   setupSMCode(160,100,128,500,490);
 
-  copyPalette(palette,paletteBackup);
+  copyPalette(Fitd::g_driver->_palette,paletteBackup);
 
-  paletteFill(palette,0,0,0);
+  paletteFill(Fitd::g_driver->_palette,0,0,0);
 
-  fadeIn(palette);
+  fadeIn(Fitd::g_driver->_palette);
 
-  copyPalette(tatouPal,palette);
+  copyPalette(tatouPal,Fitd::g_driver->_palette);
   copyToScreen(tatou2d+770,unkScreenVar);
   copyToScreen(unkScreenVar,aux2);
 
 #ifdef USE_GL
-  osystem_CopyBlockPhys((unsigned char*)unkScreenVar,0,0,320,200);
+  Fitd::g_driver->CopyBlockPhys((unsigned char*)unkScreenVar,0,0,320,200);
   flip();
 #endif
 
@@ -425,7 +426,7 @@ int make3dTatou(void)
     if(evalChrono(&localChrono)<=180) // avant eclair
     {
 #ifdef USE_GL
-      osystem_startFrame();
+      Fitd::g_driver->startFrame();
 #endif
 
       if(input2 || input1)
@@ -434,7 +435,7 @@ int make3dTatou(void)
       }
 
 #ifdef USE_GL
-      osystem_stopFrame();
+      Fitd::g_driver->stopFrame();
       flip();
 #endif
     }
@@ -448,8 +449,8 @@ int make3dTatou(void)
        /*     soundVar2 = -1;
       soundVar1 = -1;*/
 
-      paletteFill(palette,63,63,63);
-      fadeIn(palette);
+      paletteFill(Fitd::g_driver->_palette,63,63,63);
+      fadeIn(Fitd::g_driver->_palette);
     /*  setClipSize(0,0,319,199);*/
 
       clearScreenTatou();
@@ -460,11 +461,11 @@ int make3dTatou(void)
 
       blitScreenTatou();
 #ifdef USE_GL
-      osystem_CopyBlockPhys((unsigned char*)unkScreenVar,0,0,320,200);
+      Fitd::g_driver->CopyBlockPhys((unsigned char*)unkScreenVar,0,0,320,200);
 #endif
 
-      copyPalette(tatouPal,palette);
-      fadeIn(palette);
+      copyPalette(tatouPal,Fitd::g_driver->_palette);
+      fadeIn(Fitd::g_driver->_palette);
 
       while(input2==0 && input1 == 0 && inputKey == 0) // boucle de rotation du tatou
       {
@@ -480,7 +481,7 @@ int make3dTatou(void)
         clearScreenTatou();
 
 #ifdef USE_GL
-      osystem_startFrame();
+      Fitd::g_driver->startFrame();
 #endif
 
         rotateModel(0,0,0,unk1,rotation,0,time);
@@ -490,7 +491,7 @@ int make3dTatou(void)
         blitScreenTatou();
 
 #ifdef USE_GL
-      osystem_stopFrame();
+      Fitd::g_driver->stopFrame();
 #endif
 
         flip();
@@ -512,13 +513,13 @@ int make3dTatou(void)
     }
 
     fadeOut(32,0);
-    copyPalette(paletteBackup,palette);
+    copyPalette(paletteBackup,Fitd::g_driver->_palette);
     return(1);
   }
   else
   {
     fadeOut(16,0);
-    copyPalette(paletteBackup,palette);
+    copyPalette(paletteBackup,Fitd::g_driver->_palette);
     return(0);
   }
 

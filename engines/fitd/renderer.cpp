@@ -20,6 +20,7 @@
  */
 
 #include "common.h"
+#include "engines/fitd/gfx_base.h"
 
 struct rendererPointStruct
 {
@@ -27,8 +28,6 @@ struct rendererPointStruct
   float Y;
   float Z;
 };
-
-typedef struct rendererPointStruct rendererPointStruct;
 
 #define NUM_MAX_POINT 5000
 
@@ -41,10 +40,8 @@ enum primTypeEnum
   primTypeEnum_Line = 0,
   primTypeEnum_Poly = 1,
   primTypeEnum_Point = 2,
-  primTypeEnum_Disc = 3,
+  primTypeEnum_Disc = 3
 };
-
-typedef enum primTypeEnum primTypeEnum;
 
 struct primEntryLineStruct
 {
@@ -52,8 +49,6 @@ struct primEntryLineStruct
 
   rendererPointStruct points[2];
 };
-
-typedef struct primEntryLineStruct primEntryLineStruct;
 
 struct primEntryPolyStruct
 {
@@ -63,8 +58,6 @@ struct primEntryPolyStruct
   rendererPointStruct* firstPointPtr;
 };
 
-typedef struct primEntryPolyStruct primEntryPolyStruct;
-
 struct primEntryPointStruct
 {
   u8 color;
@@ -72,8 +65,6 @@ struct primEntryPointStruct
   float Y;
   float Z;
 };
-
-typedef struct primEntryPointStruct primEntryPointStruct;
 
 struct primEntryDiscStruct
 {
@@ -83,8 +74,6 @@ struct primEntryDiscStruct
   float Y;
   float Z;
 };
-
-typedef struct primEntryDiscStruct primEntryDiscStruct;
 
 struct primEntryStruct
 {
@@ -98,8 +87,6 @@ struct primEntryStruct
     primEntryDiscStruct discEntry;
   };
 };
-
-typedef struct primEntryStruct primEntryStruct;
 
 #define NUM_MAX_PRIM_ENTRY 500
 
@@ -1142,14 +1129,14 @@ void line(int x1, int y1, int x2, int y2, char c);
 
 void renderStyle0(primEntryStruct* pEntry) // line
 {
-  osystem_draw3dLine( pEntry->lineEntry.points[0].X,pEntry->lineEntry.points[0].Y,pEntry->lineEntry.points[0].Z,
+  Fitd::g_driver->draw3dLine( pEntry->lineEntry.points[0].X,pEntry->lineEntry.points[0].Y,pEntry->lineEntry.points[0].Z,
                       pEntry->lineEntry.points[1].X,pEntry->lineEntry.points[1].Y,pEntry->lineEntry.points[1].Z,
                       pEntry->lineEntry.color);
 }
 
 void renderStyle1(primEntryStruct* pEntry) // poly
 {
-  osystem_fillPoly((float*)pEntry->polyEntry.firstPointPtr,pEntry->polyEntry.numOfPoints, pEntry->polyEntry.color, pEntry->polyEntry.polyType);
+  Fitd::g_driver->fillPoly((float*)pEntry->polyEntry.firstPointPtr,pEntry->polyEntry.numOfPoints, pEntry->polyEntry.color, pEntry->polyEntry.polyType);
 }
 
 void renderStyle2(primEntryStruct* pEntry) // point
@@ -1158,7 +1145,7 @@ void renderStyle2(primEntryStruct* pEntry) // point
 	
   transformedSize = ((5.f * (float)cameraY) / (float)(pEntry->pointEntry.Z+cameraX));
 
-  osystem_drawSphere(pEntry->pointEntry.X,pEntry->pointEntry.Y,pEntry->pointEntry.Z,pEntry->pointEntry.color,transformedSize);
+  Fitd::g_driver->drawSphere(pEntry->pointEntry.X,pEntry->pointEntry.Y,pEntry->pointEntry.Z,pEntry->pointEntry.color,transformedSize);
 }
 
 void renderStyle3(primEntryStruct* pEntry)
@@ -1167,7 +1154,7 @@ void renderStyle3(primEntryStruct* pEntry)
 
   transformedSize = (((float)pEntry->discEntry.size * (float)cameraY) / (float)(pEntry->discEntry.Z+cameraX));
 
-  osystem_drawSphere(pEntry->discEntry.X,pEntry->discEntry.Y,pEntry->discEntry.Z,pEntry->discEntry.color,transformedSize);
+  Fitd::g_driver->drawSphere(pEntry->discEntry.X,pEntry->discEntry.Y,pEntry->discEntry.Z,pEntry->discEntry.color,transformedSize);
 }
 
 

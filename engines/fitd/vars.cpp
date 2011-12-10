@@ -51,8 +51,6 @@ char* fontData;
 
 char* aitdBoxGfx;
 
-char palette[256*3];
-
 //OSystem osystem;
 
 char unkScreenVar[320*200];

@@ -22,13 +22,7 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#ifndef _WIN32
-#include "config.h"
-#endif
-
-#ifdef MACOSX
-#define UNIX
-#endif
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #define NUM_MAX_CAMERA_IN_ROOM 20
 
@@ -48,7 +42,7 @@ typedef signed long int s32;
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+//#include <time.h>
 #include <string.h>
 #ifdef WIN32
 #include <search.h>
@@ -72,12 +66,12 @@ typedef signed long int s32;
 #endif
 
 #ifdef USE_GL
-#include <GL/gl.h>      // Header File For The OpenGL32 Library
-#include <GL/glu.h>     // Header File For The GLu32 Library
+//#include <GL/gl.h>      // Header File For The OpenGL32 Library
+//#include <GL/glu.h>     // Header File For The GLu32 Library
 //#include <gl\glaux.h>   // Header File For The Glaux Library
 #endif
 
-#include "SDL.h"
+//#include "SDL.h"
 
 //////////////// GAME SPECIFIC DEFINES
 
@@ -131,45 +125,13 @@ enum enumCVars
 
 //typedef enum enumCVars enumCVars;
 
-extern enumCVars AITD1KnownCVars[];
-extern enumCVars AITD2KnownCVars[];
+//extern enumCVars AITD1KnownCVars[];
+//extern enumCVars AITD2KnownCVars[];
 
 extern enumCVars* currentCVarTable;
 
 int getCVarsIdx(enumCVars);
 
-//////////////////////
-/*
-#define	SAMPLE_PAGE				0
-#define	BODY_FLAMME				1
-#define	MAX_WEIGHT_LOADABLE		2
-#define	TEXTE_CREDITS			3
-#define	SAMPLE_TONNERRE			4
-#define	INTRO_DETECTIVE			5
-#define	INTRO_HERITIERE			6
-#define	WORLD_NUM_PERSO			7
-#define	CHOOSE_PERSO			8
-#define	SAMPLE_CHOC				9
-#define	SAMPLE_PLOUF			10
-#define	REVERSE_OBJECT			11
-#define	KILLED_SORCERER			12
-#define	LIGHT_OBJECT			13
-#define	FOG_FLAG				14
-#define	DEAD_PERSO				15
-*/
-
-//////////////////
-/*
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned long uint32;
-#ifndef UNIX
-typedef unsigned int uint;
-#endif
-typedef signed char int8;
-typedef signed short int16;
-typedef signed long int32;
-*/
 typedef unsigned char U8;
 typedef unsigned short U16;
 typedef unsigned long U32;
@@ -188,6 +150,7 @@ typedef signed long S32;
 //#include <bool.h>
 //#include <geometry.h>
 int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*triangles)[3]);
+#include "common/scummsys.h"
 #include "room.h"
 #include "vars.h"
 #include "main.h"
@@ -235,9 +198,7 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 
 
 ////
-
-//typedef unsigned char byte;
-
+/*
 #ifdef UNIX
 #define FORCEINLINE static inline
 #else
@@ -247,7 +208,7 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 #define FORCEINLINE inline
 #endif
 #endif
-
+*/
 FORCEINLINE u16 READ_LE_U16(void *ptr)
 {
 #ifdef MACOSX

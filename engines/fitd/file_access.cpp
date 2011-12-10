@@ -19,13 +19,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
+#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
+#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
+#define FORBIDDEN_SYMBOL_EXCEPTION_ftell
+#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
+#define FORBIDDEN_SYMBOL_EXCEPTION_fread
+
 #include "common.h"
+#include "common/textconsole.h"
+
 // seg 20
 void theEnd(int type, char* name)
 {
 //  freeScene();
   freeAll();
-  printf("Error: %s\n", name);
+  warning("Error: %s", name);
   exit(1);
 }
 char* loadFromItd(char* name)

@@ -19,12 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/scummsys.h"
 #include "engines/fitd/sound.h"
 
 void Sound_Quit(void)
-{
+{/*
 	Mix_HookMusic(NULL, NULL);
-	Mix_CloseAudio();
+	Mix_CloseAudio();*/
 }
 
 void osystem_crossFade(char *buffer, char *palette)
@@ -34,7 +35,7 @@ void osystem_crossFade(char *buffer, char *palette)
 int posInStream = 0;
 volatile bool deviceStatus = false;
 
-void my_audio_callback(void *userdata, Uint8 *stream, int len)
+void my_audio_callback(void *userdata, uint8 *stream, int len)
 {
 	/*  Sound_Sample *sample = (Sound_Sample *)userdata;
 	 Uint8* input = (Uint8*)sample->buffer;
@@ -55,7 +56,7 @@ void my_audio_callback(void *userdata, Uint8 *stream, int len)
 #ifdef USE_UNPACKED_DATA
 void osystem_playSampleFromName(char* sampleName)
 {
-	
+/*	
 	Mix_Chunk *sample;
 	
 	sample=Mix_LoadWAV_RW(SDL_RWFromFile(sampleName, "rb"), 1);
@@ -69,11 +70,11 @@ void osystem_playSampleFromName(char* sampleName)
 	else
 	{
 		Mix_PlayChannel(-1, sample, 0);
-	}
+	}*/
 }
 #else
 void osystem_playSample(char* samplePtr,int size)
-{
+{/*
 	
 	Mix_Chunk *sample;
 	
@@ -88,6 +89,6 @@ void osystem_playSample(char* samplePtr,int size)
 	else
 	{
 		Mix_PlayChannel(-1, sample, 0);
-	}
+	}*/
 }
 #endif

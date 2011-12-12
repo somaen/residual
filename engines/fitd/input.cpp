@@ -20,7 +20,7 @@
  */
 
 #include "common.h"
-#include <SDL.h>
+//#include <SDL.h>
 
 extern float nearVal;
 extern float farVal;
@@ -29,6 +29,7 @@ extern float fov;
 
 void readKeyboard(void)
 {
+/*
   SDL_Event event;
   int size;
   int j;
@@ -55,7 +56,7 @@ void readKeyboard(void)
     if (keyboard[j])
     {
       switch (j)
-      {
+      {*/
 /*        case SDLK_z:
           nearVal-=1;
           break;
@@ -88,7 +89,7 @@ void readKeyboard(void)
         case SDLK_r:
           fov+=2;
           break; */
-      case SDLK_RETURN:
+/*      case SDLK_RETURN:
           input2 = 0x1C;
           break;
       case SDLK_ESCAPE:
@@ -149,5 +150,5 @@ void readKeyboard(void)
   {
     backgroundMode = backgroundModeEnum_3D;
   }
-#endif
+#endif*/
 }

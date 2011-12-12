@@ -21,7 +21,7 @@
 
 #include "common.h"
 
-enum gameTypeEnum gameId;
+//enum gameTypeEnum gameId;
 
 char* currentFoundBody;
 int currentFoundBodyIdx;

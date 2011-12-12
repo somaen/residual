@@ -31,9 +31,9 @@ namespace Fitd {
 
 enum FitdGameType {
 	GType_AITD1,
+	GType_JITD,
 	GType_AITD2,
 	GType_AITD3,
-	GType_JITD,
 	GType_TIMEGATE
 };
 
@@ -41,6 +41,7 @@ class FitdEngine : public Engine {
 public:
 	FitdEngine(OSystem *sys, uint32 gameFlags, FitdGameType gameType, Common::Platform platform, Common::Language language);
 	~FitdEngine();
+	FitdGameType getGameType() { return _gameType; }
 	virtual Common::Error run();
 	uint32 getRandom() { return 42; } // TODO
 private:

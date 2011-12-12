@@ -19,7 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "engines/fitd/fitd.h"
 #include "common.h"
+
+// TODO namespacing
+using namespace Fitd;
 
 char* fontVar1 = NULL;
 short int fontSm1 = 0;
@@ -116,7 +120,7 @@ void renderText(int x, int y, char* surface, char* string)
   fontVar6 = x;
   fontSm7 = y;
 
-  if(gameId >= AITD2)
+  if(g_fitd->getGameType() >= GType_AITD2)
   {
     return;
   }

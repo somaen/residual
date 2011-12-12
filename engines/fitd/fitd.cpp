@@ -104,9 +104,52 @@ FitdEngine::FitdEngine(OSystem *sys, uint32 gameFlags, FitdGameType gameType, Co
 	_softRenderer = true;
 #endif
 
+	
 	_showFps = (tolower(g_registry->get("show_fps", "false")[0]) == 't');
 
-	switch (gameType) {
+}
+
+FitdEngine::~FitdEngine() {
+	debug("FitdEngine::~FitdEngine");
+
+	// Dispose your resources here
+	delete _rnd;
+
+	if (g_registry) {
+		g_registry->save();
+		delete g_registry;
+		g_registry = NULL;
+	}
+
+	// Remove all of our debug levels here
+	DebugMan.clearAllDebugChannels();
+}
+
+Common::Error FitdEngine::run() {
+	debug("FitdEngine::run()");
+
+	// For debugging-purposes, we won't want fullscreen, as gdb is quirky to use without a window
+	bool fullscreen = false;
+	//bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
+
+	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)){
+		warning("gfx backend doesn't support hardware rendering");
+		_softRenderer=true;
+	}
+
+	//if (_softRenderer)
+	//	g_driver = CreateGfxTinyGL();
+/*#ifdef USE_OPENGL
+	else*/
+	//	g_driver = CreateGfxOpenGL();
+//#endif
+	g_driver = CreateGfxOpenGL();
+	
+	g_driver->setupScreen(640, 400, fullscreen);
+	
+	sysInit();
+	
+	switch (_gameType) {
 		case GType_AITD1:
 			numCVars = 35;
 			currentCVarTable = AITD1KnownCVars;
@@ -120,14 +163,16 @@ FitdEngine::FitdEngine(OSystem *sys, uint32 gameFlags, FitdGameType gameType, Co
 	// Init stuff
 	
 	// Game specifics
-	switch(gameType)
+	switch(_gameType)
 	{
 		case GType_AITD1:
 		{
+			warning("Calling fadeIn");
 			fadeIn(g_driver->_palette);
-			
+			warning("Call to fadeIn ended");
 			if(!make3dTatou())
 			{
+				warning("Calling makeIntroScreens");
 				makeIntroScreens();
 			}
 			break;
@@ -157,42 +202,8 @@ FitdEngine::FitdEngine(OSystem *sys, uint32 gameFlags, FitdGameType gameType, Co
 			error("Unknown gametype\n");
 			break;
 	}
-}
 
-FitdEngine::~FitdEngine() {
-	debug("FitdEngine::~FitdEngine");
 
-	// Dispose your resources here
-	delete _rnd;
-
-	if (g_registry) {
-		g_registry->save();
-		delete g_registry;
-		g_registry = NULL;
-	}
-
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
-}
-
-Common::Error FitdEngine::run() {
-	debug("FitdEngine::run()");
-
-	bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
-
-	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL)){
-		warning("gfx backend doesn't support hardware rendering");
-		_softRenderer=true;
-	}
-
-	//if (_softRenderer)
-	//	g_driver = CreateGfxTinyGL();
-/*#ifdef USE_OPENGL
-	else*/
-		g_driver = CreateGfxOpenGL();
-//#endif
-
-	g_driver->setupScreen(640, 400, fullscreen);
 
 	return Common::kNoError;
 }
@@ -201,6 +212,7 @@ Common::Error FitdEngine::run() {
 // Still needs refactor:
 void startGame(int startupFloor, int startupRoom, int allowSystemMenu)
 {
+	warning("startGame");
 	initEngine();
 	initVars();
 	
@@ -220,10 +232,12 @@ void startGame(int startupFloor, int startupRoom, int allowSystemMenu)
 	/*freeScene();
 	 
 	 fadeOut(8,0);*/
+	warning("startGame ended");
 }
 
 void initEngine()
 {
+	warning("initEngine");
 	u8* pObjectData;
 	u8* pObjectDataBackup;
 	unsigned long int objectDataSize;
@@ -248,7 +262,7 @@ void initEngine()
 	maxObjects = READ_LE_U16(pObjectData);
 	pObjectData+=2;
 	
-	if(gameId == AITD1) {
+	if(g_fitd->getGameType() == GType_AITD1) {
 		//objectTable = (objectStruct*)malloc(300*sizeof(objectStruct));
 		objectTable = new objectStruct[300];
 	}
@@ -337,7 +351,7 @@ void initEngine()
 		objectTable[i].positionInTrack = READ_LE_U16(pObjectData);
 		pObjectData+=2;
 		
-		if(gameId >= JACK)
+		if(g_fitd->getGameType() >= GType_JITD)
 		{
 			objectTable[i].mark = READ_LE_U16(pObjectData);
 			pObjectData+=2;
@@ -389,7 +403,7 @@ void initEngine()
 	
 	varSize = fileSize;
 	
-	if(gameId == AITD1)
+	if(g_fitd->getGameType() == GType_AITD1)
 	{
 		choosePersoBackup = CVars[getCVarsIdx(CHOOSE_PERSO)]; // backup hero selection
 	}
@@ -412,7 +426,7 @@ void initEngine()
 	}
 	//////////////////////////////////////////////
 	
-	if(gameId == AITD1)
+	if(g_fitd->getGameType() == GType_AITD1)
 	{
 		CVars[getCVarsIdx(CHOOSE_PERSO)] = choosePersoBackup;
 	}
@@ -422,7 +436,7 @@ void initEngine()
 	
 	// TODO: missing dos memory check here
 	
-	if(gameId == AITD1)
+	if(g_fitd->getGameType() == GType_AITD1)
 	{
 		listBody = HQR_InitRessource(listBodySelect[CVars[getCVarsIdx(CHOOSE_PERSO)]],100000, 50); // was calculated from free mem size
 		listAnim = HQR_InitRessource(listAnimSelect[CVars[getCVarsIdx(CHOOSE_PERSO)]],100000, 50); // was calculated from free mem size
@@ -441,10 +455,11 @@ void initEngine()
 		actorTable[i].field_0 = -1;
 	}
 	
-	if(gameId == AITD1)
+	if(g_fitd->getGameType() == GType_AITD1)
 	{
 		currentCameraTarget = CVars[getCVarsIdx(WORLD_NUM_PERSO)];
 	}
+	warning("InitEngine ended");
 }
 
 void initVarsSub1()
@@ -458,7 +473,7 @@ void initVarsSub1()
 void initVars()
 {
 	giveUp = 0;
-	if(gameId == AITD1)
+	if(g_fitd->getGameType() == GType_AITD1)
 	{
 		inHand = -1;
 		numObjInInventory = 0;
@@ -501,6 +516,7 @@ void initVars()
 
 void sysInit()
 {
+	warning("SysInit");
 	int i;
 	
 	/*#ifndef PCLIKE
@@ -508,7 +524,7 @@ void sysInit()
 	 #else*/
 	//time_t ltime;
 	//#endif
-	FILE* fHandle;
+	Common::File *fHandle;
 	
 	setupScreen();
 	//setupInterrupt();
@@ -555,17 +571,17 @@ void sysInit()
 	
 	CVars = (short int*)malloc(numCVars * sizeof(short int));
 	
-	switch(gameId)
+	switch(g_fitd->getGameType())
 	{
-		case JACK:
-		case AITD2:
-		case AITD3:
-		case TIMEGATE:
+		case GType_JITD:
+		case GType_AITD2:
+		case GType_AITD3:
+		case GType_TIMEGATE:
 		{
 			fontData = loadPakSafe("ITD_RESS",1);
 			break;
 		}
-		case AITD1:
+		case GType_AITD1:
 		{
 			fontData = loadPakSafe("ITD_RESS",5);
 			break;
@@ -574,7 +590,7 @@ void sysInit()
 	
 	initFont(fontData, 14);
 	
-	if(gameId == AITD1)
+	if(g_fitd->getGameType() == GType_AITD1)
 	{
 		initFont2(2,0);
 	}
@@ -583,16 +599,16 @@ void sysInit()
 		initFont2(2,1);
 	}
 	
-	switch(gameId)
+	switch(g_fitd->getGameType())
 	{
-		case JACK:
-		case AITD2:
-		case AITD3:
+		case GType_JITD:
+		case GType_AITD2:
+		case GType_AITD3:
 		{
 			aitdBoxGfx = loadPakSafe("ITD_RESS",0);
 			break;
 		}
-		case AITD1:
+		case GType_AITD1:
 		{
 			aitdBoxGfx = loadPakSafe("ITD_RESS",4);
 			break;
@@ -601,17 +617,18 @@ void sysInit()
 	
 	priority = loadFromItd("PRIORITY.ITD");
 	
-	fHandle = fopen("DEFINES.ITD","rb");
-	if(!fHandle)
+	fHandle = new Common::File();
+	if(!fHandle->open("DEFINES.ITD"))
 	{
 		theEnd(0,"DEFINES.ITD");
 	}
 	
 	///////////////////////////////////////////////
 	{
-		fread(CVars,numCVars,2,fHandle);
-		fclose(fHandle);
-		
+		fHandle->read(CVars,numCVars*2);
+		//	fread(CVars,numCVars,2,fHandle);
+		//fclose(fHandle);
+		delete fHandle;
 		for(i=0;i<numCVars;i++)
 		{
 			CVars[i] = ((CVars[i]&0xFF)<<8) | ((CVars[i]&0xFF00)>>8);
@@ -629,6 +646,7 @@ void sysInit()
 	listSamp = HQR_InitRessource("ListSamp",64000,30);
 	
 	hqrUnk = HQR_Init(10000,50);
+	warning("SysInit ended");
 }
 
 void sysInitSub1(char* var0, char* var1)
@@ -645,7 +663,7 @@ void preloadResource()
 {
 	char localPalette[768];
 	
-	if(gameId == AITD2)
+	if(g_fitd->getGameType() == GType_AITD2)
 	{
 		loadPakToPtr("ITD_RESS",59,aux);
 	}
@@ -663,6 +681,7 @@ void preloadResource()
 
 int makeIntroScreens()
 {
+	warning("makeIntroScreens");
 	char* data;
 	unsigned int chrono;
 	
@@ -687,7 +706,7 @@ int makeIntroScreens()
 		if(time>=0x30)
 			break;
 		
-	}while(input2 == 0 && input1 == 0);
+	} while(input2 == 0 && input1 == 0);
 	
 	playSound(CVars[getCVarsIdx(SAMPLE_PAGE)]);
 	/*  soundVar2 = -1;
@@ -696,8 +715,8 @@ int makeIntroScreens()
 	 soundVar1 = 0; */
 	//  readVar = 1;
 	printText(CVars[getCVarsIdx(TEXTE_CREDITS)]+1,48, 2,260,197,1,26);
-	
+	warning("makeIntroScreens ended");
 	return(0);
 }
 	
-}
+} // End of namespace Fitd

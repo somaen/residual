@@ -20,6 +20,18 @@
  */
 
 #include "common.h"
+#include "engines/fitd/fitd.h"
+
+// TODO namespacing
+using namespace Fitd;
+
+// Quick fixes, as this file will be refactored anyways
+#define gameId g_fitd->getGameType()
+#define JACK GType_JITD
+#define AITD1 GType_AITD1
+#define AITD2 GType_AITD2
+#define AITD3 GType_AITD3
+#define TIMEGATE GType_TIMEGATE
 
 unsigned int currentSaveEntrySize;
 
@@ -84,8 +96,8 @@ int loadSave(int saveNumber)
     return(0);
   }
 
-  initEngine();
-  initVars();
+  Fitd::initEngine();
+  Fitd::initVars();
 
   fseek(fHandle,8,SEEK_SET);
 

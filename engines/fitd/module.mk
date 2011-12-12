@@ -23,7 +23,7 @@ MODULE_OBJS := \
 	life_macro_table.o \
 	lines.o \
 	main_loop.o \
-	main.o \
+	fitdmain.o \
 	music.o \
 	object.o \
 	osystemSDL.o \
@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	save.o \
 	screen.o \
 	sequence.o \
+	sound.o \
 	startup_menu.o \
 	system_menu.o \
 	tatou.o \

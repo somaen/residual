@@ -19,8 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_rand
+
+#include "engines/fitd/fitd.h"
 #include "common.h"
+
 #include "engines/fitd/gfx_base.h"
+
+// TODO namespacing
+using namespace Fitd;
 
 // FIXME: Should get a header for that file
 void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar);
@@ -217,7 +224,7 @@ int createFlow( int mode, int X, int Y, int Z, int stage, int room, int alpha, i
 		}
 		default:
 		{
-			printf("Unsupported case %d in createFlow\n",mode);
+			warning("Unsupported case %d in createFlow\n",mode);
 		}
 	}
 	
@@ -314,7 +321,7 @@ void setStage(int newStage, int newRoomLocal, int X, int Y, int Z)
 	currentProcessedActorPtr->stage = newStage;
 	currentProcessedActorPtr->room = newRoomLocal;
 	
-	if(gameId != AITD1)
+	if(g_fitd->getGameType() !=GType_AITD1)
 	{
 		currentProcessedActorPtr->hardMat = -1;
 	}
@@ -477,7 +484,7 @@ void processLife(int lifeNum)
 		currentOpcode = *(short int*)(currentLifePtr);
 		currentLifePtr+=2;
 		
-		printf("%d:opcode: %04X\n",lifeNum, currentOpcode);
+		warning("%d:opcode: %04X\n",lifeNum, currentOpcode);
 		
 		if(currentOpcode & 0x8000)
 		{
@@ -486,8 +493,8 @@ void processLife(int lifeNum)
 			
 			if(var_6==-1)
 			{
-				printf("Unsupported newVar = -1\n");
-				exit(1);
+				error("Unsupported newVar = -1\n");
+				//				exit(1);
 			}
 			else
 			{
@@ -503,7 +510,7 @@ void processLife(int lifeNum)
 				{
 					int opcodeLocated;
 					
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() ==GType_AITD1)
 					{
 						opcodeLocated = AITD1LifeMacroTable[currentOpcode & 0x7FFF];
 					}
@@ -544,7 +551,7 @@ void processLife(int lifeNum)
 							objectTable[var_6].animInfo = *(short int*)(currentLifePtr);
 							currentLifePtr+=2;
 							objectTable[var_6].animType = ANIM_ONCE;
-							if(gameId >= JACK)
+							if(g_fitd->getGameType() >= GType_JITD)
 								objectTable[var_6].frame = 0;
 							break;
 						}
@@ -554,7 +561,7 @@ void processLife(int lifeNum)
 							currentLifePtr+=2;
 							objectTable[var_6].animInfo = -1;
 							objectTable[var_6].animType = ANIM_REPEAT;
-							if(gameId >= JACK)
+							if(g_fitd->getGameType() >= GType_JITD)
 								objectTable[var_6].frame = 0;
 							break;
 						}
@@ -565,13 +572,13 @@ void processLife(int lifeNum)
 							objectTable[var_6].animInfo = *(short int*)(currentLifePtr);
 							currentLifePtr+=2;
 							objectTable[var_6].animType = ANIM_ONCE | ANIM_UNINTERRUPTABLE;
-							if(gameId >= JACK)
+							if(g_fitd->getGameType() >= GType_JITD)
 								objectTable[var_6].frame = 0;
 							break;
 						}
 						case	LM_ANIM_RESET:
 						{
-							ASSERT(gameId >= JACK);
+							ASSERT(g_fitd->getGameType() >= GType_JITD);
 							objectTable[var_6].anim = *(short int*)(currentLifePtr);
 							currentLifePtr+=2;
 							objectTable[var_6].animInfo = *(short int*)(currentLifePtr);
@@ -697,8 +704,8 @@ void processLife(int lifeNum)
 							////////////////////////////////////////////////////////////////////////
 						default:
 						{
-							printf("Unsupported opcode %X when actor isn't in floor\n",currentOpcode & 0x7FFF);
-							exit(1);
+							error("Unsupported opcode %X when actor isn't in floor\n",currentOpcode & 0x7FFF);
+							//						exit(1);
 							break;
 						}
 					}
@@ -710,7 +717,7 @@ void processLife(int lifeNum)
 			int opcodeLocated;
 		processOpcode:
 			
-			if(gameId == AITD1)
+			if(g_fitd->getGameType() ==GType_AITD1)
 			{
 				opcodeLocated = AITD1LifeMacroTable[currentOpcode & 0x7FFF];
 			}
@@ -738,7 +745,7 @@ void processLife(int lifeNum)
 								char* pAnim = HQR_Get(listAnim,currentProcessedActorPtr->ANIM);
 								char* pBody;
 								
-								if(gameId >= JACK)
+								if(g_fitd->getGameType() >= GType_JITD)
 								{
 									/*                  if (bFlagDecal)
 									 gereDecal(); */
@@ -746,7 +753,7 @@ void processLife(int lifeNum)
 								
 								pBody = HQR_Get(listBody,currentProcessedActorPtr->bodyNum);
 								
-								/*    if(gameId >= JACK)
+								/*    if(g_fitd->getGameType() >= GType_JITD)
 								 {
 								 setInterAnimObject2(currentProcessedActorPtr->FRAME, pAnim, pBody, TRUE, Objet->AnimDecal);
 								 }
@@ -781,7 +788,7 @@ void processLife(int lifeNum)
 						char* pAnim = HQR_Get(listAnim,currentProcessedActorPtr->ANIM);
 						char* pBody;
 						
-						if(gameId >= JACK)
+						if(g_fitd->getGameType() >= GType_JITD)
 						{
 							/*                  if (bFlagDecal)
 							 gereDecal(); */
@@ -998,7 +1005,7 @@ void processLife(int lifeNum)
 				}
 				case LM_FIRE: // FIRE
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() ==GType_AITD1)
 					{
 						int fireAnim;
 						int shootFrame;
@@ -1137,7 +1144,7 @@ void processLife(int lifeNum)
 				}
 				case LM_DO_MOVE:
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() ==GType_AITD1)
 					{
 						processTrack();
 					}
@@ -1170,7 +1177,7 @@ void processLife(int lifeNum)
 				}
 				case LM_MANUAL_ROT: // MANUAL_ROT
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() ==GType_AITD1)
 					{
 						manualRot(240);
 					}
@@ -1291,7 +1298,7 @@ void processLife(int lifeNum)
 					lifeTempVar1 = *(short int*)(currentLifePtr);
 					currentLifePtr+=2;
 					
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() == GType_AITD1)
 					{
 						lifeTempVar2 = currentProcessedActorPtr->lifeMode;
 					}
@@ -1309,7 +1316,7 @@ void processLife(int lifeNum)
 				}
 				case LM_DELETE: // DELETE
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() ==GType_AITD1)
 					{
 						lifeTempVar1 = *(short int*)(currentLifePtr);
 						currentLifePtr+=2;
@@ -1323,7 +1330,7 @@ void processLife(int lifeNum)
 					
 					if(objectTable[lifeTempVar1].foundBody != -1)
 					{
-						if(gameId == AITD1) // TODO: check, really usefull ?
+						if(g_fitd->getGameType() == GType_AITD1) // TODO: check, really usefull ?
 						{
 							objectTable[lifeTempVar1].flags2 &= 0x7FFF;
 						}
@@ -1417,14 +1424,14 @@ void processLife(int lifeNum)
 				}
 				case LM_IN_HAND: // IN_HAND
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() == GType_AITD1)
 					{
 						inHand = *(short int*)(currentLifePtr);
 						currentLifePtr+=2;
 					}
 					else
 					{
-						if(gameId == JACK)
+						if(g_fitd->getGameType() == GType_JITD)
 						{
 							inHandTable[currentInHand] = *(short int*)(currentLifePtr);
 							currentLifePtr+=2;
@@ -1442,7 +1449,7 @@ void processLife(int lifeNum)
 					lifeTempVar2 = *(short int*)(currentLifePtr);
 					currentLifePtr+=2;
 					
-					printf("Drop\n");
+					warning("Drop\n");
 					// drop(lifeTempVar1, lifeTempVar2);
 					
 					break;
@@ -1548,10 +1555,10 @@ void processLife(int lifeNum)
 					
 					fadeOut(0x20,0);
 					
-					printf("ReadBook\n");
+					warning("ReadBook\n");
 					//          readBook(lifeTempVar2+1, lifeTempVar1);
 					
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() == GType_AITD1)
 					{
 						fadeOut(4,0);
 					}
@@ -1606,13 +1613,13 @@ void processLife(int lifeNum)
 				{
 					int sampleNumber;
 					
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() == GType_AITD1)
 					{
 						sampleNumber = evalVar();
 					}
 					else
 					{
-						if(gameId == JACK)
+						if(g_fitd->getGameType() == GType_JITD)
 						{
 							sampleNumber = evalVar();
 						}
@@ -1629,7 +1636,7 @@ void processLife(int lifeNum)
 				}
 				case LM_REP_SAMPLE: // sample TODO!
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() == GType_AITD1)
 					{
 						evalVar();
 						currentLifePtr+=2;
@@ -1646,7 +1653,7 @@ void processLife(int lifeNum)
 				}
 				case LM_SAMPLE_THEN: //todo
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() == GType_AITD1)
 					{
 						playSound(evalVar());
 						genVar7 = evalVar();
@@ -1655,7 +1662,7 @@ void processLife(int lifeNum)
 					{
 						int newSample;
 						
-						if(gameId == JACK)
+						if(g_fitd->getGameType() == GType_JITD)
 						{
 							newSample = evalVar();
 							genVar7 = evalVar();
@@ -1736,7 +1743,7 @@ void processLife(int lifeNum)
 					lifeTempVar1 = 2-((*(short int*)(currentLifePtr))<<1);
 					currentLifePtr+=2;
 					
-					if(gameId >= JACK ||(!CVars[getCVarsIdx(KILLED_SORCERER)]))
+					if(g_fitd->getGameType() >= GType_JITD ||(!CVars[getCVarsIdx(KILLED_SORCERER)]))
 					{
 						if(lightVar1 != lifeTempVar1)
 						{
@@ -1749,7 +1756,7 @@ void processLife(int lifeNum)
 				}
 				case LM_SHAKING: // SHAKING 
 				{
-					printf("Shaking\n");
+					warning("Shaking\n");
 					//shakingState = shakingAmplitude = *(short int*)(currentLifePtr);
 					currentLifePtr+=2;
 					
@@ -1767,7 +1774,7 @@ void processLife(int lifeNum)
 				case LM_WATER: // ? shaking related
 				{
 					// TODO: Warning, AITD1/AITD2 diff
-					printf("Shaking related\n");
+					warning("Shaking related\n");
 					//          mainLoopVar1 = shakeVar1 = *(short int*)(currentLifePtr);
 					currentLifePtr+=2;
 					
@@ -1793,7 +1800,7 @@ void processLife(int lifeNum)
 						
 						if(lifeTempVar2 != -1)
 						{
-							if(gameId == AITD1)
+							if(g_fitd->getGameType() == GType_AITD1)
 							{
 								currentCameraTarget = lifeTempVar1;
 								genVar9 = lifeTempVar2;
@@ -1854,7 +1861,7 @@ void processLife(int lifeNum)
 				}
 				case LM_PICTURE: // displayScreen
 				{
-					if(gameId == AITD1)
+					if(g_fitd->getGameType() == GType_AITD1)
 					{
 						unsigned int chrono;
 						
@@ -1907,7 +1914,7 @@ void processLife(int lifeNum)
 						
 						copyPalette((char*)aux+64000,(char*)lpalette);
 						
-						if(gameId < AITD3)
+						if(g_fitd->getGameType() < GType_AITD3)
 							convertPaletteIfRequired(lpalette);
 						
 						fadeOut(0x10,0);
@@ -2287,8 +2294,8 @@ void processLife(int lifeNum)
 				}
 				default:
 				{
-					printf("Unknown opcode %X in processLife\n",currentOpcode & 0x7FFF);
-					exit(1);
+					error("Unknown opcode %X in processLife\n",currentOpcode & 0x7FFF);
+					//				exit(1);
 				}
 			}
 		}

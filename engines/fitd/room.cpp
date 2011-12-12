@@ -19,7 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "engines/fitd/fitd.h"
 #include "common.h"
+
+// TODO namespacing
+using namespace Fitd;
+
 
 /*
 Room data:
@@ -48,11 +53,11 @@ int getNumberOfRoom()
   int i;
   int j = 0;
 
-  if(gameId >= AITD3)
+  if(g_fitd->getGameType() >= GType_AITD3)
   {
     char buffer[256];
 
-    if(gameId == AITD3)
+    if(g_fitd->getGameType() == GType_AITD3)
     {
       sprintf(buffer,"SAL%02d",currentEtage);
     }
@@ -111,7 +116,7 @@ void loadRoom(int roomNumber)
     oldCameraIdx = roomDataTable[currentDisplayedRoom].cameraIdxTable[currentCamera];
   }
 
-  if(gameId < AITD3)
+  if(g_fitd->getGameType() < GType_AITD3)
   {
     cameraPtr = (char*)getRoomData(roomNumber); // TODO: obsolete
     roomDataPtr = getRoomData(roomNumber);
@@ -152,7 +157,7 @@ void loadRoom(int roomNumber)
       var_10 = currentCameraIdx;
     }
 
-    if(gameId < AITD3)
+    if(g_fitd->getGameType() < GType_AITD3)
     {
       roomVar5[i] = etageVar1 + READ_LE_U32(etageVar1 + currentCameraIdx * 4);
     }

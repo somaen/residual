@@ -40,8 +40,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "SDL.h"
-#include "SDL_thread.h"
+//#include "SDL.h"
+//#include "SDL_thread.h"
 //#include "SDL_sound.h"
 #include "osystem.h"
 

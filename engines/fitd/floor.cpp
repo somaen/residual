@@ -19,7 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "engines/fitd/fitd.h"
 #include "common.h"
+
+// TODO namespacing
+using namespace Fitd;
 
 unsigned long int etageVar0Size = 0;
 unsigned long int numGlobalCamera = 0;
@@ -47,7 +51,7 @@ void loadFloor(int floorNumber)
 
   currentEtage = floorNumber;
 
-  if(gameId < AITD3)
+  if(g_fitd->getGameType() < GType_AITD3)
   {
     sprintf(buffer,"ETAGE%02d",floorNumber);
 
@@ -89,11 +93,11 @@ void loadFloor(int floorNumber)
       roomDataTable = (roomDataStruct*)malloc(sizeof(roomDataStruct));
     }
 
-    if(gameId >= AITD3)
+    if(g_fitd->getGameType() >= GType_AITD3)
     {
       char buffer[256];
 
-      if(gameId == AITD3)
+      if(g_fitd->getGameType() == GType_AITD3)
       {
         sprintf(buffer,"SAL%02d",floorNumber);
       }
@@ -196,11 +200,11 @@ void loadFloor(int floorNumber)
   /////////////////////////////////////////////////
   // camera stuff
 
-  if(gameId >= AITD3)
+  if(g_fitd->getGameType() >= GType_AITD3)
   {
     char buffer[256];
 
-    if(gameId == AITD3)
+    if(g_fitd->getGameType() == GType_AITD3)
     {
       sprintf(buffer,"CAM%02d",floorNumber);
     }
@@ -224,11 +228,11 @@ void loadFloor(int floorNumber)
     unsigned int offset;
     unsigned char* currentCameraData;
 
-    if(gameId >= AITD3)
+    if(g_fitd->getGameType() >= GType_AITD3)
     {
       char buffer[256];
 
-      if(gameId == AITD3)
+      if(g_fitd->getGameType() == GType_AITD3)
       {
         sprintf(buffer,"CAM%02d",floorNumber);
       }
@@ -252,7 +256,7 @@ void loadFloor(int floorNumber)
     {
       unsigned char* backupDataPtr;
 
-      if(gameId<AITD3)
+      if(g_fitd->getGameType() < GType_AITD3)
       {
 		currentCameraData = (unsigned char*) (etageVar1 + READ_LE_U32(etageVar1 + i * 4));
       }
@@ -292,7 +296,7 @@ void loadFloor(int floorNumber)
         pCurrentCameraZoneDefEntry->dummy5 = READ_LE_U16(currentCameraData+0x08);
         pCurrentCameraZoneDefEntry->dummy6 = READ_LE_U16(currentCameraData+0x0A);
 
-        if(gameId != AITD1)
+        if(g_fitd->getGameType() != GType_AITD1)
         {
           pCurrentCameraZoneDefEntry->dummy7 = READ_LE_U16(currentCameraData+0x0C);
           pCurrentCameraZoneDefEntry->dummy8 = READ_LE_U16(currentCameraData+0x0E);
@@ -337,12 +341,12 @@ void loadFloor(int floorNumber)
           }
         }
 
-        if(gameId == AITD1)
+        if(g_fitd->getGameType() == GType_AITD1)
           currentCameraData+=0x0C;
         else
           currentCameraData+=0x10;
 
-        if(gameId == TIMEGATE)
+        if(g_fitd->getGameType() == GType_TIMEGATE)
         {
           currentCameraData+=4;
         }

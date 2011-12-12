@@ -19,7 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "engines/fitd/fitd.h"
 #include "common.h"
+
+// TODO namespacing
+using namespace Fitd;
 
 void drawPartOfAITDBox(int left, int top, int index, char* gfxData)
 {
@@ -34,7 +38,7 @@ void drawPartOfAITDBox(int left, int top, int index, char* gfxData)
   int i;
   int j;
 
-  if(gameId != AITD1)
+  if(g_fitd->getGameType() != GType_AITD1)
     return;
 
   outPtr = screen + top*320 + left;

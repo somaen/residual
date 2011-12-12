@@ -32,6 +32,8 @@
 #include "engines/fitd/fitd.h"
 #include "engines/fitd/gfx_base.h"
 #include "common.h"
+#include "common/file.h"
+
 
 //TODO Remove this
 using namespace Fitd;
@@ -41,6 +43,14 @@ char scaledScreen[640*400];
 int input5;
 
 enumCVars* currentCVarTable = NULL;
+
+// Quick fixes, as this file will be refactored anyways
+#define gameId g_fitd->getGameType()
+#define JACK GType_JITD
+#define AITD1 GType_AITD1
+#define AITD2 GType_AITD2
+#define AITD3 GType_AITD3
+#define TIMEGATE GType_TIMEGATE
 
 int getCVarsIdx(enumCVars searchedType) // TODO: optimize by reversing the table....
 {
@@ -4696,15 +4706,17 @@ void configureHqrHero(hqrEntryStruct* hqrPtr, char* name)
 
 int fileExists(char* name)
 {
-	FILE* fHandle;
+	//FILE* fHandle;
+	Common::File *fHandle = new Common::File;
 	
-	fHandle = fopen(name,"rb");
+	//fHandle = fopen(name,"rb");
 	
-	if(fHandle)
+	if(fHandle->open(name))
 	{
-		fclose(fHandle);
+		delete fHandle;
 		return 1;
 	}
+	delete fHandle;
 	return 0;
 }
 
@@ -5078,7 +5090,7 @@ void setClipSize(int left, int top, int right, int bottom)
 
 void Sound_Quit(void);
 
-void cleanupAndExit(void)
+void cleanupAndExit()
 {
 	Sound_Quit();
 	

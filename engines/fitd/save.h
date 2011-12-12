@@ -19,6 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#ifndef SAVE_H
+#define SAVE_H
+
 int loadSave(int saveNumber);
 int restoreSave(int arg0, int arg1);
 int makeSave(int arg0);
+
+#endif // SAVE_H

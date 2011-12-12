@@ -29,47 +29,53 @@
 
 #include "common.h"
 #include "common/textconsole.h"
+#include "common/file.h"
 
 // seg 20
 void theEnd(int type, char* name)
 {
-//  freeScene();
-  freeAll();
-  warning("Error: %s", name);
-  exit(1);
+	//  freeScene();
+	freeAll();
+	error("TheEnd: %s", name);
+	//exit(1);
 }
 char* loadFromItd(char* name)
 {
-  FILE* fHandle;
-  char* ptr;
-  fHandle = fopen(name,"rb");
-  if(!fHandle)
-  {
-    theEnd(0,name);
-    return NULL;
-  }
-  fseek(fHandle,0,SEEK_END);
-  fileSize = ftell(fHandle);
-  fseek(fHandle,0,SEEK_SET);
-  ptr = (char*)malloc(fileSize);
+	Common::File *fHandle;
+	char* ptr;
+	fHandle = new Common::File();
 
-  if(!ptr)
-  {
-    theEnd(1,name);
-    return NULL;
-  }
-  fread(ptr,fileSize,1,fHandle);
-  fclose(fHandle);
-  return(ptr);
+	if(!fHandle->open(name))
+	{
+		theEnd(0,name);
+		return NULL;
+	}
+/*	fHandle->seek(0,SEEK_END);
+
+	fileSize = ftell(fHandle);
+	fseek(fHandle,0,SEEK_SET);*/
+	fileSize = fHandle->size();
+	ptr = new char[fileSize];
+	
+	if(!ptr)
+	{
+		theEnd(1,name);
+		return NULL;
+	}
+	fHandle->read(ptr, fileSize);
+	//fread(ptr,fileSize,1,fHandle);
+	delete fHandle;
+	//	fclose(fHandle);
+	return(ptr);
 }
 
 char* loadPakSafe(char* name, int index)
 {
-  char* ptr;
-  ptr = loadPak(name, index);
-  if(!ptr)
-  {
-    theEnd(0,name);
-  }
-  return ptr;
+	char* ptr;
+	ptr = loadPak(name, index);
+	if(!ptr)
+	{
+		theEnd(0,name);
+	}
+	return ptr;
 }

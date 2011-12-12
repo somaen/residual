@@ -20,12 +20,17 @@
  */
 
 #include "common/system.h"
+#include "engines/fitd/fitd.h"
 #include "common.h"
 #include "engines/fitd/gfx_base.h"
+// TODO namespacing
+using namespace Fitd;
+
+
 
 void convertPaletteIfRequired(unsigned char* lpalette)
 {
-  if(gameId >= JACK && gameId < AITD3)
+  if(g_fitd->getGameType() >= GType_JITD && g_fitd->getGameType() < GType_AITD3)
   {
     int i;
     unsigned char* ptr2 = lpalette;
@@ -202,11 +207,11 @@ s32 q=0;
 
       timer = timeGlobal;
 
-      if(gameId == AITD2)
+      if(g_fitd->getGameType() == GType_AITD2)
       {
         strcpy(buffer,sequenceListAITD2[sequenceIdx]);
       }
-      if(gameId == AITD3)
+      if(g_fitd->getGameType() == GType_AITD3)
       {
         sprintf(buffer,"AN%d",sequenceIdx);
       }
@@ -222,7 +227,7 @@ s32 q=0;
         memcpy(aux,screen+0x300,64000);
         var_8 = *(unsigned short int*)(screen+64768);
 
-        if(gameId < AITD3)
+        if(g_fitd->getGameType() < GType_AITD3)
           convertPaletteIfRequired(localPalette);
 
         if(var_4 != 0)

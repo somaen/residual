@@ -22,8 +22,12 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 #define FORBIDDEN_SYMBOL_EXCEPTION_rand
 
+#include "engines/fitd/fitd.h"
 #include "common.h"
 #include "common/textconsole.h"
+
+// TODO namespacing
+using namespace Fitd;
 
 int getPosRelTable[] = {4,1,8,2,4,1,8,0};
 
@@ -186,7 +190,7 @@ int evalVar(void)
 {
   int var1;
 
-  if(gameId >= JACK)
+  if(g_fitd->getGameType() >= GType_JITD)
   {
     return evalVar2();
   }

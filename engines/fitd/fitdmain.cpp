@@ -31,6 +31,8 @@
 
 #include "engines/fitd/fitd.h"
 #include "engines/fitd/gfx_base.h"
+#include "engines/fitd/cos_table.h"
+#include "engines/fitd/thread_code.h"
 #include "common.h"
 #include "common/file.h"
 
@@ -1061,7 +1063,7 @@ int setupCameraSub1Sub1(int value)
 // setup visibility list
 void setupCameraSub1()
 {
-	u32 i;
+	uint32 i;
 	int j;
 	int var_10;
 	
@@ -2468,7 +2470,7 @@ void drawOverlayZone(char* zoneData,int color)
 #ifdef INTERNAL_DEBUGGER
 void drawSceZone(int roomNumber)
 {
-	u32 i;
+	uint32 i;
 	ZVStruct dataLocal;
 	
 	for(i=0;i<roomDataTable[roomNumber].numSceZone;i++)
@@ -2491,7 +2493,7 @@ void drawSceZone(int roomNumber)
 #ifdef INTERNAL_DEBUGGER
 void drawHardCol(int roomNumber)
 {
-	u32 i;
+	uint32 i;
 	ZVStruct dataLocal;
 	
 	for(i=0;i<roomDataTable[roomNumber].numHardCol;i++)
@@ -3555,7 +3557,7 @@ void hardColSuB1(ZVStruct* startZv, ZVStruct* zvPtr2, ZVStruct* zvPtr3)
 
 int checkForHardCol(ZVStruct* zvPtr, roomDataStruct* pRoomData)
 {
-	u16 i;
+	uint16 i;
 	int hardColVar = 0;
 	hardColStruct* pCurrentEntry = pRoomData->hardColTable;
 	
@@ -4303,7 +4305,7 @@ void checkIfCameraChangeIsRequired(void)
 
 sceZoneStruct* processActor2Sub(int x, int y, int z, roomDataStruct* pRoomData)
 {
-	u32 i;
+	uint32 i;
 	sceZoneStruct* pCurrentZone;  
 	
 	pCurrentZone = pRoomData->sceZoneTable;
@@ -4605,7 +4607,7 @@ void throwStoppedAt(int x, int z)
 	
 	ZVStruct zvCopy;
 	ZVStruct zvLocal;
-	u8* bodyPtr;
+	uint8* bodyPtr;
 	
 	bodyPtr = (unsigned char*)HQR_Get(listBody,currentProcessedActorPtr->bodyNum);
 	

@@ -21,6 +21,10 @@
 
 #ifndef _STARTUPMENU_H_
 #define _STARTUPMENU_H_
+
+#include "common/endian.h"
+
 void drawStartupMenu(int selectedEntry);
-int processStartupMenu(void);
+int processStartupMenu();
+
 #endif

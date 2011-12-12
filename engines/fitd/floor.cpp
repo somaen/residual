@@ -80,10 +80,10 @@ void loadFloor(int floorNumber)
 	
 	for(i=0;i<expectedNumberOfRoom;i++)
 	{
-		u32 j;
-		u8* roomData;
-		u8* hardColData;
-		u8* sceZoneData;
+		uint32 j;
+		uint8* roomData;
+		uint8* hardColData;
+		uint8* sceZoneData;
 		roomDataStruct* currentRoomDataPtr;
 		
 		if(roomDataTable)
@@ -123,7 +123,7 @@ void loadFloor(int floorNumber)
 		
 		currentRoomDataPtr->numCameraInRoom =  READ_LE_UINT16(roomData+0xA);
 		
-		currentRoomDataPtr->cameraIdxTable = (u16*)malloc(currentRoomDataPtr->numCameraInRoom*sizeof(s16));
+		currentRoomDataPtr->cameraIdxTable = (uint16*)malloc(currentRoomDataPtr->numCameraInRoom*sizeof(s16));
 		
 		for(j=0;j<currentRoomDataPtr->numCameraInRoom;j++)
 		{

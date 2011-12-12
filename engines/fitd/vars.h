@@ -29,17 +29,6 @@
 extern char* currentFoundBody;
 extern int currentFoundBodyIdx;
 extern int statusVar1;
-/*
-enum gameTypeEnum
-{
-  AITD1,
-  JACK,
-  AITD2,
-  AITD3,
-  TIMEGATE
-};*/
-
-//extern enum gameTypeEnum gameId;
 
 struct point3dStruct
 {
@@ -111,22 +100,22 @@ struct rotateStruct
 
 struct actorFlags
 {
-  u16 flag0x0001:1;
-  u16 flag0x0002:1;
-  u16 flag0x0004:1;
-  u16 flag0x0008:1;
-  u16 flag0x0010:1;
-  u16 flag0x0020:1;
-  u16 flag0x0040:1;
-  u16 tackable:1;
-  u16 flag0x0100:1;
-  u16 flag0x0200:1;
-  u16 flag0x0400:1;
-  u16 flag0x0800:1;
-  u16 flag0x1000:1;
-  u16 flag0x2000:1;
-  u16 flag0x4000:1;
-  u16 flag0x8000:1;
+  uint16 flag0x0001:1;
+  uint16 flag0x0002:1;
+  uint16 flag0x0004:1;
+  uint16 flag0x0008:1;
+  uint16 flag0x0010:1;
+  uint16 flag0x0020:1;
+  uint16 flag0x0040:1;
+  uint16 tackable:1;
+  uint16 flag0x0100:1;
+  uint16 flag0x0200:1;
+  uint16 flag0x0400:1;
+  uint16 flag0x0800:1;
+  uint16 flag0x1000:1;
+  uint16 flag0x2000:1;
+  uint16 flag0x4000:1;
+  uint16 flag0x8000:1;
 };
 
 struct actorStruct // used to read data from file too
@@ -301,13 +290,6 @@ extern int currentMenuBottom;
 extern textEntryStruct* tabTextes;
 extern char* systemTextes;
 
-extern char inputKey;
-extern char input1;
-extern char input2;
-extern char input3;
-extern char input4;
-extern char button;
-
 extern char languageNameString[];
 extern char* languageNameTable[];
 
@@ -450,7 +432,7 @@ extern int animRot2;
 extern int animRot3;
 extern char* animVar1;
 extern char* animVar3;
-extern char* animVar4;
+//extern char* animVar4;
 
 extern short int newFloor;
 

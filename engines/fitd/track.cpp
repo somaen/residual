@@ -19,8 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "engines/fitd/cos_table.h"
 #include "common.h"
 #include "math.h"
+
 // From LBA:
 int DoTrackVar1;
 int GetAngle(int X1, int Y1, int X2, int Y2)

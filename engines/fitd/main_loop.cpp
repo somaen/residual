@@ -65,7 +65,7 @@ void mainLoop(int allowSystemMenu)
 
 int frames=0;                   /* Number of frames displayed */
 s32 t_start,t_left;
-u32 t_end;
+uint32 t_end;
 s32 q=0;                     /* Dummy */
 
   while(input2==0x1B || input2 == 0x1C)

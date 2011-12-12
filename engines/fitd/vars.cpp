@@ -68,13 +68,6 @@ int currentMenuBottom;
 textEntryStruct* tabTextes;
 char* systemTextes;
 
-char inputKey = 0;
-char input1 = 0;
-char input2 = 0;
-char input3;
-char input4;
-char button;
-
 char* languageNameTable[] =
 {
   "ENGLISH",
@@ -227,7 +220,6 @@ int animRot2;
 int animRot3;
 char* animVar1;
 char* animVar3;
-char* animVar4;
 
 short int newFloor;
 

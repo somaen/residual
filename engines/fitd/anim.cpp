@@ -21,6 +21,8 @@
 
 #include "common.h"
 
+char* animVar4;
+
 int initAnimInBody(int frame, char* anim, char* body)
 {
 	short int temp;
@@ -279,6 +281,7 @@ short int getAnimType(char** bodyPtr) // local
 
 void processAnimRotation(char** bodyPtr, int bp, int bx) // local
 {
+	return;
 	short int oldRotation = *(short int*)animVar4;
 	short int newRotation;
 	short int diff;
@@ -324,6 +327,8 @@ void processAnimRotation(char** bodyPtr, int bp, int bx) // local
 
 void processAnimTranslation(char** bodyPtr, int bp, int bx) // local
 {
+	return; //TODO (and rotate);
+
 	short int cx = *(short int*)animVar4;
 	short int ax;
 	animVar4+=2;

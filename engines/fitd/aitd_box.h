@@ -19,4 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#ifndef AITD_BOX_H
+#define AITD_BOX_H
+
 void drawAITDBox(int x, int y, int width, int height);
+
+#endif // AITD_BOX_H

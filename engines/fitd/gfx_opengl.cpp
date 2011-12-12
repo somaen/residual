@@ -63,48 +63,34 @@ struct quadStruct
 	bool sorted;
 };
 
-// Simply remaking SDL_Color for now
-struct color {
-	uint8 r,g,b,a;
-};
 ///////// POSSIBLE CLASS-MEMBERS //////////
 	
-int osystem_mouseRight;
-int osystem_mouseLeft;
+	//int osystem_mouseRight;
+	//int osystem_mouseLeft;
 
-unsigned int ditherTexture;
-unsigned int gouraudTexture=0;
-
-char *tempBuffer;
-Graphics::Surface *sdl_buffer;
-Graphics::Surface *sdl_buffer320x200;
-Graphics::Surface *sdl_buffer640x400;
-Graphics::Surface *sdl_bufferStretch;
-Graphics::Surface *sdl_bufferRGBA;
-Graphics::Surface *sdl_screen;  // that's the SDL global object for the screen
-color sdl_colors[256];
-Graphics::Surface *surfaceTable[16];
-char RGBA_Pal[256*4];
+	//Graphics::Surface *sdl_buffer;
+	///Graphics::Surface *sdl_buffer320x200;
+	//Graphics::Surface *sdl_buffer640x400;
+	//Graphics::Surface *sdl_bufferStretch;
+	//Graphics::Surface *sdl_bufferRGBA;
+	//Graphics::Surface *sdl_screen;  // that's the SDL global object for the screen
+	//color sdl_colors[256];
+	//Graphics::Surface *surfaceTable[16];
+	//;
 //TTF_Font *font;
 
-GLuint    backTexture;
-GLuint    modelsDisplayList;
+
 
 #ifdef INTERNAL_DEBUGGER
 GLuint    debugFontTexture;
 #endif
-
-GLUtesselator *tobj;
-
+	
 GLdouble tesselateList[100][6];
 
-GLUquadricObj* sphere;
+
 
 quadStruct quadTable[5000];
 int positionInQuadTable = 0;
-	
-char tempBuffer2[1024*512*3];
-char tempBuffer3[320*200*3];
 	
 static unsigned long int zoom = 0;
 
@@ -176,6 +162,10 @@ GfxOpenGL::GfxOpenGL() {
 	g_driver = this;
 	_storedDisplay = NULL;
 	_emergFont = 0;
+	_tempBuffer2 = new char[1024*512*3];
+	_tempBuffer3 = new char[320*200*3];
+	_RGBA_Pal = new char[256*4];
+	_gouraudTexture=0;
 }
 
 GfxOpenGL::~GfxOpenGL() {
@@ -183,6 +173,9 @@ GfxOpenGL::~GfxOpenGL() {
 	if (_emergFont && glIsList(_emergFont))
 		glDeleteLists(_emergFont, 128);
 
+	delete[] _tempBuffer2;
+	delete[] _tempBuffer3;
+	delete[] _RGBA_Pal;
 #ifdef GL_ARB_fragment_program
 /*	if (_useDepthShader)
 		glDeleteProgramsARB(1, &_fragmentProgram);*/
@@ -244,7 +237,7 @@ void GfxOpenGL::startFrame() {
 	{
 		glDisable(GL_DEPTH_TEST);
 		glColor4ub(255,255,255,255);
-		glBindTexture(GL_TEXTURE_2D, backTexture);
+		glBindTexture(GL_TEXTURE_2D,  _backTexture);
 		glBegin(GL_TRIANGLES);
 		
 		glTexCoord2f(0,0); // triangle haut gauche
@@ -340,8 +333,8 @@ void GfxOpenGL::init()  // that's the constructor of the system dependent
 		exit(1);
 	}*/
 	
-	osystem_mouseLeft = 0;
-	osystem_mouseRight = 0;
+	//osystem_mouseLeft = 0;
+	//osystem_mouseRight = 0;
 	
 	glEnable(GL_TEXTURE_2D);
 	//glEnable(GL_CULL_FACE);
@@ -421,11 +414,11 @@ void GfxOpenGL::init()  // that's the constructor of the system dependent
 		
 		//glBlendFunc(GL_SRC_ALPHA,GL_ONE);
 		
-		glGenTextures(1, &ditherTexture);
-		glBindTexture(GL_TEXTURE_2D, ditherTexture);
+		glGenTextures(1, &_ditherTexture);
+		glBindTexture(GL_TEXTURE_2D, _ditherTexture);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, ditherMap);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, ditherMap);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
 		
@@ -441,11 +434,9 @@ void GfxOpenGL::init()  // that's the constructor of the system dependent
 
 void GfxOpenGL::CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom)
 {
-	char* out = tempBuffer3;
+	//warning("copyBlockPhys %d %d %d %d",left,top,right,bottom);
+	char* out = _tempBuffer3;
 	char* in = (char*)videoBuffer + left + top * 320;
-	
-	int i;
-	int j;
 	
 	while((right-left)%4)
 	{
@@ -457,10 +448,10 @@ void GfxOpenGL::CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int
 		bottom++;
 	}
 	
-	for(i=top;i<bottom;i++)
+	for(int i=top;i<bottom;i++)
 	{
 		in = (char*)videoBuffer + left + i * 320;
-		for(j=left;j<right;j++)
+		for(int j=left;j<right;j++)
 		{
 			unsigned char color= *(in++);
 			
@@ -471,18 +462,18 @@ void GfxOpenGL::CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int
 	}
 	
 	
-	glBindTexture(GL_TEXTURE_2D, backTexture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, left, top, right-left, bottom-top, GL_RGB, GL_UNSIGNED_BYTE, tempBuffer3);
+	glBindTexture(GL_TEXTURE_2D,  _backTexture);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, left, top, right-left, bottom-top, GL_RGB, GL_UNSIGNED_BYTE, _tempBuffer3);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void GfxOpenGL::initBuffer(char *buffer, int width, int height)
 {   
 	warning("initBuffer");
-	memset(tempBuffer2,0,1024*512*3);
-	glGenTextures(1, &backTexture);
-	glBindTexture(GL_TEXTURE_2D, backTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, tempBuffer2);
+	memset(_tempBuffer2,0,1024*512*3);
+	glGenTextures(1, & _backTexture);
+	glBindTexture(GL_TEXTURE_2D,  _backTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, _tempBuffer2);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 }
@@ -591,7 +582,7 @@ void GfxOpenGL::flip(unsigned char *videoBuffer)
 	 glMatrixMode(GL_MODELVIEW);
 	 glLoadIdentity(); */
 	
-	for(j=0;j<positionInQuadTable;j++)
+	for(int j=0;j<positionInQuadTable;j++)
 	{
 		float bestDepth = -10000;
 		//    int color;
@@ -658,17 +649,17 @@ void GfxOpenGL::flip(unsigned char *videoBuffer)
 
 void GfxOpenGL::getPalette(char* palette)
 {
-	warning("getPalette");
-	memcpy(palette,RGBA_Pal,256*4);
+	//warning("getPalette");
+	memcpy(palette,_RGBA_Pal,256*4);
 }
 
 void GfxOpenGL::setPalette(byte * palette)
 {
-	warning("setPalette");
+	//warning("setPalette");
 	unsigned char localPalette[256*256*4];
 	unsigned char* ptr = localPalette;
 	
-	memcpy(RGBA_Pal,palette,256*4);
+	memcpy(_RGBA_Pal,palette,256*4);
 	
 	for(int i=0;i<256;i++)
 	{
@@ -677,12 +668,12 @@ void GfxOpenGL::setPalette(byte * palette)
 		ptr+=256*4;
 	}
 	
-	if(gouraudTexture)
+	if(_gouraudTexture)
 	{
-		glDeleteTextures(1,&gouraudTexture);
+		glDeleteTextures(1,&_gouraudTexture);
 	}
-	glGenTextures(1, &gouraudTexture);
-	glBindTexture(GL_TEXTURE_2D, gouraudTexture);
+	glGenTextures(1, &_gouraudTexture);
+	glBindTexture(GL_TEXTURE_2D, _gouraudTexture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, localPalette);
@@ -719,7 +710,7 @@ void GfxOpenGL::fillPoly(float* buffer, int numPoint, unsigned char color,uint8 
 			GLdouble projMatrix[16];
 			GLint viewMatrix[4];
 			
-			glBindTexture(GL_TEXTURE_2D, ditherTexture);
+			glBindTexture(GL_TEXTURE_2D, _ditherTexture);
 			glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_BLEND);
 			glColor4ub(_palette[color*3],_palette[color*3+1],_palette[color*3+2],255);
 			readList = (float*)buffer;
@@ -888,7 +879,7 @@ void GfxOpenGL::fillPoly(float* buffer, int numPoint, unsigned char color,uint8 
 			
 			glColor4ub(255,255,255,255);
 			
-			glBindTexture(GL_TEXTURE_2D, gouraudTexture);
+			glBindTexture(GL_TEXTURE_2D, _gouraudTexture);
 			glBegin(GL_POLYGON);
 			
 			for(int i=0;i<numPoint;i++)
@@ -936,12 +927,12 @@ void GfxOpenGL::draw3dLine(float x1, float y1, float z1, float x2, float y2, flo
 
 void GfxOpenGL::cleanScreenKeepZBuffer()
 {
-	return;
+	//return;
 	glClear(GL_COLOR_BUFFER_BIT );
 	
 	glDisable(GL_DEPTH_TEST);
 	glColor4ub(255,255,255,255);
-	glBindTexture(GL_TEXTURE_2D, backTexture);
+	glBindTexture(GL_TEXTURE_2D,  _backTexture);
 	glBegin(GL_TRIANGLES);
 	
 	glTexCoord2f(0,0); // triangle haut gauche
@@ -1030,7 +1021,7 @@ void GfxOpenGL::startBgPoly()
 {
 	// glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
-	glBindTexture(GL_TEXTURE_2D, backTexture);
+	glBindTexture(GL_TEXTURE_2D,  _backTexture);
 	//glBegin(GL_POLYGON);
 	
 	gluTessBeginPolygon(tobj, NULL);

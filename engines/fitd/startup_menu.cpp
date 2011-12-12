@@ -18,9 +18,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
-#include "common.h"
+#include "common/scummsys.h"
+#include "common/endian.h"
+#include "engines/fitd/input.h"
+#include "engines/fitd/tatou.h"
+#include "engines/fitd/font.h"
+#include "engines/fitd/aitd_box.h"
+#include "engines/fitd/main.h"
 #include "engines/fitd/gfx_base.h"
+
+// TODO even more globals to remove
+extern char *screen;
 
 void drawStartupMenu(int selectedEntry)
 {

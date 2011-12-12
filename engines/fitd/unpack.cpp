@@ -30,11 +30,11 @@
     1.0  05 Oct 04  C. Voila        First release
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
-#include "common.h"
+//#include "common.h"
 
 #define _WINDOWS
 //#define ZLIB_DLL

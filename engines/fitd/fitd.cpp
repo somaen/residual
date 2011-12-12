@@ -161,7 +161,7 @@ Common::Error FitdEngine::run() {
 	g_driver = CreateGfxOpenGL();
 	
 	g_driver->setupScreen(800, 600, fullscreen);
-	g_driver->initBuffer(scaledScreen,640,400);
+	g_driver->initBuffer(scaledScreen,800,600);
 	startThreadTimer();
 	sysInit();
 	
@@ -174,13 +174,11 @@ Common::Error FitdEngine::run() {
 	{
 		case GType_AITD1:
 		{
-			warning("Calling fadeIn");
+
 			fadeIn(g_driver->_palette);
-			warning("Call to fadeIn ended");
 			if(!make3dTatou())
 			{
 				warning("Calling makeIntroScreens");
-				//			g_fitd->initEngine();
 				makeIntroScreens();
 			}
 			break;
@@ -380,8 +378,8 @@ void startGame(int startupFloor, int startupRoom, int allowSystemMenu)
 void FitdEngine::initEngine()
 {
 	warning("initEngine");
-	u8* pObjectData;
-	u8* pObjectDataBackup;
+	uint8* pObjectData;
+	uint8* pObjectDataBackup;
 	unsigned long int objectDataSize;
 	Common::File* fHandle = new Common::File();
 	int i;
@@ -393,13 +391,13 @@ void FitdEngine::initEngine()
 	objectDataSize= fHandle->size();
 	fHandle->seek(0,SEEK_SET);
 	
-	pObjectDataBackup = pObjectData = (u8*)malloc(objectDataSize);
+	pObjectDataBackup = pObjectData = (uint8*)malloc(objectDataSize);
 	ASSERT(pObjectData);
 	
 	fHandle->read(pObjectData,objectDataSize);
 	delete fHandle;
 	
-	maxObjects = READ_LE_U16(pObjectData);
+	maxObjects = READ_LE_UINT16(pObjectData);
 	pObjectData+=2;
 	
 	if(g_fitd->getGameType() == GType_AITD1) {
@@ -413,87 +411,87 @@ void FitdEngine::initEngine()
 	
 	for(int i=0;i<maxObjects;i++){
 
-		objectTable[i].ownerIdx = READ_LE_U16(pObjectData);
+		objectTable[i].ownerIdx = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].body = READ_LE_U16(pObjectData);
+		objectTable[i].body = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].flags = READ_LE_U16(pObjectData);
+		objectTable[i].flags = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].field_6 = READ_LE_U16(pObjectData);
+		objectTable[i].field_6 = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].foundBody = READ_LE_U16(pObjectData);
+		objectTable[i].foundBody = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].foundName = READ_LE_U16(pObjectData);
+		objectTable[i].foundName = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].flags2 = READ_LE_U16(pObjectData);
+		objectTable[i].flags2 = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].foundLife = READ_LE_U16(pObjectData);
+		objectTable[i].foundLife = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].x = READ_LE_U16(pObjectData);
+		objectTable[i].x = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].y = READ_LE_U16(pObjectData);
+		objectTable[i].y = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].z = READ_LE_U16(pObjectData);
+		objectTable[i].z = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].alpha = READ_LE_U16(pObjectData);
+		objectTable[i].alpha = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].beta = READ_LE_U16(pObjectData);
+		objectTable[i].beta = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].gamma = READ_LE_U16(pObjectData);
+		objectTable[i].gamma = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].stage = READ_LE_U16(pObjectData);
+		objectTable[i].stage = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].room = READ_LE_U16(pObjectData);
+		objectTable[i].room = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].lifeMode = READ_LE_U16(pObjectData);
+		objectTable[i].lifeMode = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].life = READ_LE_U16(pObjectData);
+		objectTable[i].life = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].field_24 = READ_LE_U16(pObjectData);
+		objectTable[i].field_24 = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].anim = READ_LE_U16(pObjectData);
+		objectTable[i].anim = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].frame = READ_LE_U16(pObjectData);
+		objectTable[i].frame = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].animType = READ_LE_U16(pObjectData);
+		objectTable[i].animType = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].animInfo = READ_LE_U16(pObjectData);
+		objectTable[i].animInfo = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].trackMode = READ_LE_U16(pObjectData);
+		objectTable[i].trackMode = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].trackNumber = READ_LE_U16(pObjectData);
+		objectTable[i].trackNumber = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
-		objectTable[i].positionInTrack = READ_LE_U16(pObjectData);
+		objectTable[i].positionInTrack = READ_LE_UINT16(pObjectData);
 		pObjectData+=2;
 		
 		if(g_fitd->getGameType() >= GType_JITD)
 		{
-			objectTable[i].mark = READ_LE_U16(pObjectData);
+			objectTable[i].mark = READ_LE_UINT16(pObjectData);
 			pObjectData+=2;
 		}
 		objectTable[i].flags |= 0x20;
@@ -767,7 +765,7 @@ void FitdEngine::sysInit()
 		//	fread(CVars,numCVars,2,fHandle);
 		//fclose(fHandle);
 		delete fHandle;
-		for(i=0;i<_numCVars;i++)
+		for(int i=0;i<_numCVars;i++)
 		{
 			CVars[i] = ((CVars[i]&0xFF)<<8) | ((CVars[i]&0xFF00)>>8);
 		}
@@ -840,7 +838,7 @@ int makeIntroScreens()
 		readKeyboard();
 		
 		time = evalChrono(&chrono);
-		
+		warning("time: %d", time);
 		if(time>=0x30)
 			break;
 		

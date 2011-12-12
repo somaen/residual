@@ -23,7 +23,14 @@
 
 #include "common/endian.h"
 #include "common/file.h"
-#include "common.h"
+#include "pak.h"
+#include "unpack.h"
+
+#ifdef _DEBUG
+#define ASSERT(exp) assert(exp)
+#else
+#define ASSERT(exp)
+#endif
 
 typedef struct pakInfoStruct // warning: allignement unsafe
 {
@@ -97,7 +104,7 @@ int loadPakToPtr(char* name, int index, char* ptr)
 	fread(ptr,size,1,fHandle);
 	fclose(fHandle);
 	
-	return(1);
+	return 1;
 #else
 	char* lptr;
 	
@@ -107,7 +114,7 @@ int loadPakToPtr(char* name, int index, char* ptr)
 	
 	free(lptr);
 	
-	return(1);
+	return 1;
 #endif
 }
 
@@ -150,17 +157,10 @@ int getPakSize(char* name, int index)
 	{
 		fileHandle->seek((index+1)*4,SEEK_SET);
 		fileOffset = fileHandle->readUint32LE();
-	/*	fread(&fileOffset,4,1,fileHandle);
-#ifdef MACOSX
-		fileOffset = READ_LE_U32(&fileOffset);
-#endif*/
+
 		fileHandle->seek(fileOffset,SEEK_SET);
 		
 		additionalDescriptorSize = fileHandle->readUint32LE();
-/*		fread(&additionalDescriptorSize,4,1,fileHandle);
-#ifdef MACOSX
-		additionalDescriptorSize = READ_LE_U32(&additionalDescriptorSize);
-#endif*/
 		
 		readPakInfo(&pakInfo,fileHandle);
 		
@@ -179,7 +179,6 @@ int getPakSize(char* name, int index)
 			size = pakInfo.uncompressedSize;
 		}
 		delete fileHandle;
-		//		fclose(fileHandle);
 	}
 	
 	return size;

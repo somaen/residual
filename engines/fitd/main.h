@@ -24,6 +24,15 @@
 
 extern int input5;
 
+extern char scaledScreen[640*400];
+
+struct ZVStruct;
+struct rotateStruct;
+struct hqrEntryStruct;
+struct roomDataStruct;
+struct sceZoneStruct;
+struct textEntryStruct;
+
 void menuWaitVSync();
 void printTextSub5(int x, int y, int param, char* gfx);
 void flipScreen();
@@ -45,8 +54,7 @@ void removeObjFromInventory(int objIdx);
 void walkStep(int angle1, int angle2, int angle3);
 void throwStoppedAt(int x, int z);
 sceZoneStruct* processActor2Sub(int x, int y, int z, roomDataStruct* pRoomData);
-//void initEngine(void);
-//void initVars();
+
 void configureHqrHero(hqrEntryStruct* hqrPtr, char* name);
 void flushScreen(void);
 int parseAllSaves(int arg);
@@ -55,11 +63,8 @@ void cleanupAndExit(void);
 void drawProjectedBox(int x1,int x2,int y1,int y2,int z1,int z2, int color, int transparency);
 void printTextSub6(hqrEntryStruct* hqrPtr, int index);
 
-extern char scaledScreen[640*400];
 
-//void sysInit(void);
 void freeAll(void);
-//void startGame(int startupEtage, int startupRoom, int allowSystemMenu);
 void fillBox(int x1, int y1, int x2, int y2, char color); // fast recode. No RE
 void copyZv(ZVStruct* source, ZVStruct* dest);
 void getZvRelativePosition(ZVStruct* zvPtr, int startRoom, int destRoom);

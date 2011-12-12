@@ -184,7 +184,7 @@ void playSequence(int sequenceIdx, int fadeStart, int fadeOutVar)
 
 int frames=0;                   /* Number of frames displayed */
 s32 t_start,t_left;
-u32 t_end;
+uint32 t_end;
 s32 q=0; 
 
   int var_4 = 1;

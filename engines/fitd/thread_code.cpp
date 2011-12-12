@@ -22,7 +22,7 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "common.h"
-
+#include "engines/fitd/fitd.h"
 /*#include "SDL.h"
 #include "SDL_thread.h"*/
 
@@ -40,7 +40,7 @@ void threadTimer(void *test) // AITD time is 50 frames per seconds ie,  a frame 
             temp = SDL_GetTicks();
         }
   }*/
-	timeGlobal++;
+	timeGlobal = Fitd::g_fitd->getFrameNum();
 	return;
     //return (0);
 }

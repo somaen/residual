@@ -19,8 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef _INPUT_H_
-#define _INPUT_H_
+#ifndef INPUT_H
+#define INPUT_H
+
 void readKeyboard(void);
 void handleKey(int operation, int key, int keyModifier, uint16 ascii);
+
+extern char inputKey;
+extern char input1;
+extern char input2;
+extern char input3;
+extern char input4;
+extern char button;
+
 #endif

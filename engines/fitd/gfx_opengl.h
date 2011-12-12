@@ -109,6 +109,17 @@ public:
 	// only here:
 	void init();
 private:
+	unsigned int _ditherTexture;
+	unsigned int _gouraudTexture;
+	char *_tempBuffer; // Might not be needed
+	char *_tempBuffer2;
+	char *_tempBuffer3;
+	char *_RGBA_Pal;
+	GLuint    _backTexture;
+	GLUtesselator *tobj;
+	GLUquadricObj* sphere;
+	GLuint    modelsDisplayList;
+	
 	GLuint _emergFont;
 	int _smushNumTex;
 	GLuint *_smushTexIds;

@@ -34,26 +34,23 @@
 #define USE_GL
 #endif
 
-typedef unsigned char u8;
-typedef unsigned short int u16;
-typedef unsigned long int u32;
-
 typedef signed char s8;
 typedef signed short int s16;
 typedef signed long int s32;
 
-#include <stdlib.h>
-#include <stdio.h>
+//#include <cstdlib>
+//#include <cstdio>
 //#include <time.h>
-#include <string.h>
+//#include <cstring>
 #ifdef WIN32
 #include <search.h>
 #endif
 
 #ifdef _WIN32
 #include <windows.h>
-#include <assert.h>
+#include <cassert>
 #endif
+
 
 #ifdef _DEBUG
 #define ASSERT(exp) assert(exp)
@@ -66,14 +63,6 @@ typedef signed long int s32;
 #else
 #define ASSERT_PTR(exp)
 #endif
-
-#ifdef USE_GL
-//#include <GL/gl.h>      // Header File For The OpenGL32 Library
-//#include <GL/glu.h>     // Header File For The GLu32 Library
-//#include <gl\glaux.h>   // Header File For The Glaux Library
-#endif
-
-//#include "SDL.h"
 
 //////////////// GAME SPECIFIC DEFINES
 
@@ -125,18 +114,10 @@ enum enumCVars
   UNKNOWN_CVAR = -1 // for table padding, shouldn't be called !
 };
 
-//typedef enum enumCVars enumCVars;
-
-//extern enumCVars AITD1KnownCVars[];
-//extern enumCVars AITD2KnownCVars[];
-
 extern enumCVars* currentCVarTable;
 
 int getCVarsIdx(enumCVars);
 
-typedef unsigned char U8;
-typedef unsigned short U16;
-typedef unsigned long U32;
 typedef signed char S8;
 typedef signed short S16;
 typedef signed long S32;
@@ -148,9 +129,6 @@ typedef signed long S32;
 #define ANIM_UNINTERRUPTABLE  2
 #define ANIM_RESET            4
 
-// temp triangulation stuff
-//#include <bool.h>
-//#include <geometry.h>
 int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*triangles)[3]);
 #include "common/scummsys.h"
 #include "room.h"
@@ -160,13 +138,10 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 #include "screen.h"
 #include "video_mode.h"
 #include "pak.h"
-#include "unpack.h"
 #include "tatou.h"
-#include "thread_code.h"
 #include "renderer.h"
 #include "input.h"
 #include "version.h"
-#include "cos_table.h"
 #include "hqr.h"
 #include "time.h"
 #include "font.h"
@@ -177,7 +152,6 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 #include "actor_list.h"
 #include "main_loop.h"
 #include "inventory.h"
-#include "startup_menu.h"
 #include "system_menu.h"
 #include "floor.h"
 #include "object.h"
@@ -198,20 +172,6 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 
 #include "osystem.h"
 
-
-////
-/*
-#ifdef UNIX
-#define FORCEINLINE static inline
-#else
-#ifdef WIN32
-#define FORCEINLINE __forceinline
-#else
-#define FORCEINLINE inline
-#endif
-#endif
-*/
-
 #define READ_LE_U16(x) READ_LE_UINT16(x)
 #define READ_LE_U32(x) READ_LE_UINT32(x)
 
@@ -220,22 +180,9 @@ FORCEINLINE s16 READ_LE_S16(void *ptr)
   return (s16)READ_LE_U16(ptr);
 }
 
-
-/*
-FORCEINLINE s16 READ_BE_S16(void *ptr)
-{
-  return (s16)READ_BE_S16(ptr);
-}*/
-
-
 FORCEINLINE s32 READ_LE_S32(void *ptr)
 {
   return (s32)READ_LE_U32(ptr);
 }
-/*
-FORCEINLINE s32 READ_BE_S32(void *ptr)
-{
-  return (s32)READ_LE_U32(ptr);
-}*/
 
 #endif

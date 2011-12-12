@@ -26,9 +26,10 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "common/textconsole.h"
+
 #include "common.h"
 #include "engines/fitd/gfx_base.h"
-
+#include "engines/fitd/cos_table.h"
 #include "engines/fitd/fitd.h"
 #include "engines/fitd/input.h"
 
@@ -71,15 +72,15 @@ void copyToScreen(char* source, char* dest)
 
 void paletteFill(void* palette, unsigned char r, unsigned char g, unsigned b)
 {
+	warning("palettefill(,%d,%d,%d)",r,g,b);
 	unsigned char* paletteLocal = (unsigned char*) palette;
 	int offset = 0;
-	int i;
 	
 	r<<=1;
 	g<<=1;
 	b<<=1;
 	
-	for(i=0;i<256;i++)
+	for(int i=0;i<256;i++)
 	{
 		paletteLocal[offset] = r;
 		paletteLocal[offset+1] = g;
@@ -92,9 +93,9 @@ void fadeInSub1(char* palette)
 {	
 	for(int i=0;i<256;i++)
 	{
-		/*  palette[i*3] >>=2;
+		  palette[i*3] >>=2;
 		 palette[i*3+1] >>=2;
-		 palette[i*3+2] >>=2; */
+		 palette[i*3+2] >>=2; 
 	}
 }
 

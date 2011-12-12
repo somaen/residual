@@ -19,14 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_fopen
-#define FORBIDDEN_SYMBOL_EXCEPTION_fseek
-#define FORBIDDEN_SYMBOL_EXCEPTION_ftell
-#define FORBIDDEN_SYMBOL_EXCEPTION_fclose
-#define FORBIDDEN_SYMBOL_EXCEPTION_fread
-
 #include "common.h"
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -50,10 +42,7 @@ char* loadFromItd(char* name)
 		theEnd(0,name);
 		return NULL;
 	}
-/*	fHandle->seek(0,SEEK_END);
 
-	fileSize = ftell(fHandle);
-	fseek(fHandle,0,SEEK_SET);*/
 	fileSize = fHandle->size();
 	ptr = new char[fileSize];
 	
@@ -63,9 +52,8 @@ char* loadFromItd(char* name)
 		return NULL;
 	}
 	fHandle->read(ptr, fileSize);
-	//fread(ptr,fileSize,1,fHandle);
+
 	delete fHandle;
-	//	fclose(fHandle);
 	return(ptr);
 }
 

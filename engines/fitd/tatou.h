@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef _TATOU_H_
-#define _TATOU_H_
+#ifndef TATOU_H
+#define TATOU_H
 
 int make3dTatou(void);
 //////////////// to mode

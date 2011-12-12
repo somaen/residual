@@ -30,15 +30,15 @@ typedef struct hardColStruct hardColStruct;
 struct hardColStruct
 {
   ZVStruct zv;
-  u32 type;
-  u32 parameter;
+  uint32 type;
+  uint32 parameter;
 };
 
 struct sceZoneStruct
 {
   ZVStruct zv;
-  u32 type;
-  u32 parameter;
+  uint32 type;
+  uint32 parameter;
 };
 
 typedef struct sceZoneStruct sceZoneStruct;
@@ -53,7 +53,7 @@ typedef struct cameraZonePointStruct cameraZonePointStruct;
 
 struct cameraZoneEntryStruct
 {
-  u16 numPoints;
+  uint16 numPoints;
 
   cameraZonePointStruct* pointTable;
 };
@@ -71,7 +71,7 @@ struct cameraZoneDefStruct
   s16 dummy7;
   s16 dummy8;
 
-  u16 numZones;
+  uint16 numZones;
   cameraZoneEntryStruct* cameraZoneEntryTable;
 };
 
@@ -91,7 +91,7 @@ struct cameraDataStruct
   s16 focal2;
   s16 focal3;
 
-  u16 numCameraZoneDef;
+  uint16 numCameraZoneDef;
 
   cameraZoneDefStruct* cameraZoneDefTable;
 };
@@ -99,19 +99,19 @@ typedef struct cameraDataStruct cameraDataStruct;
 
 struct roomDataStruct
 {
-  u32 numCameraInRoom;
+  uint32 numCameraInRoom;
 
-  u32 numHardCol;
+  uint32 numHardCol;
   hardColStruct* hardColTable;
 
-  u32 numSceZone;
+  uint32 numSceZone;
   sceZoneStruct* sceZoneTable;
 
   s32 worldX;
   s32 worldY;
   s32 worldZ;
 
-  u16* cameraIdxTable;
+  uint16* cameraIdxTable;
 };
 typedef struct roomDataStruct roomDataStruct;
 

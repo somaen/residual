@@ -80,8 +80,8 @@ public:
 	
 	void startFrame();
 	void stopFrame() {} // TODO
-	void startModelRender() {warning("Unimplemented: startModelRenderer");}// TODO
-	void stopModelRender() {warning("Unimplemented: stopModelRenderer");} // TODO
+	void startModelRender();
+	void stopModelRender();
 //#ifdef USE_GL
 	void fillPoly(float* buffer, int numPoint, unsigned char color,uint8 polyType);
 	void draw3dLine(float x1, float y1, float z1, float x2, float y2, float z2, unsigned char color);
@@ -91,7 +91,7 @@ public:
 	
 	void startBgPoly();
 	void endBgPoly();
-	void addBgPolyPoint(int x, int y) {warning("UNIMPLEMENTED: addBgPolyPoint");} // TODO
+	void addBgPolyPoint(int x, int y);
 //#else
 #if 0
 	void fillPoly(short int* buffer, int numPoint, unsigned char color);

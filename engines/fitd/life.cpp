@@ -484,7 +484,7 @@ void processLife(int lifeNum)
 		currentOpcode = *(short int*)(currentLifePtr);
 		currentLifePtr+=2;
 		
-		warning("%d:opcode: %04X\n",lifeNum, currentOpcode);
+		warning("%d:opcode: %04X",lifeNum, currentOpcode);
 		
 		if(currentOpcode & 0x8000)
 		{

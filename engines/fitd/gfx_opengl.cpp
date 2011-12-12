@@ -213,8 +213,8 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	//_currentShadowArray = NULL;
 
-	GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
+	/*GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);*/
 
 	glPolygonOffset(-6.0, -6.0);
 
@@ -658,19 +658,19 @@ void GfxOpenGL::flip(unsigned char *videoBuffer)
 
 void GfxOpenGL::getPalette(char* palette)
 {
+	warning("getPalette");
 	memcpy(palette,RGBA_Pal,256*4);
 }
 
 void GfxOpenGL::setPalette(byte * palette)
 {
-	
-	int i;
+	warning("setPalette");
 	unsigned char localPalette[256*256*4];
 	unsigned char* ptr = localPalette;
 	
 	memcpy(RGBA_Pal,palette,256*4);
 	
-	for(i=0;i<256;i++)
+	for(int i=0;i<256;i++)
 	{
 		memcpy(ptr,palette,256*4);
 		
@@ -1028,7 +1028,6 @@ void GfxOpenGL::draw3dQuad(float x1, float y1, float z1, float x2, float y2, flo
 
 void GfxOpenGL::startBgPoly()
 {
-	warning("startBgPoly");
 	// glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 	glBindTexture(GL_TEXTURE_2D, backTexture);
@@ -1042,7 +1041,6 @@ void GfxOpenGL::startBgPoly()
 
 void GfxOpenGL::endBgPoly()
 {
-	warning("endBgPoly");
 	gluTessEndContour(tobj);
 	gluTessEndPolygon(tobj);
 	
@@ -1050,6 +1048,28 @@ void GfxOpenGL::endBgPoly()
 	glDepthMask(GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
+}
+	
+void GfxOpenGL::addBgPolyPoint(int x, int y) {
+	tesselateList[tesselatePosition][0] = x;
+	tesselateList[tesselatePosition][1] = y;
+	tesselateList[tesselatePosition][2] = 0;
+	tesselateList[tesselatePosition][3] = 1.f;
+	tesselateList[tesselatePosition][4] = 1.f;
+	tesselateList[tesselatePosition][5] = 1.f;
+	
+	gluTessVertex(tobj, tesselateList[tesselatePosition], tesselateList[tesselatePosition]); 
+	
+	tesselatePosition++;
+
+} 
+	
+void GfxOpenGL::startModelRender() {
+
+}
+	
+void GfxOpenGL::stopModelRender() {
+
 }
 
 	

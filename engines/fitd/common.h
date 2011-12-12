@@ -24,9 +24,11 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/endian.h"
+
 #define NUM_MAX_CAMERA_IN_ROOM 20
 
-#define HAS_YM3812 1
+#define HAS_YM3812 0
 
 #ifndef USE_GL
 #define USE_GL
@@ -209,60 +211,31 @@ int triangulate_polygon(int ncontours,int cntr[],double (*vertices)[2],int (*tri
 #endif
 #endif
 */
-FORCEINLINE u16 READ_LE_U16(void *ptr)
-{
-#ifdef MACOSX
-  return (((u8*)ptr)[1]<<8)|((u8*)ptr)[0];
-#else
-  return *(u16*)ptr;
-#endif
-}
+
+#define READ_LE_U16(x) READ_LE_UINT16(x)
+#define READ_LE_U32(x) READ_LE_UINT32(x)
 
 FORCEINLINE s16 READ_LE_S16(void *ptr)
 {
   return (s16)READ_LE_U16(ptr);
 }
 
-FORCEINLINE u16 READ_BE_U16(void *ptr)
-{
-#ifdef MACOSX
-  return *(u16*)ptr;
-#else
-  return (((u8*)ptr)[1]<<8)|((u8*)ptr)[0];
-#endif
-}
 
+/*
 FORCEINLINE s16 READ_BE_S16(void *ptr)
 {
   return (s16)READ_BE_S16(ptr);
-}
+}*/
 
-FORCEINLINE u32 READ_LE_U32(void *ptr)
-{
-#ifdef MACOSX
-  return (((u8*)ptr)[3]<<24)|(((u8*)ptr)[2]<<16)|(((u8*)ptr)[1]<<8)|((u8*)ptr)[0];
-#else
-  return *(u32*)ptr;
-#endif
-}
 
 FORCEINLINE s32 READ_LE_S32(void *ptr)
 {
   return (s32)READ_LE_U32(ptr);
 }
-
-FORCEINLINE u32 READ_BE_U32(void *ptr)
-{
-#ifdef MACOSX
-  return *(u32*)ptr;
-#else
-  return (((u8*)ptr)[3]<<24)|(((u8*)ptr)[2]<<16)|(((u8*)ptr)[1]<<8)|((u8*)ptr)[0];
-#endif
-}
-
+/*
 FORCEINLINE s32 READ_BE_S32(void *ptr)
 {
   return (s32)READ_LE_U32(ptr);
-}
+}*/
 
 #endif

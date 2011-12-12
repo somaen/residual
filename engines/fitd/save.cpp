@@ -96,7 +96,7 @@ int loadSave(int saveNumber)
     return(0);
   }
 
-  Fitd::initEngine();
+  Fitd::g_fitd->initEngine();
   Fitd::initVars();
 
   fseek(fHandle,8,SEEK_SET);
@@ -222,7 +222,7 @@ int loadSave(int saveNumber)
     ASSERT(numCVars == 45);
   }
 
-  for(i=0;i<numCVars;i++)
+  for(i=0;i<g_fitd->getNumCVars();i++)
   {
     ASSERT(sizeof(CVars[i]) == 2);
     fread(&CVars[i], 2, 1, fHandle);
@@ -727,7 +727,7 @@ int makeSaveFile(int entry)
     ASSERT(numCVars == 45);
   }
 
-  for(i=0;i<numCVars;i++)
+  for(i=0;i<g_fitd->getNumCVars();i++)
   {
     ASSERT(sizeof(CVars[i]) == 2);
     fwrite(&CVars[i], 2, 1, fHandle);

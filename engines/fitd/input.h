@@ -22,4 +22,5 @@
 #ifndef _INPUT_H_
 #define _INPUT_H_
 void readKeyboard(void);
+void handleKey(int operation, int key, int keyModifier, uint16 ascii);
 #endif

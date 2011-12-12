@@ -54,7 +54,7 @@ enumCVars* currentCVarTable = NULL;
 
 int getCVarsIdx(enumCVars searchedType) // TODO: optimize by reversing the table....
 {
-	for(int i=0;i<numCVars;i++)
+	for(int i=0;i<g_fitd->getNumCVars();i++)
 	{
 		if(currentCVarTable[i] == -1)
 		{
@@ -540,6 +540,9 @@ int printText(int index, int left, int top, int right, int bottom, int mode, int
 	var_8 = printTextSub1(hqrUnk,getPakSize(languageNameString,index)+300);
 	
 	textPtr = printTextSub2(hqrUnk, var_8);
+	
+	if (!textPtr)
+		return 0;
 	
 	if(!loadPakToPtr( languageNameString, index, textPtr))
 	{
@@ -4791,7 +4794,7 @@ int fitdmain()
 	
 	detectGame();
 	
-	sysInit();
+	g_fitd->sysInit();
 	
 	paletteFill(g_driver->_palette,0,0,0);
 	

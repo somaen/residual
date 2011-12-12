@@ -77,7 +77,7 @@ int processStartupMenu(void)
     }
 
     process_events();
-    readKeyboard();
+	  //  readKeyboard();
 
     if(inputKey&1) // up key
     {

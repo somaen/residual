@@ -19,16 +19,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/system.h"
+#include "common/timer.h"
 #include "common.h"
 
-#include "SDL.h"
-#include "SDL_thread.h"
+/*#include "SDL.h"
+#include "SDL_thread.h"*/
 
 int musicThread(void *dummy);
 
-int threadTimer(void *test) // AITD time is 50 frames per seconds ie,  a frame every 20 miliseconds
+void threadTimer(void *test) // AITD time is 50 frames per seconds ie,  a frame every 20 miliseconds
 {
-    int temp = SDL_GetTicks();
+  /*  int temp = SDL_GetTicks();
     while (1)
   {
       SDL_Delay(2); // granularity restriction
@@ -37,12 +39,16 @@ int threadTimer(void *test) // AITD time is 50 frames per seconds ie,  a frame e
          // timeGlobal++;
             temp = SDL_GetTicks();
         }
-  }
-    return (0);
+  }*/
+	timeGlobal++;
+	return;
+    //return (0);
 }
 
 void startThreadTimer()
 {
+	int speed = 20;
+	g_system->getTimerManager()->installTimerProc(&threadTimer, speed, NULL);
  //   SDL_CreateThread(threadTimer, NULL);
  //   SDL_CreateThread(musicThread, NULL);
 }

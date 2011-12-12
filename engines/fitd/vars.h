@@ -275,7 +275,7 @@ extern char* screen;
 extern int screenBufferSize;
 extern int unkScreenVar2;
 
-extern int numCVars;
+//extern int numCVars;
 extern short int* CVars;
 
 extern char* priority;

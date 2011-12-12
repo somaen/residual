@@ -32,6 +32,7 @@
 #include "engines/fitd/gfx_base.h"
 #include "engines/fitd/fitd.h"
 #include "engines/fitd/common.h"
+#include "engines/fitd/thread_code.h"
 
 namespace Fitd {
 
@@ -124,10 +125,13 @@ FitdEngine::~FitdEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 }
+int FitdEngine::getFrameNum() {
+	return (g_system->getMillis() - _startTime) / _speed;
+}
 
 Common::Error FitdEngine::run() {
 	debug("FitdEngine::run()");
-
+	_startTime = g_system->getMillis();
 	// For debugging-purposes, we won't want fullscreen, as gdb is quirky to use without a window
 	bool fullscreen = false;
 	//bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
@@ -143,22 +147,25 @@ Common::Error FitdEngine::run() {
 	else*/
 	//	g_driver = CreateGfxOpenGL();
 //#endif
-	g_driver = CreateGfxOpenGL();
-	
-	g_driver->setupScreen(640, 400, fullscreen);
-	
-	sysInit();
-	
 	switch (_gameType) {
 		case GType_AITD1:
-			numCVars = 35;
+			_numCVars = 35;
 			currentCVarTable = AITD1KnownCVars;
 			break;
 		default:
-			numCVars = 70;
+			_numCVars = 70;
 			currentCVarTable = AITD2KnownCVars;
 			break;
 	}
+	
+	g_driver = CreateGfxOpenGL();
+	
+	g_driver->setupScreen(800, 600, fullscreen);
+	g_driver->initBuffer(scaledScreen,640,400);
+	startThreadTimer();
+	sysInit();
+	
+	
 	
 	// Init stuff
 	
@@ -173,6 +180,7 @@ Common::Error FitdEngine::run() {
 			if(!make3dTatou())
 			{
 				warning("Calling makeIntroScreens");
+				//			g_fitd->initEngine();
 				makeIntroScreens();
 			}
 			break;
@@ -203,7 +211,141 @@ Common::Error FitdEngine::run() {
 			break;
 	}
 
-
+	while(1)
+	{
+		int startupMenuResult = processStartupMenu();
+		
+		switch(startupMenuResult)
+		{
+			case -1: // timeout
+			{
+				CVars[getCVarsIdx(CHOOSE_PERSO)] = rand()&1;
+				/*  startGame(7,1,0);
+				 
+				 if(!make3dTatou())
+				 {
+				 if(!makeIntroScreens())
+				 {
+				 makeSlideshow();
+				 }
+				 } */
+				
+				break;
+			}
+			case 0: // new game
+			{
+				/*  if(protectionToBeDone)
+				 {
+				 makeProtection();
+				 protectionToBeDone = 0;
+				 }*/
+				
+				//if(selectHero()!=-1)
+				{
+					readKeyboard();
+					while(input2)
+						readKeyboard();
+					
+					if(g_fitd->getGameType() == GType_AITD1)
+					{
+						CVars[getCVarsIdx(CHOOSE_PERSO)] = 0;
+					}
+					
+					switch(g_fitd->getGameType())
+					{
+						case GType_JITD:
+						{
+							startGame(16,1,0);
+							break;
+						}
+						case GType_AITD2:
+						{
+							startGame(8,7,1);
+							break;
+						}
+						case GType_AITD3:
+						{
+							startGame(0,12,1);
+							break;
+						}
+						case GType_AITD1:
+						{
+							startGame(7,1,0);
+							
+							/*  if(!protectionState)
+							 {
+							 freeAll();
+							 exit(-1);
+							 }
+							 */
+							readKeyboard();
+							while(input2)
+								readKeyboard();
+							
+							startGame(0,0,1);
+							break;
+						}
+					}
+					/*
+					 if(giveUp == 0)
+					 {
+					 freeAll();
+					 exit(-1);
+					 }*/
+				}
+				
+				break;
+			}
+			case 1: // continue
+			{
+				/*  if(protectionToBeDone)
+				 {
+				 makeProtection();
+				 protectionToBeDone = 0;
+				 }*/
+				
+				if(restoreSave(12,0))
+				{
+					/*  if(!protectionState)
+					 {
+					 freeAll();
+					 exit(-1);
+					 }*/
+					
+					//          updateShaking();
+					
+					mainVar1 = 2;
+					
+					setupCamera();
+					
+					mainLoop(1);
+					
+					//          freeScene();
+					
+					fadeOut(8,0);
+					
+					/*  if(giveUp == 0)
+					 {
+					 freeAll();
+					 exit(-1);
+					 } */
+				}
+				
+				break;
+			}
+			case 2: // exit
+			{
+				freeAll();
+				exit(-1);
+				
+				break;
+			}
+		}
+	}
+	
+	//return(0);
+	
+	
 
 	return Common::kNoError;
 }
@@ -213,7 +355,7 @@ Common::Error FitdEngine::run() {
 void startGame(int startupFloor, int startupRoom, int allowSystemMenu)
 {
 	warning("startGame");
-	initEngine();
+	g_fitd->initEngine();
 	initVars();
 	
 	loadFloor(startupFloor);
@@ -235,29 +377,27 @@ void startGame(int startupFloor, int startupRoom, int allowSystemMenu)
 	warning("startGame ended");
 }
 
-void initEngine()
+void FitdEngine::initEngine()
 {
 	warning("initEngine");
 	u8* pObjectData;
 	u8* pObjectDataBackup;
 	unsigned long int objectDataSize;
-	FILE* fHandle;
+	Common::File* fHandle = new Common::File();
 	int i;
 	int choosePersoBackup;
 	
-	fHandle = fopen("OBJETS.ITD","rb");
-	if(!fHandle)
+	if(!fHandle->open("OBJETS.ITD"))
 		theEnd(0,"OBJETS.ITD");
 	
-	fseek(fHandle,0,SEEK_END);
-	objectDataSize= ftell(fHandle);
-	fseek(fHandle,0,SEEK_SET);
+	objectDataSize= fHandle->size();
+	fHandle->seek(0,SEEK_SET);
 	
 	pObjectDataBackup = pObjectData = (u8*)malloc(objectDataSize);
 	ASSERT(pObjectData);
 	
-	fread(pObjectData,objectDataSize,1,fHandle);
-	fclose(fHandle);
+	fHandle->read(pObjectData,objectDataSize);
+	delete fHandle;
 	
 	maxObjects = READ_LE_U16(pObjectData);
 	pObjectData+=2;
@@ -408,18 +548,18 @@ void initEngine()
 		choosePersoBackup = CVars[getCVarsIdx(CHOOSE_PERSO)]; // backup hero selection
 	}
 	
-	fHandle = fopen("DEFINES.ITD","rb");
-	if(!fHandle)
+	fHandle = new Common::File();
+	if(!fHandle->open("DEFINES.ITD"))
 	{
 		theEnd(0,"DEFINES.ITD");
 	}
 	
 	///////////////////////////////////////////////
 	{
-		fread(CVars,numCVars,2,fHandle);
-		fclose(fHandle);
+		fHandle->read(CVars,_numCVars*2);
+		delete fHandle;
 		
-		for(i=0;i<numCVars;i++)
+		for(i = 0; i <_numCVars; i++)
 		{
 			CVars[i] = ((CVars[i]&0xFF)<<8) | ((CVars[i]&0xFF00)>>8);
 		}
@@ -480,9 +620,7 @@ void initVars()
 	}
 	else
 	{
-		int i;
-		
-		for(i=0;i<2;i++)
+		for(int i=0;i<2;i++)
 		{
 			numObjInInventoryTable[i] = 0;
 			inHandTable[i] = -1;
@@ -514,7 +652,7 @@ void initVars()
 	initVarsSub1();
 }
 
-void sysInit()
+void FitdEngine::sysInit()
 {
 	warning("SysInit");
 	int i;
@@ -569,7 +707,7 @@ void sysInit()
 		theEnd(1,"BufferAnim");
 	}
 	
-	CVars = (short int*)malloc(numCVars * sizeof(short int));
+	CVars = (short int*)malloc(_numCVars * sizeof(short int));
 	
 	switch(g_fitd->getGameType())
 	{
@@ -625,11 +763,11 @@ void sysInit()
 	
 	///////////////////////////////////////////////
 	{
-		fHandle->read(CVars,numCVars*2);
+		fHandle->read(CVars,_numCVars*2);
 		//	fread(CVars,numCVars,2,fHandle);
 		//fclose(fHandle);
 		delete fHandle;
-		for(i=0;i<numCVars;i++)
+		for(i=0;i<_numCVars;i++)
 		{
 			CVars[i] = ((CVars[i]&0xFF)<<8) | ((CVars[i]&0xFF00)>>8);
 		}

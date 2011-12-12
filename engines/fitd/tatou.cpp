@@ -20,30 +20,34 @@
  */
 
 // seg 4
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/events.h"
+#include "common/textconsole.h"
 #include "common.h"
 #include "engines/fitd/gfx_base.h"
-#ifdef PCLIKE
-//#include "SDL.h"
-#endif
 
+#include "engines/fitd/fitd.h"
+#include "engines/fitd/input.h"
+
+
+// TODO
+using namespace Fitd;
 
 //////////// stuff to move
 void clearScreenTatou(void)
 {
-	int i;
-	
-	for(i=0;i<45120;i++)
+	for(int i=0;i<45120;i++)
 	{
 		screen[i] = 0;
 	}
 }
 
 void blitScreenTatou(void)
-{
-	int i;
-	
-	for(i=0;i<45120;i++)
+{	
+	for(int i=0;i<45120;i++)
 	{
 		unkScreenVar[i] = screen[i];
 	}
@@ -51,9 +55,7 @@ void blitScreenTatou(void)
 
 void copyPalette(char* source, char* dest)
 {
-	int i;
-	
-	for(i=0;i<768;i++)
+	for(int i=0;i<768;i++)
 	{
 		dest[i] = source[i];
 	}
@@ -61,9 +63,7 @@ void copyPalette(char* source, char* dest)
 
 void copyToScreen(char* source, char* dest)
 {
-	int i;
-	
-	for(i=0;i<64000;i++)
+	for(int i=0;i<64000;i++)
 	{
 		dest[i] = source[i];
 	}
@@ -89,10 +89,8 @@ void paletteFill(void* palette, unsigned char r, unsigned char g, unsigned b)
 }
 
 void fadeInSub1(char* palette)
-{
-	int i;
-	
-	for(i=0;i<256;i++)
+{	
+	for(int i=0;i<256;i++)
 	{
 		/*  palette[i*3] >>=2;
 		 palette[i*3+1] >>=2;
@@ -102,14 +100,14 @@ void fadeInSub1(char* palette)
 
 void blitPalette(char* palettePtr,unsigned char startColor,unsigned char nbColor)
 {
-	int i;
+
 	char paletteRGBA[256*4];
 	char* outPtr = scaledScreen;
 	char* inPtr = unkScreenVar;
 	
 	Fitd::g_driver->getPalette(paletteRGBA);
 	
-	for(i=startColor;i<startColor+nbColor;i++)
+	for(int i=startColor;i<startColor+nbColor;i++)
 	{
 		paletteRGBA[i*4] = palettePtr[i*3];
 		paletteRGBA[i*4+1] = palettePtr[i*3+1];
@@ -117,19 +115,18 @@ void blitPalette(char* palettePtr,unsigned char startColor,unsigned char nbColor
 		paletteRGBA[i*4+3] = -1;
 	}
 	
-	for(i=0;i<200;i++)
+	for(int i = 0; i < 200; i++)
 	{
-		int j;
 		char* copySource = outPtr;
 		
-		for(j=0;j<320;j++)
+		for(int j = 0; j < 320; j++)
 		{
 			*(outPtr++) = *(inPtr);
 			*(outPtr++) = *(inPtr++);
 		}
 		
 		// copy line
-		for(j=0;j<640;j++)
+		for(int j = 0; j < 640; j++)
 		{
 			*(outPtr++) = *(copySource++);
 		}
@@ -222,11 +219,10 @@ void make3dTatouUnk1(int var1,int var2)
 void fadeOut(int var1, int var2)
 {
 	char localPalette[0x300];
-	int i;
 	
 	freezeTime();
 	
-	for(i=256;i>=0;i-=var1)
+	for(int i=256;i>=0;i-=var1)
 	{
 		computeProportionalPalette((unsigned char*)Fitd::g_driver->_palette,(unsigned char*)localPalette,i);
 		fadeInSub1(localPalette);
@@ -251,7 +247,7 @@ void flip()
 {
 	char* outPtr = scaledScreen;
 	char* inPtr = unkScreenVar;
-	int i;
+
 	char paletteRGBA[256*4];
 	
 #ifdef USE_GL
@@ -259,7 +255,7 @@ void flip()
 	return;
 #endif
 	
-	for(i=0;i<256;i++)
+	for(int i = 0; i < 256; i++)
 	{
 		paletteRGBA[i*4] = Fitd::g_driver->_palette[i*3];
 		paletteRGBA[i*4+1] = Fitd::g_driver->_palette[i*3+1];
@@ -267,19 +263,18 @@ void flip()
 		paletteRGBA[i*4+3] = -1;
 	}
 	
-	for(i=0;i<200;i++)
+	for(int i = 0; i < 200; i++)
 	{
-		int j;
 		char* copySource = outPtr;
 		
-		for(j=0;j<320;j++)
+		for(int j = 0; j < 320; j++)
 		{
 			*(outPtr++) = *(inPtr);
 			*(outPtr++) = *(inPtr++);
 		}
 		
 		// copy line
-		for(j=0;j<640;j++)
+		for(int j = 0; j < 640; j++)
 		{
 			*(outPtr++) = *(copySource++);
 		}
@@ -290,43 +285,40 @@ void flip()
 	Fitd::g_driver->flip((unsigned char*)scaledScreen);
 }
 
-#ifdef PCLIKE
-void process_events( void )
+void process_events()
 {
-    /* Our SDL event placeholder. */
-    SDL_Event event;
-	
-    /* Grab all the events off the queue. */
-    while( SDL_PollEvent( &event ) ) {
-		
-        switch( event.type ) {
-			case SDL_KEYDOWN:
-				/* Handle key presses. */
-				//            handle_key_down( &event.key.keysym );
-				break;
-			case SDL_QUIT:
-				/* Handle quit requests (like Ctrl-c). */
-				exit( 0 );
-				break;
-        }
-		
-    }
-	
+	Common::Event handledEvent;
+	while (g_system->getEventManager()->pollEvent(handledEvent)) {
+		// Handle any buttons, keys and joystick operations
+		Common::EventType type = handledEvent.type;
+		if (type == Common::EVENT_KEYDOWN) {
+				warning("Key %d", handledEvent.kbd.keycode);
+				handleKey(type, handledEvent.kbd.keycode, handledEvent.kbd.flags, handledEvent.kbd.ascii);
+				//}
+		}
+		//if (type == Common::EVENT_KEYDOWN || type == Common::EVENT_KEYUP) {
+			//handleKey(type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
+			//}
+		// Check for "Hard" quit"
+		if (type == Common::EVENT_QUIT) {
+			cleanupAndExit();
+			error("Hard quit");
+			return;
+		}
+		if (type == Common::EVENT_SCREEN_CHANGED)
+			return;
+			//_refreshDrawNeeded = true;
+	}
 }
-#else
-void process_events( void )
-{
-}
-#endif
 
 void startChrono(unsigned int* chrono)
 {
-	*chrono = timer;
+	*chrono = g_fitd->getFrameNum();
 }
 
 int evalChrono(unsigned int* chrono)
 {
-	return(timer-*chrono);
+	return(g_fitd->getFrameNum()-*chrono);
 }
 
 // bp = x, bx = y, cx = z
@@ -351,10 +343,7 @@ void makeRotationMtx(unsigned int x, unsigned int y, unsigned int z, int* xOut, 
 
 void rotateModel(int x,int y,int z,int alpha,int beta,int gamma,int time)
 {
-	int x1;
-	int y1;
-	int x2;
-	int y2;
+	int x1, y1, x2, y2;
 	
 	makeRotationMtx(alpha+0x200,-time,0,&x1,&y1);
 	makeRotationMtx(beta+0x200,y1,0,&x2,&y2);
@@ -509,7 +498,8 @@ int make3dTatou(void)
 	{
 		while(input2)
 		{
-			readKeyboard();
+			process_events();
+			//readKeyboard();
 		}
 		
 		fadeOut(32,0);

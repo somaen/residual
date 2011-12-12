@@ -23,9 +23,7 @@
 
 hqrSubEntryStruct* quickFindEntry(int index, int numMax, hqrSubEntryStruct* ptr) // no RE. Original was probably faster
 {
-  int i;
-
-  for(i=0;i<numMax;i++)
+  for(int i=0;i<numMax;i++)
   {
     if((ptr[i].key == index) && ptr[i].ptr)
     {

@@ -113,6 +113,8 @@ float farVal = 100000;
 float cameraZoom=0;
 float fov = 0;
 
+int tesselatePosition = 0;
+	
 ///////// POSSIBLE CLASS-MEMBERS //////////
 
 	
@@ -217,6 +219,8 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	glPolygonOffset(-6.0, -6.0);
 
 	initExtensions();
+	
+	init();
 
 	return NULL;
 }
@@ -363,15 +367,15 @@ void GfxOpenGL::init()  // that's the constructor of the system dependent
 	tobj = gluNewTess(); 
 	
 	// Set callback functions TODO fix this
-/*	gluTessCallback(tobj, GLU_TESS_VERTEX, vertexCallback);
-	gluTessCallback(tobj, GLU_TESS_BEGIN, glBegin);
-	gluTessCallback(tobj, GLU_TESS_END, glEnd);
-	gluTessCallback(tobj, GLU_TESS_COMBINE, combineCallback);
+	gluTessCallback(tobj, GLU_TESS_VERTEX, (GLvoid(CALLBACK*)())vertexCallback);
+	gluTessCallback(tobj, GLU_TESS_BEGIN, (GLvoid(CALLBACK*)())glBegin);
+	gluTessCallback(tobj, GLU_TESS_END, (GLvoid(CALLBACK*)())glEnd);
+	gluTessCallback(tobj, GLU_TESS_COMBINE, (GLvoid(CALLBACK*)())combineCallback);
 	
-	gluTessCallback(tobj, GLU_TESS_VERTEX, vertexCallback);
-	gluTessCallback(tobj, GLU_TESS_BEGIN, glBegin);
-	gluTessCallback(tobj, GLU_TESS_END, glEnd);
-	gluTessCallback(tobj, GLU_TESS_COMBINE, combineCallback);*/
+	gluTessCallback(tobj, GLU_TESS_VERTEX, (GLvoid(CALLBACK*)())vertexCallback);
+	gluTessCallback(tobj, GLU_TESS_BEGIN, (GLvoid(CALLBACK*)())glBegin);
+	gluTessCallback(tobj, GLU_TESS_END, (GLvoid(CALLBACK*)())glEnd);
+	gluTessCallback(tobj, GLU_TESS_COMBINE, (GLvoid(CALLBACK*)())combineCallback);
 	
 	// init debug font
 #if 0
@@ -398,16 +402,13 @@ void GfxOpenGL::init()  // that's the constructor of the system dependent
 	
 	// generate textures
 	{
-		int i;
-		int j;
-		
 		unsigned char ditherMap[256*256*4];
 		
 		unsigned char* tempPtr = ditherMap;
 		
-		for(i=0;i<256;i++)
+		for(int i=0;i<256;i++)
 		{
-			for(j=0;j<256;j++)
+			for(int j=0;j<256;j++)
 			{
 				unsigned char ditherValue = g_fitd->getRandom()%0x50;
 				
@@ -477,6 +478,7 @@ void GfxOpenGL::CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int
 
 void GfxOpenGL::initBuffer(char *buffer, int width, int height)
 {   
+	warning("initBuffer");
 	memset(tempBuffer2,0,1024*512*3);
 	glGenTextures(1, &backTexture);
 	glBindTexture(GL_TEXTURE_2D, backTexture);
@@ -1024,6 +1026,33 @@ void GfxOpenGL::draw3dQuad(float x1, float y1, float z1, float x2, float y2, flo
 	}
 }
 
+void GfxOpenGL::startBgPoly()
+{
+	warning("startBgPoly");
+	// glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+	glBindTexture(GL_TEXTURE_2D, backTexture);
+	//glBegin(GL_POLYGON);
+	
+	gluTessBeginPolygon(tobj, NULL);
+	gluTessBeginContour(tobj);
+	
+	tesselatePosition = 0;
+}
+
+void GfxOpenGL::endBgPoly()
+{
+	warning("endBgPoly");
+	gluTessEndContour(tobj);
+	gluTessEndPolygon(tobj);
+	
+	// glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+}
+
+	
 void GfxOpenGL::drawSphere(float X, float Y, float Z, uint8 color, float size)
 {
 	glMatrixMode(GL_MODELVIEW);

@@ -26,6 +26,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
+#include "engines/fitd/startup_menu.h"
 
 namespace Fitd {
 
@@ -44,12 +45,18 @@ public:
 	FitdGameType getGameType() { return _gameType; }
 	virtual Common::Error run();
 	uint32 getRandom() { return 42; } // TODO
+	int getFrameNum();
+	void initEngine();
+	void sysInit();
+	int getNumCVars() { return _numCVars; }
 private:
 	Common::RandomSource *_rnd;
 
+	int _numCVars;
 	bool _showFps;
 	bool _softRenderer;
-
+	static const int _speed = 20;
+	uint32 _startTime;
 	uint32 _gameFlags;
 	FitdGameType _gameType;
 	Common::Platform _gamePlatform;
@@ -58,10 +65,10 @@ private:
 	// Temporaries from main.cpp
 	int makeIntroScreens();
 	void preloadResource();
-	void sysInit();
+	//	void sysInit();
 	void initVars();
 	void initVarsSub1();
-	void initEngine();
+	//	void initEngine();
 	void startGame(int startupFloor, int startupRoom, int allowSystemMenu);
 	void sysInitSub1(char* var0, char* var1);
 

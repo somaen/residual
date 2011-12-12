@@ -42,7 +42,7 @@ char* screen;
 int screenBufferSize;
 int unkScreenVar2;
 
-int numCVars;
+//int numCVars;
 short int* CVars;
 
 char* priority;
@@ -77,9 +77,9 @@ char button;
 
 char* languageNameTable[] =
 {
+  "ENGLISH",
   "FRANCAIS",
   "ITALIANO",
-  "ENGLISH",
   "ESPAGNOL",
   "DEUTSCH",
   NULL,

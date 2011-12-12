@@ -35,6 +35,8 @@
 #include <GL/glu.h>
 #endif
 
+#include "common/textconsole.h"
+
 #define USE_GL
 
 namespace Fitd {
@@ -62,24 +64,24 @@ public:
 	bool isHardwareAccelerated() { return true; } // CLEANME
 
 	void initBuffer(char *buffer, int width, int height);
-	void initVideoBuffer(char *buffer, int width, int height) {} // TODO 
-	void putpixel(int x, int y, int pixel) {} // TODO
-	void setColor(byte i, byte R, byte G, byte B) {} // TODO
+	void initVideoBuffer(char *buffer, int width, int height) {warning("initVideoBuffer");} // TODO 
+	void putpixel(int x, int y, int pixel) {warning("putpixel");} // TODO
+	void setColor(byte i, byte R, byte G, byte B) {warning("setColor");} // TODO
 	void setPalette(byte * palette);
-	void setPalette320x200(byte * palette) {} // TODO
+	void setPalette320x200(byte * palette) {warning("setPalette320x200");} // TODO
 	void flip(unsigned char *videoBuffer);
-	void draw320x200BufferToScreen(unsigned char *videoBuffer) {} // TODO
+	void draw320x200BufferToScreen(unsigned char *videoBuffer) {warning("draw320x200BufferToScreen");} // TODO
 	void CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom);
-	void drawText(int X, int Y, char *text) {} // TODO
-	void drawTextColor(int X, int Y, char *string, unsigned char R, unsigned char G, unsigned char B) {} // TODO
-	void drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette) {} // TODO
+	void drawText(int X, int Y, char *text) {warning("Unimplemented: drawText");} // TODO
+	void drawTextColor(int X, int Y, char *string, unsigned char R, unsigned char G, unsigned char B) {warning("drawTextColor");} // TODO
+	void drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette) {warning("drawLine");} // TODO
 	void getPalette(char* palette);
-	void set320x200Mode(bool mode) {} // TODO
+	void set320x200Mode(bool mode) {warning("set320x200mode");} // TODO
 	
 	void startFrame();
 	void stopFrame() {} // TODO
-	void startModelRender() {}// TODO
-	void stopModelRender() {} // TODO
+	void startModelRender() {warning("Unimplemented: startModelRenderer");}// TODO
+	void stopModelRender() {warning("Unimplemented: stopModelRenderer");} // TODO
 //#ifdef USE_GL
 	void fillPoly(float* buffer, int numPoint, unsigned char color,uint8 polyType);
 	void draw3dLine(float x1, float y1, float z1, float x2, float y2, float z2, unsigned char color);
@@ -87,9 +89,9 @@ public:
 	void cleanScreenKeepZBuffer();
 	void drawSphere(float X, float Y, float Z, uint8 color, float size);
 	
-	void startBgPoly() {} // TODO
-	void endBgPoly() {} // TODO
-	void addBgPolyPoint(int x, int y) {} // TODO
+	void startBgPoly();
+	void endBgPoly();
+	void addBgPolyPoint(int x, int y) {warning("UNIMPLEMENTED: addBgPolyPoint");} // TODO
 //#else
 #if 0
 	void fillPoly(short int* buffer, int numPoint, unsigned char color);
@@ -101,8 +103,8 @@ public:
 	void drawDebugText(const u32 X, const u32 Y, const uint8* string);
 #endif
 	
-	void fadeBlackToWhite() {} // TODO
-	void updateImage() {} // TODO
+	void fadeBlackToWhite() {warning("fadeBlackToWhite");} // TODO
+	void updateImage() {warning("updateImage");} // TODO
 	
 	// only here:
 	void init();

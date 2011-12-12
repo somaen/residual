@@ -165,7 +165,9 @@ Common::Error FitdEngine::run() {
 	startThreadTimer();
 	sysInit();
 	
+	paletteFill(g_driver->_palette,0,0,0);
 	
+	preloadResource();
 	
 	// Init stuff
 	
@@ -238,7 +240,7 @@ Common::Error FitdEngine::run() {
 				 protectionToBeDone = 0;
 				 }*/
 				
-				//if(selectHero()!=-1)
+				if(selectHero()!=-1)
 				{
 					readKeyboard();
 					while(input2)

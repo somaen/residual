@@ -76,6 +76,6 @@ extern FitdEngine *g_fitd;
 }
 void allocTextes(void);
 
-
+int selectHero();
 
 #endif // FITD_H

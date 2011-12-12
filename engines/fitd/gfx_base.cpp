@@ -27,43 +27,18 @@ namespace Fitd {
 GfxBase::GfxBase() :
 	_renderBitmaps(true),
 	_renderZBitmaps(true) {
-
+	_palette = new char[0x300];
+		//clearPalette();
 }
 
-/*void GfxBase::saveState(SaveGame *state) {
-	state->beginSection('DRVR');
-
-	byte r, g, b;
-	getShadowColor(&r, &g, &b);
-	state->writeByte(r),
-	state->writeByte(g),
-	state->writeByte(b),
-	state->writeLEBool(_renderBitmaps);
-	state->writeLEBool(_renderZBitmaps);
-
-	state->endSection();
+	
+void GfxBase::clearPalette() {
+	if (_palette) {
+		for (int i = 0; i < 0x300; i++) {
+			_palette[i] = 0;
+		}
+	}
+	
 }
-
-void GfxBase::restoreState(SaveGame *state) {
-	state->beginSection('DRVR');
-
-	byte r, g, b;
-	r = state->readByte();
-	g = state->readByte();
-	b = state->readByte();
-	setShadowColor(r, g ,b);
-	_renderBitmaps = state->readLEBool();
-	_renderZBitmaps = state->readLEBool();
-
-	state->endSection();
-}*/
-/*
-void GfxBase::renderBitmaps(bool render) {
-	_renderBitmaps = render;
-}
-
-void GfxBase::renderZBitmaps(bool render) {
-	_renderZBitmaps = render;
-}*/
 
 }

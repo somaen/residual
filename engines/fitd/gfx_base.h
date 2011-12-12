@@ -95,7 +95,8 @@ public:
 	virtual void fadeBlackToWhite() = 0;
 	virtual void updateImage() = 0;
 	
-	char _palette[0x300];
+	char *_palette;
+	void clearPalette();
 protected:
 	int _screenWidth, _screenHeight, _screenBPP;
 	bool _isFullscreen;

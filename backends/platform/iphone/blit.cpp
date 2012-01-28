@@ -20,27 +20,29 @@
  *
  */
 
-#ifndef BACKENDS_BASE_BACKEND_H
-#define BACKENDS_BASE_BACKEND_H
+#include "common/scummsys.h"
+#include "blit_arm.h"
 
-#include "common/system.h"
-#include "common/events.h"
+void blitLandscapeScreenRect16bpp(uint16 *dst, uint16 *src, int width, int height, int screenWidth, int screenHeight)
+{
+	for (int x = width; x > 0; x--) {
+		for (int y = height; y > 0; y--) {
+			*(dst++) = *src;
+			src += screenWidth;
+		}
+		dst -= screenHeight + height;
+		src += 1 - height * screenWidth;
+	}
+}
 
-class BaseBackend : public OSystem {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() = 0;
-public:
-	virtual void initBackend();
-
-	virtual void displayMessageOnOSD(const char *msg);
-	virtual void fillScreen(uint32 col);
-};
-
-class EventsBaseBackend : public BaseBackend, Common::EventSource {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
-public:
-};
-
-
-#endif
+void blitLandscapeScreenRect8bpp(uint16 *dst, byte *src, int width, int height, uint16 *palette, int screenWidth, int screenHeight)
+{
+	for (int x = width; x > 0; x--) {
+		for (int y = height; y > 0; y--) {
+			*(dst++) = palette[*src];
+			src += screenWidth;
+		}
+		dst -= screenHeight + height;
+		src += 1 - height * screenWidth;
+	}
+}

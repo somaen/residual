@@ -20,27 +20,17 @@
  *
  */
 
-#ifndef BACKENDS_BASE_BACKEND_H
-#define BACKENDS_BASE_BACKEND_H
+#import <UIKit/UIKit.h>
+#import <UIKit/UITextView.h>
 
-#include "common/system.h"
-#include "common/events.h"
+@interface SoftKeyboard : UIView {
+	id inputDelegate;
+	UITextView* inputView;
+}
 
-class BaseBackend : public OSystem {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() = 0;
-public:
-	virtual void initBackend();
+- (id)initWithFrame:(CGRect)frame;
+- (UITextView*)inputView;
+- (void)setInputDelegate:(id)delegate;
+- (void)handleKeyPress:(unichar)c;
 
-	virtual void displayMessageOnOSD(const char *msg);
-	virtual void fillScreen(uint32 col);
-};
-
-class EventsBaseBackend : public BaseBackend, Common::EventSource {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
-public:
-};
-
-
-#endif
+@end

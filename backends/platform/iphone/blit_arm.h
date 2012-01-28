@@ -20,27 +20,16 @@
  *
  */
 
-#ifndef BACKENDS_BASE_BACKEND_H
-#define BACKENDS_BASE_BACKEND_H
+extern "C" void blitLandscapeScreenRect16bpp(uint16 *dst, uint16 *src,
+                                            int width,
+                                            int height,
+                                            int screenWidth,
+                                            int screenHeight);
 
-#include "common/system.h"
-#include "common/events.h"
-
-class BaseBackend : public OSystem {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() = 0;
-public:
-	virtual void initBackend();
-
-	virtual void displayMessageOnOSD(const char *msg);
-	virtual void fillScreen(uint32 col);
-};
-
-class EventsBaseBackend : public BaseBackend, Common::EventSource {
-protected:
-	virtual Common::EventSource *getDefaultEventSource() { return this; }
-public:
-};
-
-
-#endif
+extern "C" void blitLandscapeScreenRect8bpp(uint16 *dst,
+                                            byte *src,
+                                            int width,
+                                            int height,
+                                            uint16 *palette,
+                                            int screenWidth,
+                                            int screenHeight);

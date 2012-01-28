@@ -46,6 +46,8 @@ public:
 	virtual int getScreenChangeID() const = 0;
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;
+	virtual Graphics::Surface *lockScreen() = 0;
+	virtual void unlockScreen() = 0;
 	virtual void updateScreen() = 0;
 
 	virtual void showOverlay() = 0;

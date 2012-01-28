@@ -92,6 +92,10 @@ public:
 		LINK_PLUGIN(MYST3)
 		#endif
 
+		#if PLUGIN_ENABLED_STATIC(FITD)
+		LINK_PLUGIN(FITD)
+		#endif
+
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines

@@ -12,3 +12,8 @@ ifdef ENABLE_MYST3
 DEFINES += -DENABLE_MYST3=$(ENABLE_MYST3)
 MODULES += engines/myst3
 endif
+
+ifdef ENABLE_TINSEL
+DEFINES += -DENABLE_TINSEL=$(ENABLE_TINSEL)
+MODULES += engines/tinsel
+endif

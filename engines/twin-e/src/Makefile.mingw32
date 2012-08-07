@@ -1,0 +1,60 @@
+CC=i686-mingw32-gcc
+CFLAGS=-g -Wall -Wextra -Wdeclaration-after-statement -DWIN32 -I/usr/i686-mingw32/usr/include -I/usr/i686-mingw32/usr/include/SDL
+LDFLAGS=-g -lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows
+OBJ=actors.o \
+	actorScript.o \
+	angle.o \
+	angleTable.o \
+	animAction.o \
+	anim.o \
+	body.o \
+	comportementMenu.o \
+	costume.o \
+	cube.o \
+	extra.o \
+	fichePerso.o \
+	fireEffect.o \
+	fla.o \
+	font.o \
+	fullRedraw.o \
+	hqr.o \
+	images.o \
+	inventory.o \
+	script.o \
+	main.o \
+	mainLoop.o \
+	mainMenu.o \
+	mainSDL.o \
+	moveActor.o \
+	music.o \
+	object.o \
+	overlay.o \
+	renderer.o \
+	room.o \
+	samples.o \
+	save.o \
+	shadow.o \
+	streamReader.o \
+	text.o \
+	vox.o \
+	zones.o
+
+TARGET=twin-e.exe
+INSTALLDIR=../bin
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm $(OBJ)
+
+mrproper: clean
+	rm $(TARGET)
+
+install: $(TARGET)
+	cp $(TARGET) $(INSTALLDIR)

@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "type.h"
 
+#define PCLIKE
+
 #ifdef WIN32
 # define PCLIKE
 #endif

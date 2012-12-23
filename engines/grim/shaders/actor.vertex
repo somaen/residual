@@ -1,7 +1,8 @@
 #version 150
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 texcoord;
+in vec3 position;
+in vec2 texcoord;
+in vec4 color;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -12,17 +13,21 @@ uniform vec3 actorPos;
 uniform bool textured;
 
 out vec2 Texcoord;
+out vec4 Color;
 
 void main()
 {
 	vec4 pos = modelMatrix * extraMatrix * vec4( position, 1.0);
 	pos /= pos.w;
 	pos = viewMatrix * pos;
-	pos += transpose(viewMatrix) * vec4(actorPos - cameraPos, 0.0);
+	pos += viewMatrix * vec4(actorPos - cameraPos, 0.0);
 	pos.z *= -1;
 	gl_Position = projMatrix * pos;
+	Color = color;
 	if (textured) {
 		Texcoord = texcoord;
+		if (isBillboard)
+			Texcoord.x = 1.0 - Texcoord.x;
 	} else {
 		Texcoord = vec2(0.0, 0.0);
 	}

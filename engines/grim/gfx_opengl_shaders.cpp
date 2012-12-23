@@ -134,6 +134,7 @@ void GfxOpenGLS::setupTexturedQuad() {
 	glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
 			(void *) (2 * sizeof(float)));
 	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void GfxOpenGLS::setupShaders() {
@@ -316,7 +317,28 @@ void GfxOpenGLS::translateViewpointFinish() {
 
 
 void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face) {
+	if (model->_dirtySkeleton) {
+		model->_dirtySkeleton = false;
+		glBindBuffer(GL_ARRAY_BUFFER, model->_verticesVBO);
+		void * bufData = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+		memcpy(bufData, model->_drawVertices, 3 * sizeof(float) * model->_numVertices);
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+	}
 
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glBindVertexArray(model->_modelVAO);
+	GLint texturedPos = glGetUniformLocation(_actorProgram, "textured");
+	glUniform1i(texturedPos, face->_hasTexture ? GL_TRUE : GL_FALSE);
+
+	GLint extraMatrixPos = glGetUniformLocation(_actorProgram, "extraMatrix");
+	Math::Matrix4 extraMatrix;
+	glUniformMatrix4fv(extraMatrixPos, GL_TRUE, 1, extraMatrix.getData());
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
+
+	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_INT, 0);
+	glDisable(GL_DEPTH_TEST);
 }
 
 void GfxOpenGLS::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
@@ -346,11 +368,69 @@ void GfxOpenGLS::turnOffLight(int lightId) {
 
 
 void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap *cmap) {
+	material->_texture = new GLuint[1];
+	glGenTextures(1, (GLuint *)material->_texture);
+	char *texdata = new char[material->_width * material->_height * 4];
+	char *texdatapos = texdata;
 
+	if (cmap != NULL) { // EMI doesn't have colour-maps
+		for (int y = 0; y < material->_height; y++) {
+			for (int x = 0; x < material->_width; x++) {
+				uint8 col = *(const uint8 *)(data);
+				if (col == 0) {
+					memset(texdatapos, 0, 4); // transparent
+					if (!material->_hasAlpha) {
+						texdatapos[3] = '\xff'; // fully opaque
+					}
+				} else {
+					memcpy(texdatapos, cmap->_colors + 3 * (col), 3);
+					texdatapos[3] = '\xff'; // fully opaque
+				}
+				texdatapos += 4;
+				data++;
+			}
+		}
+	} else {
+		memcpy(texdata, data, material->_width * material->_height * material->_bpp);
+	}
+
+	GLuint format = 0;
+	GLuint internalFormat = 0;
+	if (material->_colorFormat == BM_RGBA) {
+		format = GL_RGBA;
+		internalFormat = GL_RGBA;
+	} else if (material->_colorFormat == BM_BGRA) {
+		format = GL_BGRA;
+		internalFormat = GL_RGBA;
+	} else {	// The only other colorFormat we load right now is BGR
+		format = GL_BGR;
+		internalFormat = GL_RGB;
+	}
+
+	GLuint *textures = (GLuint *)material->_texture;
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, material->_width, material->_height, 0, format, GL_UNSIGNED_BYTE, texdata);
+	delete[] texdata;
 }
 
 void GfxOpenGLS::selectMaterial(const Texture *material) {
+	GLuint *textures = (GLuint *)material->_texture;
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
 
+	if (material->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
+		glEnable(GL_BLEND);
+	}
+
+//	// Grim has inverted tex-coords, EMI doesn't
+//	if (g_grim->getGameType() != GType_MONKEY4) {
+//		glMatrixMode(GL_TEXTURE);
+//		glLoadIdentity();
+//		glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
+//	}
 }
 
 void GfxOpenGLS::destroyMaterial(Texture *material) {
@@ -899,6 +979,64 @@ void GfxOpenGLS::renderZBitmaps(bool render) {
 
 void GfxOpenGLS::createSpecialtyTextures() {
 
+}
+
+void GfxOpenGLS::createEMIModel(EMIModel *model) {
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	model->_modelVAO = vao;
+
+	GLuint verticesVBO;
+	glGenBuffers(1, &verticesVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, verticesVBO);
+	glBufferData(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_vertices, GL_STREAM_DRAW);
+	model->_verticesVBO = verticesVBO;
+
+//	GLuint normalsVBO;
+//	glGenBuffers(1, &normalsVBO);
+//	glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
+//	glBufferData(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_normals, GL_STATIC_DRAW);
+//	model->_normalsVBO = normalsVBO;
+
+	GLuint texCoordsVBO;
+	glGenBuffers(1, &texCoordsVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, texCoordsVBO);
+	glBufferData(GL_ARRAY_BUFFER, model->_numVertices * 2 * sizeof(float), model->_texVerts, GL_STATIC_DRAW);
+	model->_texCoordsVBO = texCoordsVBO;
+
+	GLuint colorMapVBO;
+	glGenBuffers(1, &colorMapVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, colorMapVBO);
+	glBufferData(GL_ARRAY_BUFFER, model->_numVertices * 4 * sizeof(byte), model->_colorMap, GL_STATIC_DRAW);
+	model->_colorMapVBO = colorMapVBO;
+
+	glUseProgram(_actorProgram);
+	GLint posAttrib = glGetAttribLocation(_actorProgram, "position");
+	glEnableVertexAttribArray(posAttrib);
+	glBindBuffer(GL_ARRAY_BUFFER, verticesVBO);
+	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+
+	GLint texAttrib = glGetAttribLocation(_actorProgram, "texcoord");
+	glEnableVertexAttribArray(texAttrib);
+	glBindBuffer(GL_ARRAY_BUFFER, texCoordsVBO);
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+
+	GLint colAttrib = glGetAttribLocation(_actorProgram, "color");
+	glEnableVertexAttribArray(colAttrib);
+	glBindBuffer(GL_ARRAY_BUFFER, colorMapVBO);
+	glVertexAttribPointer(colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, 4 * sizeof(byte), 0);
+
+	for (uint32 i = 0; i < model->_numFaces; ++i) {
+		EMIMeshFace * face = &model->_faces[i];
+		GLuint indicesEBO;
+		glGenBuffers(1, &indicesEBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, face->_faceLength * 3 * sizeof(uint32), face->_indexes, GL_STATIC_DRAW);
+		face->_indicesEBO = indicesEBO;
+	}
+
+	glBindVertexArray(0);
 }
 
 }

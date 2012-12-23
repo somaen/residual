@@ -1,0 +1,29 @@
+#version 150
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 texcoord;
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projMatrix;
+uniform mat4 extraMatrix;
+uniform vec3 cameraPos;
+uniform vec3 actorPos;
+uniform bool textured;
+
+out vec2 Texcoord;
+
+void main()
+{
+	vec4 pos = modelMatrix * extraMatrix * vec4( position, 1.0);
+	pos /= pos.w;
+	pos = viewMatrix * pos;
+	pos += transpose(viewMatrix) * vec4(actorPos - cameraPos, 0.0);
+	pos.z *= -1;
+	gl_Position = projMatrix * pos;
+	if (textured) {
+		Texcoord = texcoord;
+	} else {
+		Texcoord = vec2(0.0, 0.0);
+	}
+}

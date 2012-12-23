@@ -140,6 +140,7 @@ void GfxOpenGLS::setupShaders() {
 	_backgroundProgram = compileShader("background");
 	_smushProgram = compileShader("smush");
 	_textProgram = compileShader("text");
+	_actorProgram = compileShader("actor");
 	setupTexturedQuad();
 }
 
@@ -174,13 +175,46 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	return NULL;
 }
 
-
+// matrix calculation based on the glm library.
 void GfxOpenGLS::setupCamera(float fov, float nclip, float fclip, float roll) {
+	if (_fov == fov && _nclip == nclip && _fclip == fclip)
+		return;
 
+	_fov = fov; _nclip = nclip; _fclip = fclip;
+
+	float right = nclip * tan(fov / 2 * (LOCAL_PI / 180));
+	float left = -right;
+	float top = right * 0.75;
+	float bottom = -right * 0.75;
+
+	Math::Matrix4 proj;
+	proj(0,0) = (2.0f * nclip) / (right - left);
+	proj(1,1) = (2.0f * nclip) / (top - bottom);
+	proj(2,0) = (right + left) / (right - left);
+	proj(2,1) = (top + bottom) / (top - bottom);
+	proj(2,2) = -(fclip + nclip) / (fclip - nclip);
+	proj(2,3) = -1.0f;
+	proj(3,2) = -(2.0f * fclip * nclip) / (fclip - nclip);
+	proj(3,3) = 0.0f;
+	proj.transpose();
+
+	_projMatrix = proj;
 }
 
 void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d &interest, float roll) {
-
+	if (g_grim->getGameType() == GType_MONKEY4) {
+		_currentPos = pos;
+		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
+	} else {
+//		Math::Vector3d up_vec(0, 0, 1);
+//
+//		glRotatef(roll, 0, 0, -1);
+//
+//		if (pos.x() == interest.x() && pos.y() == interest.y())
+//			up_vec = Math::Vector3d(0, 1, 0);
+//
+//		gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
+	}
 }
 
 
@@ -198,8 +232,31 @@ void GfxOpenGLS::getBoundingBoxPos(const Mesh *mesh, int *x1, int *y1, int *x2, 
 }
 
 void GfxOpenGLS::startActorDraw(const Math::Vector3d &pos, float scale, const Math::Quaternion &quat,
-														const bool inOverworld, const float alpha) {
+                                const bool inOverworld, const float alpha) {
+	glUseProgram(_actorProgram);
+	GLint modelMatrixPos = glGetUniformLocation(_actorProgram, "modelMatrix");
+	GLint projMatrixPos = glGetUniformLocation(_actorProgram, "projMatrix");
+	GLint viewMatrixPos = glGetUniformLocation(_actorProgram, "viewMatrix");
+	GLint extraMatrixPos = glGetUniformLocation(_actorProgram, "extraMatrix");
+	GLint cameraPos = glGetUniformLocation(_actorProgram, "cameraPos");
+	GLint actorPos = glGetUniformLocation(_actorProgram, "actorPos");
 
+	Math::Matrix4 viewMatrix = _currentQuat.toMatrix();
+	viewMatrix.transpose();
+
+	Math::Matrix4 modelMatrix = quat.toMatrix();
+	modelMatrix.transpose();
+
+	Math::Matrix4 extraMatrix;
+
+	_mvpMatrix = _projMatrix * viewMatrix * modelMatrix;
+
+	glUniformMatrix4fv(modelMatrixPos, GL_TRUE, 1, modelMatrix.getData());
+	glUniformMatrix4fv(viewMatrixPos, GL_TRUE, 1, viewMatrix.getData());
+	glUniformMatrix4fv(projMatrixPos, GL_TRUE, 1, _projMatrix.getData());
+	glUniformMatrix4fv(extraMatrixPos, GL_TRUE, 1, extraMatrix.getData());
+	glUniform3fv(cameraPos, 1, _currentPos.getData());
+	glUniform3fv(actorPos, 1, pos.getData());
 }
 
 

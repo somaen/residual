@@ -220,7 +220,7 @@ void GfxOpenGLS::setupShaders() {
 	_backgroundProgram = compileShader("background");
 	_smushProgram = compileShader("smush");
 	_textProgram = compileShader("text");
-	_actorProgram = compileShader("actor");
+	_actorProgram = compileShader("emi_actor");
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
 }

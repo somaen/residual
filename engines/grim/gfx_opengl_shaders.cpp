@@ -217,10 +217,11 @@ void GfxOpenGLS::setupTexturedCenteredQuad() {
 }
 
 void GfxOpenGLS::setupShaders() {
+	bool isEMI = g_grim->getGameType() == GType_MONKEY4;
 	_backgroundProgram = compileShader("background");
 	_smushProgram = compileShader("smush");
 	_textProgram = compileShader("text");
-	_actorProgram = compileShader("emi_actor");
+	_actorProgram = compileShader(isEMI ? "emi_actor" : "grim_actor");
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
 }
@@ -427,7 +428,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_INT, 0);
 }
 
-void GfxOpenGLS::drawModelFace(const MeshFace *face, float *vertices, float *vertNormals, float *textureVerts) {
+void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
 
 }
 

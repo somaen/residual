@@ -24,6 +24,7 @@
 #define GRIM_GFX_OPENGL_SHADERS_H
 
 #include "engines/grim/gfx_base.h"
+#include "common/stack.h"
 
 namespace Grim {
 
@@ -209,7 +210,6 @@ private:
 	GLuint _smushVAO, _smushVBO, _quadEBO, _bigQuadEBO;
 	GLuint _textProgram;
 
-
 	int _smushWidth;
 	int _smushHeight;
 	uint32 _smushNumTex;
@@ -221,11 +221,15 @@ private:
 	float _nclip;
 	float _fclip;
 	Math::Matrix4 _projMatrix;
+	Math::Matrix4 _viewMatrix;
 	Math::Matrix4 _mvpMatrix;
 
 	void setupTexturedCenteredQuad();
+
 	GLuint _spriteVAO;
 	GLuint _spriteVBO;
+
+	Common::Stack<Math::Matrix4> _matrixStack;
 };
 }
 #endif

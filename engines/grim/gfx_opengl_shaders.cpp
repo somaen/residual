@@ -49,7 +49,6 @@
 #include "engines/grim/primitives.h"
 #include "engines/grim/set.h"
 
-
 namespace Grim {
 
 static float textured_quad[] = {
@@ -80,10 +79,9 @@ GfxOpenGLS::~GfxOpenGLS() {
 
 }
 
-static GLuint loadShader(const char *base, const char *extension, GLenum shaderType) {
-	const Common::String filename = Common::String("shaders/") + base + "." + extension;
+const GLchar* readFile(const Common::String& filename) {
 	Common::File file;
-	file.open(filename);
+	file.open(Common::String("shaders/") + filename);
 	if (!file.isOpen())
 		error("Could not open shader %s!", filename.c_str());
 
@@ -92,9 +90,21 @@ static GLuint loadShader(const char *base, const char *extension, GLenum shaderT
 	file.read(shaderSource, size);
 	file.close();
 	shaderSource[size] = '\0';
+	return shaderSource;
+}
+
+static GLuint loadShader(const char *base, const char *extension, GLenum shaderType) {
+	const Common::String filename = Common::String(base) + "." + extension;
+	const GLchar *shaderSource = readFile(filename);
+	const GLchar *compatSource = readFile(shaderType == GL_VERTEX_SHADER ? "compat.vertex" : "compat.fragment");
+	const GLchar *shaderSources[] = {
+			"#version 330",
+			compatSource,
+			shaderSource
+	};
 
 	GLuint shader = glCreateShader( shaderType );
-	glShaderSource( shader, 1, (const GLchar **)&shaderSource, NULL );
+	glShaderSource( shader, 3, shaderSources, NULL );
 	glCompileShader( shader );
 
 	GLint status;
@@ -105,6 +115,7 @@ static GLuint loadShader(const char *base, const char *extension, GLenum shaderT
 		error("Could not compile shader %s.%s: %s", base, extension, buffer);
 	}
 	delete[] shaderSource;
+	delete[] compatSource;
 
 	return shader;
 }
@@ -122,6 +133,26 @@ GLuint GfxOpenGLS::compileShader(const char *vertex, const char *fragment) {
 	return shaderProgram;
 }
 
+void GfxOpenGLS::setupBigEBO() {
+	// FIXME: Probably way too big...
+	unsigned short quad_indices[6 * 1000];
+
+	unsigned short start = 0;
+	for (unsigned short *p = quad_indices; p < &quad_indices[6 * 1000]; p += 6) {
+		p[0] = p[3] = start++;
+		p[1] = start++;
+		p[2] = p[4] = start++;
+		p[5] = start++;
+	}
+
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	_bigQuadEBO = ebo;
+}
+
 void GfxOpenGLS::setupTexturedQuad() {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -133,6 +164,7 @@ void GfxOpenGLS::setupTexturedQuad() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(textured_quad), textured_quad,
 			GL_STATIC_DRAW);
 	_smushVBO = vbo;
+
 	GLint posAttrib = glGetAttribLocation(_smushProgram, "position");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
@@ -143,6 +175,18 @@ void GfxOpenGLS::setupTexturedQuad() {
 			(void *) (2 * sizeof(float)));
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	byte quad_indices[] = {
+		0, 1, 2,
+		0, 2, 3,
+	};
+
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	_quadEBO = ebo;
 }
 
 void GfxOpenGLS::setupTexturedCenteredQuad() {
@@ -405,7 +449,9 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	glUniform1i(texturedPos, GL_TRUE);
 	glUniform1i(billboardPos, GL_TRUE);
 
-	glDrawArrays(GL_QUADS, 0, 4);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
 	glDisable(GL_ALPHA_TEST);
@@ -585,8 +631,8 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 				glBindTexture(GL_TEXTURE_2D, textures[bitmap->_numTex * pic + i]);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 				glTexImage2D(GL_TEXTURE_2D, 0, format, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, format, type, NULL);
 			}
 
@@ -660,7 +706,9 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int x, int y, bool initialDraw
 		for (uint32 i = offset; i < offset + data->_layers[curLayer]._numImages; ++i) {
 			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
 
-			glDrawArrays(GL_QUADS, data->_verts[i]._pos, data->_verts[i]._verts);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
+			glDrawElements(GL_TRIANGLES, data->_verts[i]._verts / 4 * 6, GL_UNSIGNED_SHORT, (void *)(data->_verts[i]._pos / 4 * 6));
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 		curLayer--;
 	}
@@ -765,8 +813,8 @@ void GfxOpenGLS::createFont(Font *font) {
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size * charsWide, size * charsHigh, 0, GL_RGBA, GL_UNSIGNED_BYTE, temp);
 
 	delete[] data;
@@ -880,7 +928,9 @@ void GfxOpenGLS::drawTextObject(const TextObject *text) {
 	GLint colorAttrib = glGetUniformLocation(_textProgram, "color");
 	glUniform3f(colorAttrib, float(td->color.getRed()) / 255.0f, float(td->color.getGreen()) / 255.0f, float(td->color.getBlue()) / 255.0f);
 	glBindTexture(GL_TEXTURE_2D, td->texture);
-	glDrawArrays(GL_QUADS, 0, td->characters *  4);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
+	glDrawElements(GL_TRIANGLES, td->characters * 6, GL_UNSIGNED_SHORT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 
@@ -957,8 +1007,8 @@ void GfxOpenGLS::prepareMovieFrame(Graphics::Surface* frame) {
 		glBindTexture(GL_TEXTURE_2D, _smushTexIds[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
 	}
 
@@ -997,7 +1047,9 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 
 			glUniform2f(offsetPos, float(x + offsetX) / _screenWidth, float(y + offsetY) / _screenHeight);
 			glUniform2f(sizePos, BITMAP_TEXTURE_SIZE * _scaleW / _screenWidth, BITMAP_TEXTURE_SIZE * _scaleH / _screenHeight);
-			glDrawArrays(GL_QUADS, 0, 4);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 			curTexIdx++;
 		}

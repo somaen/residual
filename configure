@@ -3755,9 +3755,8 @@ case $_host_os in
 		if test "$_opengl_shaders" = yes; then
 			_opengl=yes
 			_opengles2=yes
-			OPENGL_LIBS="-lGLESv2"
-			OPENGL_CFLAGS="$OPENGL_LIBS"
-			LIBS="$LIBS $OPENGL_LIBS"
+			LDFLAGS="$LDFLAGS -Landroid-toolchain/sysroot/usr/lib"
+			LDFLAGS="$LDFLAGS -lGLESv2"
 		fi
 		;;
 esac

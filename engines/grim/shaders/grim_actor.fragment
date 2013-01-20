@@ -10,8 +10,10 @@ out vec4 outColor;
 
 void main()
 {
-	    outColor = Color;
-	    if (textured) {
-	    	outColor *= texture(tex, Texcoord);
-	    }
+	outColor = Color;
+	if (textured) {
+		outColor *= texture(tex, Texcoord);
+	}
+	if (outColor.a == 0.0)
+		discard;
 }

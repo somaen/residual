@@ -72,13 +72,13 @@ public:
 	void setUniform(const char* uniform, const Math::Matrix4& m) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1)
-			glUniformMatrix4fv(pos, 1, GL_TRUE, m.getData());
+			glUniformMatrix4fv(pos, 1, GL_FALSE, m.getData());
 	}
 
 	void setUniform(const char* uniform, const Math::Matrix3& m) {
 		GLint pos = getUniformLocation(uniform);
 		if (pos != -1)
-			glUniformMatrix3fv(pos, 1, GL_TRUE, m.getData());
+			glUniformMatrix3fv(pos, 1, GL_FALSE, m.getData());
 	}
 
 	void setUniform(const char* uniform, const Math::Vector3d& v) {

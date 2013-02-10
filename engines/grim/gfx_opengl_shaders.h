@@ -225,6 +225,7 @@ private:
 	Math::Matrix4 _mvpMatrix;
 
 	void setupTexturedCenteredQuad();
+	void setupQuadEBO();
 
 	GLuint _spriteVAO;
 	GLuint _spriteVBO;

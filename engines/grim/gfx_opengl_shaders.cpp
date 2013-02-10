@@ -145,14 +145,14 @@ static GLuint loadShader(const char *base, const char *extension, GLenum shaderT
 	const GLchar *shaderSource = readFile(filename);
 	const GLchar *compatSource = readFile(shaderType == GL_VERTEX_SHADER ? "compat.vertex" : "compat.fragment");
 	const GLchar *shaderSources[] = {
-			"#version 330",
+			"#version 150\n",
 			compatSource,
 			shaderSource
 	};
 
-	GLuint shader = glCreateShader( shaderType );
-	glShaderSource( shader, 3, shaderSources, NULL );
-	glCompileShader( shader );
+	GLuint shader = glCreateShader(shaderType);
+	glShaderSource(shader, 3, shaderSources, NULL);
+	glCompileShader(shader);
 
 	GLint status;
 	glGetShaderiv( shader, GL_COMPILE_STATUS, &status );
@@ -200,6 +200,16 @@ void GfxOpenGLS::setupBigEBO() {
 	_bigQuadEBO = ebo;
 }
 
+void GfxOpenGLS::setupQuadEBO() {
+	unsigned short quad_indices[] = { 0, 2, 2, 0, 2, 3};
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	_quadEBO = ebo;
+}
+
 void GfxOpenGLS::setupTexturedQuad() {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -208,32 +218,20 @@ void GfxOpenGLS::setupTexturedQuad() {
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(textured_quad), textured_quad,
-			GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(textured_quad), textured_quad, GL_STATIC_DRAW);
 	_smushVBO = vbo;
 
+	glUseProgram(_smushProgram);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	GLint posAttrib = glGetAttribLocation(_smushProgram, "position");
 	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
-			0);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	GLint coordAttrib = glGetAttribLocation(_smushProgram, "texcoord");
 	glEnableVertexAttribArray(coordAttrib);
-	glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
-			(void *) (2 * sizeof(float)));
+	glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) (2 * sizeof(float)));
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	byte quad_indices[] = {
-		0, 1, 2,
-		0, 2, 3,
-	};
-
-	GLuint ebo;
-	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	_quadEBO = ebo;
 }
 
 void GfxOpenGLS::setupTexturedCenteredQuad() {
@@ -244,9 +242,9 @@ void GfxOpenGLS::setupTexturedCenteredQuad() {
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(textured_quad_centered), textured_quad_centered,
-			GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(textured_quad_centered), textured_quad_centered, GL_STATIC_DRAW);
 	_spriteVBO = vbo;
+
 	GLint posAttrib = glGetAttribLocation(_actorProgram, "position");
 	glEnableVertexAttribArray(posAttrib);
 	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
@@ -269,6 +267,8 @@ void GfxOpenGLS::setupShaders() {
 	_smushProgram = compileShader("smush");
 	_textProgram = compileShader("text");
 	_actorProgram = compileShader(isEMI ? "emi_actor" : "grim_actor");
+	setupBigEBO();
+	setupQuadEBO();
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
 }
@@ -491,6 +491,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	glEnableVertexAttribArray(colAttrib);
 
 	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_INT, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
@@ -532,7 +533,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	glUniform1i(billboardPos, GL_TRUE);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -739,28 +740,28 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		GLuint vao;
-		glGenVertexArrays( 1, &vao );
-		glBindVertexArray( vao );
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
 		bitmap->_bufferVAO = vao;
 
 		GLuint vbo;
-		glGenBuffers( 1, &vbo );
-		glBindBuffer( GL_ARRAY_BUFFER, vbo );
-		glBufferData( GL_ARRAY_BUFFER, bitmap->_numCoords * 4 * sizeof(float), bitmap->_texc, GL_STATIC_DRAW );
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, bitmap->_numCoords * 4 * sizeof(float), bitmap->_texc, GL_STATIC_DRAW);
 		bitmap->_bufferVBO = vbo;
 
 		glUseProgram(_backgroundProgram);
 
-		GLint posAttrib = glGetAttribLocation( _backgroundProgram, "position" );
-		glEnableVertexAttribArray( posAttrib );
-		glVertexAttribPointer( posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0 );
+		GLint posAttrib = glGetAttribLocation(_backgroundProgram, "position");
+		glEnableVertexAttribArray(posAttrib);
+		glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 
-		GLint coordAttrib = glGetAttribLocation( _backgroundProgram, "texcoord" );
-		glEnableVertexAttribArray( coordAttrib );
-		glVertexAttribPointer( coordAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2*sizeof(float)) );
+		GLint coordAttrib = glGetAttribLocation( _backgroundProgram, "texcoord");
+		glEnableVertexAttribArray(coordAttrib);
+		glVertexAttribPointer(coordAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2*sizeof(float)));
 
 		glBindVertexArray(0);
-		glBindBuffer( GL_ARRAY_BUFFER, 0 );
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	} else {
 		bitmap->_bufferVBO = _smushVBO;
 		bitmap->_bufferVAO = _smushVAO;
@@ -773,6 +774,9 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDr
 		BitmapData *data = bitmap->_data;
 		GLuint *textures = (GLuint *)bitmap->getTexIds();
 
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_ALPHA_TEST);
+
 		int curLayer, frontLayer;
 		if (initialDraw) {
 			curLayer = frontLayer = data->_numLayers - 1;
@@ -784,22 +788,22 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDr
 			frontLayer = 0;
 		}
 
-		glDisable(GL_DEPTH_TEST);
-
 		glUseProgram(_backgroundProgram);
-		glBindVertexArray( data->_bufferVAO );
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
+		glBindVertexArray(data->_bufferVAO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
 		while (frontLayer <= curLayer) {
 			uint32 offset = data->_layers[curLayer]._offset;
 			for (uint32 i = offset; i < offset + data->_layers[curLayer]._numImages; ++i) {
 				glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
 
-				glDrawElements(GL_TRIANGLES, data->_verts[i]._verts / 4 * 6, GL_UNSIGNED_SHORT, (void *)(data->_verts[i]._pos / 4 * 6));
+				unsigned short startVertex = data->_verts[i]._pos / 4 * 6;
+				unsigned short numVertices = data->_verts[i]._verts / 4 * 6;
+				glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_SHORT, (void *)(startVertex * sizeof(unsigned short)));
 			}
 			curLayer--;
 		}
 		glBindVertexArray(0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		return;
 	}
 
@@ -1182,6 +1186,8 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 	GLint offsetPos = glGetUniformLocation(_smushProgram, "offsetXY");
 	GLint sizePos = glGetUniformLocation(_smushProgram, "sizeWH");
 
+	glBindBuffer(GL_ARRAY_BUFFER, _smushVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	int curTexIdx = 0;
 	for (int y = 0; y < _smushHeight; y += (int)(BITMAP_TEXTURE_SIZE * _scaleH)) {
 		for (int x = 0; x < _smushWidth; x += (int)(BITMAP_TEXTURE_SIZE * _scaleW)) {
@@ -1189,15 +1195,14 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 
 			glUniform2f(offsetPos, float(x + offsetX) / _screenWidth, float(y + offsetY) / _screenHeight);
 			glUniform2f(sizePos, BITMAP_TEXTURE_SIZE * _scaleW / _screenWidth, BITMAP_TEXTURE_SIZE * _scaleH / _screenHeight);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			curTexIdx++;
 		}
 	}
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 
@@ -1293,6 +1298,7 @@ void GfxOpenGLS::createEMIModel(EMIModel *model) {
 	}
 
 	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void GfxOpenGLS::createModel(Mesh *mesh) {
@@ -1344,6 +1350,7 @@ void GfxOpenGLS::createModel(Mesh *mesh) {
 	}
 
 	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 }

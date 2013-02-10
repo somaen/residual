@@ -476,8 +476,11 @@ void GfxOpenGLS::createMaterial(Texture *material, const char *data, const CMap 
 	} else if (material->_colorFormat == BM_BGRA) {
 		format = GL_BGRA;
 		internalFormat = GL_RGBA;
-#ifndef USE_GLES2
 	} else {	// The only other colorFormat we load right now is BGR
+#ifdef USE_GLES2
+		format = GL_RGB;
+		internalFormat = GL_RGB;
+#else
 		format = GL_BGR;
 		internalFormat = GL_RGB;
 #endif

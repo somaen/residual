@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,44 +20,22 @@
  *
  */
 
-#include "config.h"
+#ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_KEYBOARD_H
+#define BACKENDS_PLATFORM_IPHONE_IPHONE_KEYBOARD_H
 
-#define USE_GLES2
+#include <UIKit/UIKit.h>
+#include <UIKit/UITextView.h>
 
-#if defined(USE_GLES2)
-#define GL_GLEXT_PROTOTYPES
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
-//#include <GLES2/gl2.h>
-//#include <GLES2/gl2ext.h>
-#undef GL_GLEXT_PROTOTYPES
-
-#define glMapBuffer glMapBufferOES
-#define glUnmapBuffer glUnmapBufferOES
-#define GL_WRITE_ONLY GL_WRITE_ONLY_OES
-
-#define GL_BGRA GL_BGRA_EXT
-#else
-#include <GL/glew.h>
-#endif
-
-namespace Graphics {
-
-class FrameBuffer {
-public:
-	FrameBuffer(GLuint texture_name, uint width, uint height);
-	~FrameBuffer();
-
-	void attach(uint actual_width, uint actual_height);
-	void detach();
-
-	GLuint getColorTextureName() const { return _color_texture_name; }
-
-private:
-	GLuint _color_texture_name;
-	GLuint _depth_render_buffer;
-	GLuint _frame_buffer;
-	uint _width, _height;
-};
-
+@interface SoftKeyboard : UIView {
+	id inputDelegate;
+	UITextView *inputView;
 }
+
+- (id)initWithFrame:(CGRect)frame;
+- (UITextView *)inputView;
+- (void)setInputDelegate:(id)delegate;
+- (void)handleKeyPress:(unichar)c;
+
+@end
+
+#endif

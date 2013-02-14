@@ -322,7 +322,7 @@ void GfxOpenGLS::clearShadowMode() {
 }
 
 bool GfxOpenGLS::isShadowModeActive() {
-
+	return false;
 }
 
 void GfxOpenGLS::setShadowColor(byte r, byte g, byte b) {
@@ -935,7 +935,7 @@ void GfxOpenGLS::destroyTextObject(TextObject *text) {
 
 
 Bitmap *GfxOpenGLS::getScreenshot(int w, int h) {
-
+	return NULL;
 }
 
 void GfxOpenGLS::storeDisplay() {

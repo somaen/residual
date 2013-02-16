@@ -84,10 +84,12 @@ void GfxBase::renderZBitmaps(bool render) {
 }
 
 #ifndef USE_OPENGL
+#ifndef USE_OPENGL_SHADERS
 // Allow CreateGfxOpenGL to be called even if OpenGL isn't included
 GfxBase *CreateGfxOpenGL() {
 	return CreateGfxTinyGL();
 }
+#endif // USE_OPENGL_SHADERS
 #endif // USE_OPENGL
 
 void SpecialtyMaterial::select() const {

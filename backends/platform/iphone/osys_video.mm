@@ -27,6 +27,7 @@
 #include "iphone_video.h"
 
 #include "graphics/conversion.h"
+#include "graphics/pixelbuffer.h"
 
 void OSystem_IPHONE::initVideoContext() {
 	_videoContext = [g_iPhoneViewInstance getVideoContext];
@@ -66,9 +67,20 @@ Common::List<Graphics::PixelFormat> OSystem_IPHONE::getSupportedFormats() const 
 	return list;
 }
 #endif
+void OSystem_IPHONE::launcherInitSize(uint width, uint height) {
+	setupScreen(width, height, true, true);
+}
 
 void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+}
+
+Graphics::PixelBuffer OSystem_IPHONE::setupScreen(int width, int height, bool fullscreen, bool accel3d) {
 	//printf("initSize(%u, %u, %p)\n", width, height, (const void *)format);
+
+	Graphics::PixelFormat pFormat = Graphics::createPixelFormat<565>();
+	Graphics::PixelFormat *format = &pFormat;
+	_residualVMFrame.free();
+	_residualVMFrame.create(width, height, pFormat);
 
 	_videoContext->screenWidth = width;
 	_videoContext->screenHeight = height;
@@ -110,6 +122,10 @@ void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelForm
 	_fullScreenIsDirty = false;
 	dirtyFullScreen();
 	_mouseCursorPaletteEnabled = false;
+	Graphics::Surface screenSurface;
+	_pixelBuffer.set(pFormat, (byte *)_residualVMFrame.pixels);
+	
+	return _pixelBuffer;
 }
 
 void OSystem_IPHONE::beginGFXTransaction() {
@@ -210,11 +226,12 @@ void OSystem_IPHONE::copyRectToScreen(const void *buf, int pitch, int x, int y, 
 }
 
 void OSystem_IPHONE::updateScreen() {
-	if (_dirtyRects.size() == 0 && _dirtyOverlayRects.size() == 0 && !_mouseDirty)
-		return;
+//	if (_dirtyRects.size() == 0 && _dirtyOverlayRects.size() == 0 && !_mouseDirty)
+//		return;
 
 	//printf("updateScreen(): %i dirty rects.\n", _dirtyRects.size());
-
+	copyRectToScreen(_residualVMFrame.pixels, _residualVMFrame.pitch, 0, 0, _residualVMFrame.w, _residualVMFrame.h);
+	dirtyFullScreen();
 	internUpdateScreen();
 	_mouseDirty = false;
 	_fullScreenIsDirty = false;

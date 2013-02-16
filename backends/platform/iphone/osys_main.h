@@ -31,6 +31,7 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
+#include "graphics/pixelbuffer.h"
 
 #include <AudioToolbox/AudioQueue.h>
 
@@ -64,6 +65,8 @@ protected:
 	VideoContext *_videoContext;
 
 	Graphics::Surface _framebuffer;
+	Graphics::Surface _residualVMFrame;
+	Graphics::PixelBuffer _pixelBuffer;
 
 	// For signaling that screen format set up might have failed.
 	TransactionError _gfxTransactionError;
@@ -190,7 +193,9 @@ public:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
-
+	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	bool lockMouse(bool lock) { return true; } // TODO
+	void launcherInitSize(uint width, uint height);
 protected:
 	void initVideoContext();
 	void updateOutputSurface();

@@ -118,6 +118,9 @@ GfxBase *CreateGfxOpenGL() {
 GfxOpenGLS::GfxOpenGLS() {
 	_smushTexId = 0;
 	_matrixStack.push(Math::Matrix4());
+	_fov = -1.0;
+	_nclip = -1;
+	_fclip = -1;
 }
 
 GfxOpenGLS::~GfxOpenGLS() {

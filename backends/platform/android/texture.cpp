@@ -98,7 +98,7 @@ void GLESBaseTexture::initGL() {
 	}
 
 	const char* attributes[] = { "position", "texcoord", NULL };
-	g_box_shader = Graphics::Shader::fromStrings("box", Graphics::BuiltinShaders::box_vertex, Graphics::BuiltinShaders::box_fragment, attributes);
+	g_box_shader = Graphics::Shader::fromStrings("box", Graphics::BuiltinShaders::boxVertex, Graphics::BuiltinShaders::boxFragment, attributes);
 	g_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	g_box_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	g_box_shader->enableVertexAttribute("texcoord", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);

@@ -77,6 +77,34 @@ static float textured_quad_centered[] = {
 	+0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
 };
 
+static float cube_coords[] = {
+		-0.5, -0.5, -0.5,
+		-0.5, -0.5, +0.5,
+		-0.5, +0.5, -0.5,
+		-0.5, +0.5, +0.5,
+		+0.5, -0.5, -0.5,
+		+0.5, -0.5, +0.5,
+		+0.5, +0.5, -0.5,
+		+0.5, +0.5, +0.5
+};
+
+static unsigned short cube_indices[] = {
+		0, 1, 3,
+		0, 2, 3,
+		0, 1, 5,
+		0, 4, 5,
+		0, 2, 6,
+		0, 4, 6,
+		1, 3, 7,
+		1, 5, 7,
+		2, 3, 7,
+		2, 6, 7,
+		4, 5, 7,
+		4, 6, 7,
+};
+
+static GLuint cubeEBO;
+
 // taken from glm
 Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
 	Math::Vector3d f = (interest - pos).getNormalized();
@@ -121,6 +149,7 @@ Math::Matrix4 makeRotationMatrix(const Math::Angle& angle, Math::Vector3d axis) 
 	rotate(2, 2) = c + temp.z() * axis.z();
 
 	rotate.transpose();
+
 	return rotate;
 }
 
@@ -196,6 +225,12 @@ void GfxOpenGLS::setupShaders() {
 	_actorProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 	_spriteProgram = _actorProgram->clone();
 
+	GLuint vertsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(cube_coords), cube_coords);
+	cubeEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices);
+	_actorProgram->enableVertexAttribute("position", vertsVBO, 3, GL_FLOAT, true, 3 * sizeof(float), 0);
+	_actorProgram->disableVertexAttribute("texcoord", Math::Vector3d(0,0,0));
+	_actorProgram->disableVertexAttribute("color", Math::Vector4d(1,1,1,0.3));
+
 	setupBigEBO();
 	setupQuadEBO();
 	setupTexturedQuad();
@@ -265,7 +300,7 @@ void GfxOpenGLS::positionCamera(const Math::Vector3d &pos, const Math::Vector3d 
 		_currentPos = pos;
 		_currentQuat = Math::Quaternion(interest.x(), interest.y(), interest.z(), roll);
 	} else {
-		Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, -1));
+		Math::Matrix4 viewMatrix = makeRotationMatrix(Math::Angle(roll), Math::Vector3d(0, 0, 1));
 		Math::Vector3d up_vec(0, 0, 1);
 
 		if (pos.x() == interest.x() && pos.y() == interest.y())
@@ -317,18 +352,19 @@ void GfxOpenGLS::startActorDraw(const Math::Vector3d &pos, float scale, const Ma
 
 		modelMatrix.transpose();
 		modelMatrix.setPosition(pos);
-		_mvpMatrix = _projMatrix * _viewMatrix * modelMatrix;
+		_mvpMatrix = _viewMatrix * modelMatrix;
+		_mvpMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
 		_actorProgram->setUniform("projMatrix", _projMatrix);
 		_actorProgram->setUniform("viewMatrix", _viewMatrix);
 		_actorProgram->setUniform("extraMatrix", extraMatrix);
+		_actorProgram->setUniform("mvpMatrix", _mvpMatrix);
 	}
 }
 
 
 void GfxOpenGLS::finishActorDraw() {
-	glDisable(GL_DEPTH_TEST);
 }
 
 void GfxOpenGLS::setShadow(Shadow *shadow) {
@@ -372,14 +408,12 @@ void GfxOpenGLS::translateViewpointStart() {
 void GfxOpenGLS::translateViewpoint(const Math::Vector3d &vec) {
 	Math::Matrix4 temp;
 	temp.setPosition(vec);
+	temp.transpose();
 	_matrixStack.top() = _matrixStack.top() * temp;
 }
 
-
-
-// Taken from glm
 void GfxOpenGLS::rotateViewpoint(const Math::Angle &angle, const Math::Vector3d &axis_) {
-	_matrixStack.top() = _matrixStack.top() * makeRotationMatrix(angle, axis_);
+//	_matrixStack.top() = _matrixStack.top() * makeRotationMatrix(angle, axis_);
 }
 
 void GfxOpenGLS::translateViewpointFinish() {
@@ -396,12 +430,8 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
 
-	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-	if (!face->_hasTexture) {
-		int x = 3;
-	}
 	model->_shader->use();
 	model->_shader->setUniform("textured", face->_hasTexture ? GL_TRUE : GL_FALSE);
 
@@ -414,24 +444,28 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void GfxOpenGLS::drawTestCube() {
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	_actorProgram->setUniform("textured", GL_FALSE);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeEBO);
+
+	glDrawElements(GL_TRIANGLES, sizeof(cube_indices) / sizeof(*cube_indices), GL_UNSIGNED_SHORT, 0);
+}
+
 void GfxOpenGLS::drawModelFace(const Mesh *mesh, const MeshFace *face) {
-	// TODO
-//	glEnable(GL_DEPTH_TEST);
-//
-//	glBindVertexArray(mesh->_modelVAO);
-//	_actorProgram->setUniform("textured", /* face->_texVertices ? GL_TRUE : */ GL_FALSE);
-//
-////	GLint extraMatrixPos = _actorProgram->getUniformLocation("extraMatrix");
-////	glUniformMatrix4fv(extraMatrixPos, GL_TRUE, 1, _matrixStack.top().getData());
-//
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
-//
-//	glDrawElements(GL_TRIANGLES, face->_numVertices, GL_UNSIGNED_INT, 0);
-//
-//	glDisable(GL_DEPTH_TEST);
+	Graphics::Shader * actorShader = mesh->_shader;
+	actorShader->use();
+	actorShader->setUniform("textured", face->_texVertices ? GL_TRUE : GL_FALSE);
+	actorShader->setUniform("extraMatrix", _matrixStack.top());
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
+
+	glDrawElements(face->_numVertices == 3 ? GL_TRIANGLES : GL_TRIANGLE_FAN, face->_numVertices, GL_UNSIGNED_INT, 0);
 }
 
 void GfxOpenGLS::drawSprite(const Sprite *sprite) {
+	return;
 	glDisable(GL_DEPTH_TEST);
 
 	_spriteProgram->use();
@@ -447,6 +481,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -668,6 +703,7 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, bool initialDr
 		}
 		return;
 	}
+
 
 	int format = bitmap->getFormat();
 	if ((format == 1 && !_renderBitmaps) || (format == 5 && !_renderZBitmaps)) {
@@ -919,6 +955,7 @@ void GfxOpenGLS::drawTextObject(const TextObject *text) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bigQuadEBO);
 	glDrawElements(GL_TRIANGLES, td->characters * 6, GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void GfxOpenGLS::destroyTextObject(TextObject *text) {
@@ -1032,6 +1069,7 @@ void GfxOpenGLS::drawMovieFrame(int offsetX, int offsetY) {
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -1094,41 +1132,20 @@ void GfxOpenGLS::createEMIModel(EMIModel *model) {
 }
 
 void GfxOpenGLS::createModel(Mesh *mesh) {
-	return;
-	// TODO
-//	GLuint vao;
-//	glGenVertexArrays(1, &vao);
-//	glBindVertexArray(vao);
-//	mesh->_modelVAO = vao;
-//
-//	mesh->_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, mesh->_numVertices * 3 * sizeof(float), mesh->_vertices, GL_STREAM_DRAW);
-//
-//	//	mesh->_normalsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, model->_numVertices * 3 * sizeof(float), model->_normals, GL_STATIC_DRAW);;
-//
-//	mesh->_texCoordsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, mesh->_numVertices * 2 * sizeof(float), mesh->_textureVerts, GL_STATIC_DRAW);
-//
-//	_actorProgram->use();
-//	GLint posAttrib = _actorProgram->getAttribLocation("position");
-//	glEnableVertexAttribArray(posAttrib);
-//	glBindBuffer(GL_ARRAY_BUFFER, mesh->_verticesVBO);
-//	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-//
-//	GLint texAttrib = _actorProgram->getAttribLocation("texcoord");
-//	glEnableVertexAttribArray(texAttrib);
-//	glBindBuffer(GL_ARRAY_BUFFER, mesh->_texCoordsVBO);
-//	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
-//
-//	GLint colAttrib = _actorProgram->getAttribLocation("color");
-//	glDisableVertexAttribArray(colAttrib);
-//	glVertexAttrib4f(colAttrib, 1.f, 0.f, 1.f, 1.f);
-//
-//	for (int i = 0; i < mesh->_numFaces; ++i) {
-//		MeshFace * face = &mesh->_faces[i];
-//		face->_indicesEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_numVertices * sizeof(uint32), face->_vertices, GL_STATIC_DRAW);
-//	}
-//
-//	glBindVertexArray(0);
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	mesh->_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, mesh->_numVertices * 3 * sizeof(float), mesh->_vertices, GL_STREAM_DRAW);
+	mesh->_texCoordsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, mesh->_numVertices * 2 * sizeof(float), mesh->_textureVerts, GL_STATIC_DRAW);
+//	mesh->_normalsVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, mesh->_numVertices * 3 * sizeof(float), model->_normals, GL_STATIC_DRAW);;
+
+	Graphics::Shader *shader = _actorProgram->clone();
+	mesh->_shader = shader;
+	shader->enableVertexAttribute("position", mesh->_verticesVBO, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	shader->enableVertexAttribute("texcoord", mesh->_texCoordsVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	shader->disableVertexAttribute("color", Math::Vector4d(1.f, 1.f, 1.f, 1.f));
+
+	for (int i = 0; i < mesh->_numFaces; ++i) {
+		MeshFace * face = &mesh->_faces[i];
+		face->_indicesEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_numVertices * sizeof(uint32), face->_vertices, GL_STATIC_DRAW);
+	}
 }
 
 }

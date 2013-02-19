@@ -92,6 +92,8 @@ public:
 	virtual void selectMaterial(const Texture *material);
 	virtual void destroyMaterial(Texture *material);
 
+	virtual void drawTestCube();
+
 	/**
 	 * Prepares a bitmap for drawing
 	 * performs any format conversions needed for the renderer,

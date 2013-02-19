@@ -260,6 +260,7 @@ public:
 	virtual void clearBuffer(int buffer) {}
 	virtual void drawBuffers() {}
 	virtual void refreshBuffers() {}
+	virtual void drawTestCube() {}
 
 protected:
 	static const int _gameHeight = 480;

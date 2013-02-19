@@ -47,12 +47,12 @@ public:
 	void attach(uint actual_width, uint actual_height);
 	void detach();
 
-	GLuint getColorTextureName() const { return _color_texture_name; }
+	GLuint getColorTextureName() const { return _colorTexture; }
 
 private:
-	GLuint _color_texture_name;
-	GLuint _depth_render_buffer;
-	GLuint _frame_buffer;
+	GLuint _colorTexture;
+	GLuint _depthRenderBuffer;
+	GLuint _frameBuffer;
 	uint _width, _height;
 };
 

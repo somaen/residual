@@ -69,19 +69,19 @@ extern void checkGlError(const char *expr, const char *file, int line);
 
 namespace Graphics {
 
-FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height) : _color_texture_name(texture_name), _width(width), _height(height) {
-GLCALL(	glGenFramebuffers(1, &_frame_buffer));
-GLCALL(	glGenRenderbuffers(1, &_depth_render_buffer));
+FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height) : _colorTexture(texture_name), _width(width), _height(height) {
+GLCALL(	glGenFramebuffers(1, &_frameBuffer));
+GLCALL(	glGenRenderbuffers(1, &_depthRenderBuffer));
 
-GLCALL(	glBindRenderbuffer(GL_RENDERBUFFER, _depth_render_buffer));
+GLCALL(	glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer));
 GLCALL(	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height));
 GLCALL(	glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
-GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, _frame_buffer));
+GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
 GLCALL(	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_name, 0));
-GLCALL(	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depth_render_buffer));
+GLCALL(	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depthRenderBuffer));
 
-GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, _frame_buffer));
+GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
 	GLenum status=glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status != GL_FRAMEBUFFER_COMPLETE)
 		error("Framebuffer is not complete! status: %d", status);
@@ -91,12 +91,12 @@ GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 FrameBuffer::~FrameBuffer() {
-GLCALL(	glDeleteRenderbuffers(1, &_depth_render_buffer));
-GLCALL(	glDeleteFramebuffers(1, &_frame_buffer));
+GLCALL(	glDeleteRenderbuffers(1, &_depthRenderBuffer));
+GLCALL(	glDeleteFramebuffers(1, &_frameBuffer));
 }
 
 void FrameBuffer::attach(uint actual_width, uint actual_height) {
-GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, _frame_buffer));
+GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer));
 GLCALL(	glViewport(0,0, actual_width, actual_height));
 
 GLCALL(	glClearColor(0, 0, 0, 1.0f));
@@ -105,7 +105,7 @@ GLCALL(	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 void FrameBuffer::detach() {
 GLCALL(	glBindFramebuffer(GL_FRAMEBUFFER, 0));
-GLCALL(	glBindTexture(GL_TEXTURE_2D, _color_texture_name));
+GLCALL(	glBindTexture(GL_TEXTURE_2D, _colorTexture));
 GLCALL(	glGenerateMipmap(GL_TEXTURE_2D));
 GLCALL(	glBindTexture(GL_TEXTURE_2D, 0));
 }

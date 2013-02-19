@@ -79,7 +79,7 @@ static float textured_quad_centered[] = {
 
 // taken from glm
 Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& interest, const Math::Vector3d& up) {
-	Math::Vector3d f = (pos - interest).getNormalized();
+	Math::Vector3d f = (interest - pos).getNormalized();
 	Math::Vector3d u = up.getNormalized();
 	Math::Vector3d s = Math::Vector3d::crossProduct(f, u).getNormalized();
 	u = Math::Vector3d::crossProduct(s, f);
@@ -94,9 +94,10 @@ Math::Matrix4 makeLookMatrix(const Math::Vector3d& pos, const Math::Vector3d& in
 	look(0,2) = -f.x();
 	look(1,2) = -f.y();
 	look(2,2) = -f.z();
-	look(3,0) = -Math::Vector3d::dotProduct(s, interest);
-	look(3,1) = -Math::Vector3d::dotProduct(u, interest);
-	look(3,2) =  Math::Vector3d::dotProduct(f, interest);
+	look(3,0) = -Math::Vector3d::dotProduct(s, pos);
+	look(3,1) = -Math::Vector3d::dotProduct(u, pos);
+	look(3,2) =  Math::Vector3d::dotProduct(f, pos);
+
 	look.transpose();
 
 	return look;
@@ -314,6 +315,7 @@ void GfxOpenGLS::startActorDraw(const Math::Vector3d &pos, float scale, const Ma
 	} else {
 		Math::Matrix4 extraMatrix;
 
+		modelMatrix.transpose();
 		modelMatrix.setPosition(pos);
 		_mvpMatrix = _projMatrix * _viewMatrix * modelMatrix;
 

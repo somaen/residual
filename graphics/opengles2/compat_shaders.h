@@ -26,7 +26,7 @@
 namespace Graphics {
 namespace BuiltinShaders {
 
-static const char *compat_vertex =
+static const char *compatVertex =
 	"#ifdef GL_ES\n"
 	"mediump float round(in mediump float x) {\n"
 	"	return sign(x) * floor(abs(x) + .5);\n"
@@ -35,7 +35,7 @@ static const char *compat_vertex =
 	"#define out varying\n"
 	"#endif\n";
 
-static const char *compat_fragment =
+static const char *compatFragment =
 	"#ifdef GL_ES\n"
 		"#define in varying\n"
 		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"

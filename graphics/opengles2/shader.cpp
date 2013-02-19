@@ -58,7 +58,7 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 
 static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
 	const GLchar *compatSource =
-			shaderType == GL_VERTEX_SHADER ? Graphics::BuiltinShaders::compat_vertex : Graphics::BuiltinShaders::compat_fragment;
+			shaderType == GL_VERTEX_SHADER ? Graphics::BuiltinShaders::compatVertex : Graphics::BuiltinShaders::compatFragment;
 	const GLchar *shaderSources[] = {
 		"#version 100\n",
 		compatSource,

@@ -23,7 +23,7 @@ void main()
 
 	Color = color;
 	if (textured) {
-		Texcoord = texcoord / texScale;
+		Texcoord = vec2(0.0, 1.0) + (texcoord / texScale);
 	} else {
 		Texcoord = vec2(0.0, 0.0);
 	}

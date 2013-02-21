@@ -479,7 +479,7 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 		}
 
 		actorShader->setUniform("textured", face->_texVertices ? GL_TRUE : GL_FALSE);
-		actorShader->setUniform("texScale", Math::Vector2d(_selectedTexture->_width, -1.f * _selectedTexture->_height));
+		actorShader->setUniform("texScale", Math::Vector2d(_selectedTexture->_width, _selectedTexture->_height));
 
 		glDrawArrays(GL_TRIANGLES, face->_start, faces);
 

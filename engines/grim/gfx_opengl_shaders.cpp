@@ -456,6 +456,9 @@ void GfxOpenGLS::drawTestCube() {
 
 void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 	Graphics::Shader * actorShader = mesh->_shader;
+	if (!actorShader)
+		return;
+
 	actorShader->use();
 	actorShader->setUniform("extraMatrix", _matrixStack.top());
 
@@ -1179,6 +1182,11 @@ void GfxOpenGLS::createModel(Mesh *mesh) {
 			meshInfo.push_back(GrimVertex(VERT(j-1), TEXVERT(j-1)));
 			meshInfo.push_back(GrimVertex(VERT(j), TEXVERT(j)));
 		}
+	}
+
+	if (meshInfo.empty()) {
+		mesh->_shader = NULL;
+		return;
 	}
 
 	GLuint meshInfoVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, meshInfo.size() * sizeof(GrimVertex), &meshInfo[0], GL_STATIC_DRAW);

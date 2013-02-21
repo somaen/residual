@@ -163,6 +163,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_fov = -1.0;
 	_nclip = -1;
 	_fclip = -1;
+	_selectedTexture = NULL;
 #ifdef USE_GLES2
 	// FIXME: We cannot render depth bitmaps yet.
 	_renderZBitmaps = false;
@@ -475,6 +476,7 @@ void GfxOpenGLS::drawMesh(const Mesh *mesh) {
 		}
 
 		actorShader->setUniform("textured", face->_texVertices ? GL_TRUE : GL_FALSE);
+		actorShader->setUniform("texScale", Math::Vector2d(_selectedTexture->_width, -1.f * _selectedTexture->_height));
 
 		glDrawArrays(GL_TRIANGLES, face->_start, faces);
 
@@ -588,12 +590,7 @@ void GfxOpenGLS::selectMaterial(const Texture *material) {
 		glEnable(GL_BLEND);
 	}
 
-//	// Grim has inverted tex-coords, EMI doesn't
-//	if (g_grim->getGameType() != GType_MONKEY4) {
-//		glMatrixMode(GL_TEXTURE);
-//		glLoadIdentity();
-//		glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
-//	}
+	_selectedTexture = const_cast<Texture *>(material);
 }
 
 void GfxOpenGLS::destroyMaterial(Texture *material) {

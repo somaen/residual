@@ -558,7 +558,7 @@ void Mesh::sortFaces() {
 		return;
 
 	MeshFace *newFaces = new MeshFace[_numFaces];
-	bool copied[_numFaces];
+	bool *copied = new bool[_numFaces];
 	for (int i = 0; i < _numFaces; ++i) {
 		copied[i] = false;
 	}
@@ -579,6 +579,7 @@ void Mesh::sortFaces() {
 	}
 
 	delete[] _faces;
+	delete[] copied;
 	_faces = newFaces;
 }
 

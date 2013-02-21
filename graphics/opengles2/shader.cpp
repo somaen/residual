@@ -45,7 +45,7 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 	glShaderSource(shader, 1, &shaderSource, NULL);
 	glCompileShader(shader);
 
-	GLint status;
+	GLint status = 0;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	if (status != GL_TRUE) {
 		char buffer[512];

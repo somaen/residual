@@ -67,12 +67,10 @@ struct VideoContext {
 	// Game screen state
 	bool asprectRatioCorrection;
 	uint screenWidth, screenHeight;
-	Graphics::Surface screenTexture;
 
 	// Overlay state
 	bool overlayVisible;
 	uint overlayWidth, overlayHeight;
-	Graphics::Surface overlayTexture;
 
 	// Mouse cursor state
 	uint mouseX, mouseY;

@@ -20,21 +20,33 @@
  *
  */
 
+#ifndef GRAPHICS_FRAMEBUFFER_H
+#define GRAPHICS_FRAMEBUFFER_H
+
 #include "config.h"
 
-#if defined(USE_GLES2)
+#define USE_GLES2
+
+#ifdef USE_GLES2
 #define GL_GLEXT_PROTOTYPES
+#if defined(IPHONE)
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#else
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#endif
 #undef GL_GLEXT_PROTOTYPES
 
 #define glMapBuffer glMapBufferOES
 #define glUnmapBuffer glUnmapBufferOES
 #define GL_WRITE_ONLY GL_WRITE_ONLY_OES
 
+#ifndef GL_BGRA
 #define GL_BGRA GL_BGRA_EXT
-#else
-#include <GL/glew.h>
+#endif
+#elif !defined(USE_GLES2)
+//#include <GL/glew.h>
 #endif
 
 namespace Graphics {
@@ -57,3 +69,5 @@ private:
 };
 
 }
+
+#endif

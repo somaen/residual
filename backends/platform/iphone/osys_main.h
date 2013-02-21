@@ -32,6 +32,8 @@
 #include "graphics/colormasks.h"
 #include "graphics/palette.h"
 #include "graphics/pixelbuffer.h"
+#include "graphics/opengles2/framebuffer.h" // Not needed
+#include "texture.h"
 
 #include <AudioToolbox/AudioQueue.h>
 
@@ -63,10 +65,6 @@ protected:
 	Audio::MixerImpl *_mixer;
 
 	VideoContext *_videoContext;
-
-	Graphics::Surface _framebuffer;
-	Graphics::Surface _residualVMFrame;
-	Graphics::PixelBuffer _pixelBuffer;
 
 	// For signaling that screen format set up might have failed.
 	TransactionError _gfxTransactionError;
@@ -111,13 +109,40 @@ protected:
 	bool _fullScreenIsDirty;
 	bool _fullScreenOverlayIsDirty;
 	int _screenChangeCount;
-
+	
+	GLESBaseTexture *_overlayTexture;
+	GLESBaseTexture *_mouseTexture;
+	GLESBaseTexture *_mouseTexturePalette;
+	GLES5551Texture *_mouseTextureRGB;
+	Common::Point _mouseHotspot;
+	uint32 _mouseKeycolor;
+	int _mouseTargetscale;
+	bool _useMousePalette;
+	bool _showMouse;
+	// Game layer
+	GLESBaseTexture *_gameTexture;
+	Graphics::PixelBuffer _gamePbuf;
+	Graphics::FrameBuffer * _frameBuffer;
+	enum FixupType {
+		kClear = 0,		// glClear
+		kClearSwap,		// glClear + swapBuffers
+		kClearUpdate	// glClear + updateScreen
+	};
+	void clearScreen(FixupType type, byte count = 1);
+	void updateScreenRect();
+	void updateEventScale();
+	bool _opengl;
+	bool _fullscreen;
+	bool _forceRedraw;
 public:
 
 	OSystem_IPHONE();
 	virtual ~OSystem_IPHONE();
 
 	virtual void initBackend();
+	void initSurface();
+	void initOverlay();
+	void initViewport();
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -135,8 +160,12 @@ public:
 	virtual int16 getWidth();
 
 #ifdef USE_RGB_COLOR
-	virtual Graphics::PixelFormat getScreenFormat() const { return _framebuffer.format; }
+	virtual Graphics::PixelFormat getScreenFormat() const { return _gameTexture->getPixelFormat(); }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+#endif
+#ifdef USE_RGB_COLOR
+	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
+	void initTexture(GLESBaseTexture **texture, uint width, uint height, const Graphics::PixelFormat *format);
 #endif
 
 	virtual PaletteManager *getPaletteManager() { return this; }
@@ -193,10 +222,12 @@ public:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
-	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) { return setupScreen(screenW, screenH, fullscreen, accel3d, true); }
+	virtual Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d, bool isGame);
 	bool lockMouse(bool lock) { return true; } // TODO
 	void launcherInitSize(uint width, uint height);
 protected:
+	void setCursorPaletteInternal(const byte *colors, uint start, uint num);
 	void initVideoContext();
 	void updateOutputSurface();
 
@@ -221,6 +252,10 @@ protected:
 
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
 	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
+
+	// Convenience functions since we compile as Objective-C++
+	DisposeAfterUse::Flag getDisposeAfterUseYes();
+	DisposeAfterUse::Flag getDisposeAfterUseNo();
 };
 
 #endif

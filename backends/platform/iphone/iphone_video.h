@@ -28,8 +28,8 @@
 #include <QuartzCore/QuartzCore.h>
 
 #include <OpenGLES/EAGL.h>
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 
 #include "iphone_keyboard.h"
 #include "iphone_common.h"
@@ -55,12 +55,8 @@
 	GLint _renderBufferWidth;
 	GLint _renderBufferHeight;
 
-	GLfloat _gameScreenVertCoords[4 * 2];
-	GLfloat _gameScreenTexCoords[4 * 2];
 	CGRect _gameScreenRect;
 
-	GLfloat _overlayVertCoords[4 * 2];
-	GLfloat _overlayTexCoords[4 * 2];
 	CGRect _overlayRect;
 
 	GLfloat _mouseVertCoords[4 * 2];
@@ -75,6 +71,9 @@
 	UITouch *_secondTouch;
 }
 
+- (GLint)getRenderBufferWidth;
+- (GLint)getRenderBufferHeight;
+
 - (id)initWithFrame:(struct CGRect)frame;
 
 - (VideoContext *)getVideoContext;
@@ -82,6 +81,7 @@
 - (void)drawRect:(CGRect)frame;
 
 - (void)createScreenTexture;
+- (void)createThreadContext;
 - (void)initSurface;
 - (void)setViewTransformation;
 

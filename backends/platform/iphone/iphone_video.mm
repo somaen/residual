@@ -59,10 +59,10 @@ bool iPhone_isHighResDevice() {
 
 void iPhone_updateScreen() {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
-	if (!g_needsScreenUpdate) {
+//	if (!g_needsScreenUpdate) {
 		g_needsScreenUpdate = 1;
-		[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
-	}
+		[g_iPhoneViewInstance updateSurface];
+//	}
 }
 
 bool iPhone_fetchEvent(InternalEvent *event) {
@@ -98,6 +98,11 @@ const char *iPhone_getDocumentsDir() {
 	return &_videoContext;
 }
 
+- (void)createThreadContext { // Not used
+	[EAGLContext setCurrentContext:_context];
+	return;
+}
+
 - (void)createContext {
 	CAEAGLLayer *eaglLayer = (CAEAGLLayer *)self.layer;
 
@@ -105,7 +110,7 @@ const char *iPhone_getDocumentsDir() {
 	eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 	                                [NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
 
-	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+	_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:nil];
 
 	// In case creating the OpenGL ES context failed, we will error out here.
 	if (_context == nil) {
@@ -114,37 +119,27 @@ const char *iPhone_getDocumentsDir() {
 	}
 
 	if ([EAGLContext setCurrentContext:_context]) {
-		glGenFramebuffersOES(1, &_viewFramebuffer); printOpenGLError();
-		glGenRenderbuffersOES(1, &_viewRenderbuffer); printOpenGLError();
+		glGenFramebuffers(1, &_viewFramebuffer); printOpenGLError();
+		glGenRenderbuffers(1, &_viewRenderbuffer); printOpenGLError();
 
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer); printOpenGLError();
-		glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-		[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
+		glBindFramebuffer(GL_FRAMEBUFFER, _viewFramebuffer); printOpenGLError();
+		glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer); printOpenGLError();
+		[_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:(id<EAGLDrawable>)self.layer];
 
-		glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _viewRenderbuffer); printOpenGLError();
 
 		// Retrieve the render buffer size. This *should* match the frame size,
 		// i.e. g_fullWidth and g_fullHeight.
-		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_renderBufferWidth); printOpenGLError();
-		glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_renderBufferHeight); printOpenGLError();
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &_renderBufferWidth); printOpenGLError();
+		glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &_renderBufferHeight); printOpenGLError();
 
-		if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
-			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 			return;
 		}
 
 		_videoContext.overlayHeight = _renderBufferWidth;
 		_videoContext.overlayWidth = _renderBufferHeight;
-		uint overlayTextureWidth = getSizeNextPOT(_videoContext.overlayHeight);
-		uint overlayTextureHeight = getSizeNextPOT(_videoContext.overlayWidth);
-
-		// Since the overlay size won't change the whole run, we can
-		// precalculate the texture coordinates for the overlay texture here
-		// and just use it later on.
-		_overlayTexCoords[2] = _overlayTexCoords[6] = _videoContext.overlayWidth / (GLfloat)overlayTextureWidth;
-		_overlayTexCoords[5] = _overlayTexCoords[7] = _videoContext.overlayHeight / (GLfloat)overlayTextureHeight;
-
-		_videoContext.overlayTexture.create(overlayTextureWidth, overlayTextureHeight, Graphics::createPixelFormat<5551>());
 
 		glViewport(0, 0, _renderBufferWidth, _renderBufferHeight); printOpenGLError();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); printOpenGLError();
@@ -153,8 +148,7 @@ const char *iPhone_getDocumentsDir() {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_TEXTURE_2D); printOpenGLError();
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY); printOpenGLError();
-		glEnableClientState(GL_VERTEX_ARRAY); printOpenGLError();
+		printOpenGLError();
 	}
 }
 
@@ -184,26 +178,6 @@ const char *iPhone_getDocumentsDir() {
 
 	_eventLock = [[NSLock alloc] init];
 
-	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
-	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
-	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
-	    _gameScreenVertCoords[6] = _gameScreenVertCoords[7] = 0;
-
-	_gameScreenTexCoords[0] = _gameScreenTexCoords[1] =
-	    _gameScreenTexCoords[2] = _gameScreenTexCoords[3] =
-	    _gameScreenTexCoords[4] = _gameScreenTexCoords[5] =
-	    _gameScreenTexCoords[6] = _gameScreenTexCoords[7] = 0;
-
-	_overlayVertCoords[0] = _overlayVertCoords[1] =
-	    _overlayVertCoords[2] = _overlayVertCoords[3] =
-	    _overlayVertCoords[4] = _overlayVertCoords[5] =
-	    _overlayVertCoords[6] = _overlayVertCoords[7] = 0;
-
-	_overlayTexCoords[0] = _overlayTexCoords[1] =
-	    _overlayTexCoords[2] = _overlayTexCoords[3] =
-	    _overlayTexCoords[4] = _overlayTexCoords[5] =
-	    _overlayTexCoords[6] = _overlayTexCoords[7] = 0;
-
 	_mouseVertCoords[0] = _mouseVertCoords[1] =
 	    _mouseVertCoords[2] = _mouseVertCoords[3] =
 	    _mouseVertCoords[4] = _mouseVertCoords[5] =
@@ -225,8 +199,6 @@ const char *iPhone_getDocumentsDir() {
 		[_keyboardView dealloc];
 	}
 
-	_videoContext.screenTexture.free();
-	_videoContext.overlayTexture.free();
 	_videoContext.mouseTexture.free();
 
 	[_eventLock dealloc];
@@ -282,24 +254,7 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)updateSurface {
-	if (!g_needsScreenUpdate) {
-		return;
-	}
-	g_needsScreenUpdate = 0;
-
-	glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
-
-	[self updateMainSurface];
-
-	if (_videoContext.overlayVisible)
-		[self updateOverlaySurface];
-
-	if (_videoContext.mouseIsVisible)
-		[self updateMouseSurface];
-
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
-	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
-
+	[_context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
 - (void)notifyMouseMove {
@@ -368,31 +323,17 @@ const char *iPhone_getDocumentsDir() {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.mouseTexture.w, _videoContext.mouseTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.mouseTexture.pixels); printOpenGLError();
 }
 
-- (void)updateMainSurface {
-	glVertexPointer(2, GL_FLOAT, 0, _gameScreenVertCoords); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, _gameScreenTexCoords); printOpenGLError();
-
-	glBindTexture(GL_TEXTURE_2D, _screenTexture); printOpenGLError();
+- (void)updateMainSurface {  // Not used
 
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _videoContext.screenTexture.w, _videoContext.screenTexture.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _videoContext.screenTexture.pixels); printOpenGLError();
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
 }
 
-- (void)updateOverlaySurface {
-	glVertexPointer(2, GL_FLOAT, 0, _overlayVertCoords); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, _overlayTexCoords); printOpenGLError();
-
-	glBindTexture(GL_TEXTURE_2D, _overlayTexture); printOpenGLError();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _videoContext.overlayTexture.w, _videoContext.overlayTexture.h, 0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, _videoContext.overlayTexture.pixels); printOpenGLError();
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
+- (void)updateOverlaySurface { // Not used
 }
 
 - (void)updateMouseSurface {
-	glVertexPointer(2, GL_FLOAT, 0, _mouseVertCoords); printOpenGLError();
-	glTexCoordPointer(2, GL_FLOAT, 0, _mouseTexCoords); printOpenGLError();
 
 	glBindTexture(GL_TEXTURE_2D, _mouseCursorTexture); printOpenGLError();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); printOpenGLError();
@@ -401,22 +342,22 @@ const char *iPhone_getDocumentsDir() {
 - (void)setUpOrientation:(UIDeviceOrientation)orientation width:(int *)width height:(int *)height {
 	_orientation = orientation;
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+/*	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();*/
 
 	// We always force the origin (0,0) to be in the upper left corner.
 	switch (_orientation) {
 	case UIDeviceOrientationLandscapeRight:
-		glRotatef( 90, 0, 0, 1); printOpenGLError();
-		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
+/*		glRotatef( 90, 0, 0, 1); printOpenGLError();
+		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();*/
 
 		*width = _renderBufferHeight;
 		*height = _renderBufferWidth;
 		break;
 
 	case UIDeviceOrientationLandscapeLeft:
-		glRotatef(-90, 0, 0, 1); printOpenGLError();
-		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();
+/*		glRotatef(-90, 0, 0, 1); printOpenGLError();
+		glOrthof(0, _renderBufferHeight, _renderBufferWidth, 0, 0, 1); printOpenGLError();*/
 
 		*width = _renderBufferHeight;
 		*height = _renderBufferWidth;
@@ -428,7 +369,7 @@ const char *iPhone_getDocumentsDir() {
 		// the real orientation.
 		_orientation = UIDeviceOrientationPortrait;
 
-		glOrthof(0, _renderBufferWidth, _renderBufferHeight, 0, 0, 1); printOpenGLError();
+/*		glOrthof(0, _renderBufferWidth, _renderBufferHeight, 0, 0, 1); printOpenGLError();*/
 
 		*width = _renderBufferWidth;
 		*height = _renderBufferHeight;
@@ -436,15 +377,7 @@ const char *iPhone_getDocumentsDir() {
 	}
 }
 
-- (void)createScreenTexture {
-	const uint screenTexWidth = getSizeNextPOT(_videoContext.screenWidth);
-	const uint screenTexHeight = getSizeNextPOT(_videoContext.screenHeight);
-
-	_gameScreenTexCoords[2] = _gameScreenTexCoords[6] = _videoContext.screenWidth / (GLfloat)screenTexWidth;
-	_gameScreenTexCoords[5] = _gameScreenTexCoords[7] = _videoContext.screenHeight / (GLfloat)screenTexHeight;
-
-	_videoContext.screenTexture.create(screenTexWidth, screenTexHeight, Graphics::createPixelFormat<565>());
-}
+- (void)createScreenTexture {} // Not used
 
 - (void)initSurface {
 	int screenWidth, screenHeight;
@@ -464,7 +397,7 @@ const char *iPhone_getDocumentsDir() {
 	glGenTextures(1, &_overlayTexture); printOpenGLError();
 	[self setFilterModeForTexture:_overlayTexture];
 
-	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer); printOpenGLError();
+	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer); printOpenGLError();
 
 	[self clearColorBuffer];
 
@@ -513,14 +446,14 @@ const char *iPhone_getDocumentsDir() {
 		//printf("Rect: %i, %i, %i, %i\n", xOffset, yOffset, rectWidth, rectHeight);
 		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
 		overlayPortraitRatio = 1.0f;
-	} else {
+	} else { // TODO:
 		GLfloat ratio = adjustedHeight / adjustedWidth;
 		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
 
 		CGRect keyFrame = CGRectMake(0.0f, 0.0f, 0.0f, 0.0f);
-		if (_keyboardView == nil) {
+/*		if (_keyboardView == nil) {
 			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
 			[_keyboardView setInputDelegate:self];
 		}
@@ -529,17 +462,12 @@ const char *iPhone_getDocumentsDir() {
 		[self addSubview: _keyboardView];
 		[[_keyboardView inputView] becomeFirstResponder];
 		overlayPortraitRatio = (_videoContext.overlayHeight * ratio) / _videoContext.overlayWidth;
+		*/
 	}
 
 	_overlayRect = CGRectMake(0, 0, screenWidth, screenHeight * overlayPortraitRatio);
 
-	_gameScreenVertCoords[0] = _gameScreenVertCoords[4] = CGRectGetMinX(_gameScreenRect);
-	_gameScreenVertCoords[1] = _gameScreenVertCoords[3] = CGRectGetMinY(_gameScreenRect);
-	_gameScreenVertCoords[2] = _gameScreenVertCoords[6] = CGRectGetMaxX(_gameScreenRect);
-	_gameScreenVertCoords[5] = _gameScreenVertCoords[7] = CGRectGetMaxY(_gameScreenRect);
 
-	_overlayVertCoords[2] = _overlayVertCoords[6] = CGRectGetMaxX(_overlayRect);
-	_overlayVertCoords[5] = _overlayVertCoords[7] = CGRectGetMaxY(_overlayRect);
 
 	[self setViewTransformation];
 	[self updateMouseCursorScaling];
@@ -548,7 +476,7 @@ const char *iPhone_getDocumentsDir() {
 - (void)setViewTransformation {
 	// Set the modelview matrix. This matrix will be used for the shake offset
 	// support.
-	glMatrixMode(GL_MODELVIEW);
+/*	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	// Scale the shake offset according to the overlay size. We need this to
@@ -556,7 +484,7 @@ const char *iPhone_getDocumentsDir() {
 	_scaledShakeOffsetY = (int)(_videoContext.shakeOffsetY / (GLfloat)_videoContext.screenHeight * CGRectGetHeight(_overlayRect));
 
 	// Apply the shakeing to the output screen.
-	glTranslatef(0, -_scaledShakeOffsetY, 0);
+	glTranslatef(0, -_scaledShakeOffsetY, 0);*/
 }
 
 - (void)clearColorBuffer {
@@ -564,7 +492,7 @@ const char *iPhone_getDocumentsDir() {
 	int clearCount = 5;
 	while (clearCount-- > 0) {
 		glClear(GL_COLOR_BUFFER_BIT); printOpenGLError();
-		[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
+		[_context presentRenderbuffer:GL_RENDERBUFFER];
 	}
 }
 
@@ -761,6 +689,14 @@ const char *iPhone_getDocumentsDir() {
 
 - (void)applicationResume {
 	[self addEvent:InternalEvent(kInputApplicationResumed, 0, 0)];
+}
+
+- (GLint)getRenderBufferWidth {
+	return _renderBufferWidth;
+}
+
+- (GLint)getRenderBufferHeight {
+	return _renderBufferHeight;
 }
 
 @end

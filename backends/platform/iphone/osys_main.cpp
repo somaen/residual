@@ -60,7 +60,10 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess), _residualVMFrame() {
+	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess),
+	_overlayTexture(0), _mouseTexture(0), _mouseHotspot(), _mouseKeycolor(0), _useMousePalette(false),
+	_mouseTexturePalette(0), _gameTexture(0), _gamePbuf(), _showMouse(false),
+	_opengl(false), _fullscreen(true), _forceRedraw(false) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
@@ -78,8 +81,8 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	// Prevent accidental freeing of the screen texture here. This needs to be
 	// checked since we might use the screen texture as framebuffer in the case
 	// of hi-color games for example.
-	if (_framebuffer.pixels == _videoContext->screenTexture.pixels)
-		_framebuffer.free();
+//	if (_framebuffer.pixels == _videoContext->screenTexture.pixels)
+//		_framebuffer.free();
 	_mouseBuffer.free();
 }
 
@@ -101,6 +104,12 @@ void OSystem_IPHONE::initBackend() {
 	gettimeofday(&_startTime, NULL);
 
 	setupMixer();
+
+	_gameTexture = new GLESFakePalette565Texture();
+	_overlayTexture = new GLES5551Texture();
+	_mouseTexturePalette = new GLESFakePalette5551Texture();
+	_mouseTexture = _mouseTexturePalette;
+	initSurface();
 
 	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
 
@@ -320,4 +329,12 @@ void iphone_main(int argc, char *argv[]) {
 	// Invoke the actual ScummVM main entry point:
 	scummvm_main(argc, argv);
 	g_system->quit();       // TODO: Consider removing / replacing this!
+}
+
+DisposeAfterUse::Flag OSystem_IPHONE::getDisposeAfterUseYes() {
+	return DisposeAfterUse::YES;
+}
+
+DisposeAfterUse::Flag OSystem_IPHONE::getDisposeAfterUseNo() {
+	return DisposeAfterUse::NO;
 }

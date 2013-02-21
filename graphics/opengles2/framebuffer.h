@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef GRAPHICS_FRAMEBUFFER_H
+#define GRAPHICS_FRAMEBUFFER_H
+
 #include "config.h"
 
 #if defined(USE_GLES2)
@@ -57,3 +60,5 @@ private:
 };
 
 }
+
+#endif

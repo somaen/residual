@@ -384,6 +384,20 @@ void Lua_V2::GetMemoryCardId() {
 	warning("GetMemoryCardId: Currently just returning 0");
 }
 
+void Lua_V2::LocalizeString() {
+	char msgId[50], buf[1000];
+	lua_Object strObj = lua_getparam(1);
+
+	if (lua_isstring(strObj)) {
+		const char *str = lua_getstring(strObj);
+		Common::String msg = parseMsgText(str, msgId);
+		sprintf(buf, "/%s/%s", msgId, msg.c_str());
+		str = buf;
+
+		lua_pushstring(str);
+	}
+}
+
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -561,6 +575,7 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "GammaEnabled", LUA_OPCODE(Lua_V2, GammaEnabled) },
 	{ "FRUTEY_Begin", LUA_OPCODE(Lua_V2, FRUTEY_Begin) },
 	{ "FRUTEY_End", LUA_OPCODE(Lua_V2, FRUTEY_End) },
+	{ "LocalizeString", LUA_OPCODE(Lua_V2, LocalizeString) },
 // PS2:
 	{ "GetMemoryCardId", LUA_OPCODE(Lua_V2, GetMemoryCardId) }
 };

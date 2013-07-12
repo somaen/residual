@@ -23,6 +23,9 @@
 #include "common/endian.h"
 #include "common/foreach.h"
 
+#include "common/savefile.h"
+#include "common/config-manager.h"
+
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/lua/lauxlib.h"
 
@@ -514,6 +517,72 @@ STUB_FUNC2(Lua_V2::SectEditForgetIt)
 STUB_FUNC2(Lua_V2::FRUTEY_Begin)
 STUB_FUNC2(Lua_V2::FRUTEY_End)
 
+// ResidualVM-hacks:
+
+Common::String translateKeyForPreference(const Common::String &key) {
+	Common::String prefixedKey = Common::String("emi_") + Common::String(key);
+	if (key == "sfxvolume") { //sfx_volume, music_volume, speech_volume
+		prefixedKey = "sfx_volume";
+	} else if (key == "musvolume") {
+		prefixedKey = "music_volume";
+	} else if (key == "vocvolume") {
+		prefixedKey = "speech_volume";
+	}
+	return prefixedKey;
+}
+
+Common::String translateValueForPreference(const Common::String &key, const Common::String &value, bool saving) {
+	Common::String result = value;
+	if (key == "sfx_volume" || key == "music_volume" || key == "speech_volume") { //sfx_volume, music_volume, speech_volume
+		int volume = atoi(value.c_str());
+		if (saving) {
+			volume = (int)((volume / 100.0f) * 255.0f);
+		} else {
+			volume = (int)((volume / 255.0f) * 100.0f);
+		}
+		result = Common::String::format("%d", volume);
+	}
+	return value;
+}
+
+void Lua_V2::GetResidualVMPreference() {
+	lua_Object keyObj = lua_getparam(1);
+	lua_Object valueObj = lua_getparam(2);
+	
+	if (lua_isstring(keyObj) && lua_isstring(valueObj)) {
+		const char *key = lua_getstring(keyObj);
+		const char *value = lua_getstring(valueObj);
+		warning("GetResidualVMPreference(%s, %s)", key, value);
+		Common::String prefixedKey = translateKeyForPreference(key);
+		if (ConfMan.hasKey(prefixedKey)) {
+			Common::String setting = ConfMan.get(prefixedKey);
+			setting = translateValueForPreference(prefixedKey, setting, false);
+			warning("Pushing %s:%s", prefixedKey.c_str(), setting.c_str());
+			lua_pushstring(setting.c_str());
+		} else {
+			lua_pushstring(value);
+		}
+	} else {
+		lua_pushnumber(0);
+	}
+}
+
+void Lua_V2::SetResidualVMPreference() {
+	lua_Object keyObj = lua_getparam(1);
+	lua_Object valueObj = lua_getparam(2);
+	
+	if (lua_isstring(keyObj) && lua_isstring(valueObj)) {
+		const char *key = lua_getstring(keyObj);
+		const char *value = lua_getstring(valueObj);
+		warning("SetResidualVMPreference(%s, %s)", key, value);
+		Common::String prefixedKey = translateKeyForPreference(key);
+		Common::String setting = translateValueForPreference(prefixedKey, value, true);
+		warning("Setting %s:%s", prefixedKey.c_str(), setting.c_str());
+		
+		ConfMan.set(prefixedKey, value);
+	}
+}
+
 struct luaL_reg monkeyMainOpcodes[] = {
 	// Monkey specific LUA_OPCODEs:
 	{ "ScreenshotForSavegame", LUA_OPCODE(Lua_V2, ScreenshotForSavegame) },
@@ -616,7 +685,10 @@ struct luaL_reg monkeyMainOpcodes[] = {
 	{ "LocalizeString", LUA_OPCODE(Lua_V2, LocalizeString) },
 // PS2:
 	{ "GetMemoryCardId", LUA_OPCODE(Lua_V2, GetMemoryCardId) },
-	{ "OverWorldToScreen", LUA_OPCODE(Lua_V2, OverWorldToScreen) }
+	{ "OverWorldToScreen", LUA_OPCODE(Lua_V2, OverWorldToScreen) },
+// ResidualVM-hacks:
+	{ "GetResidualVMPreference", LUA_OPCODE(Lua_V2, GetResidualVMPreference) },
+	{ "SetResidualVMPreference", LUA_OPCODE(Lua_V2, SetResidualVMPreference) }
 };
 
 void Lua_V2::registerOpcodes() {

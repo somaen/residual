@@ -3,3 +3,4 @@
 add_engine grim "Grim" yes "monkey4" "zlib"
 add_engine monkey4 "Escape from Monkey Island" yes
 add_engine myst3 "Myst 3" yes
+add_engine twin "Twin" yes

@@ -12,3 +12,8 @@ ifdef ENABLE_MYST3
 DEFINES += -DENABLE_MYST3=$(ENABLE_MYST3)
 MODULES += engines/myst3
 endif
+
+ifdef ENABLE_TWIN
+DEFINES += -DENABLE_TWIN=$(ENABLE_TWIN)
+MODULES += engines/twin
+endif

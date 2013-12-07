@@ -25,6 +25,7 @@
 #include "common/stream.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+#include "common/textconsole.h"
 #include "engines/grim/emi/sound/track.h"
 
 namespace Grim {
@@ -44,6 +45,11 @@ SoundTrack::SoundTrack() {
 SoundTrack::~SoundTrack() {
 	if (_stream && (_disposeAfterPlaying == DisposeAfterUse::NO || !_handle))
 		delete _stream;
+}
+
+bool SoundTrack::openSound(const Common::String &path, const Common::String &filename, Common::SeekableReadStream *file) {
+	// Just usefull for MP3-track for now.
+	error("SoundTrack::openSound not overridden");
 }
 
 Common::String SoundTrack::getSoundName() {

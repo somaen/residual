@@ -41,11 +41,14 @@ class MP3Track : public SoundTrack {
 	char _bits;
 	char _channels;
 	bool _endFlag;
+	float _loopStart, _loopEnd;
 	void parseRIFFHeader(Common::SeekableReadStream *data);
+	bool parseJMM(const Common::String &filepath);
 public:
 	MP3Track(Audio::Mixer::SoundType soundType);
 	~MP3Track();
 	bool openSound(const Common::String &soundName, Common::SeekableReadStream *file);
+	bool openSound(const Common::String &path, const Common::String &soundName, Common::SeekableReadStream *file);
 	bool isPlaying() { return !_endFlag; }
 };
 

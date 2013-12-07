@@ -152,7 +152,7 @@ SoundTrack *EMISound::createEmptyMusicTrack() const {
 
 bool EMISound::initTrack(const Common::String &filename, SoundTrack *track) {
 	Common::SeekableReadStream *str = g_resourceloader->openNewStreamFile(_musicPrefix + filename);
-	if (track->openSound(filename, str)) {
+	if (track->openSound(_musicPrefix, filename, str)) {
 		return true;
 	} else {
 		return false;

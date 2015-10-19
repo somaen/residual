@@ -40,11 +40,9 @@ void lib3ds_io_cleanup(Lib3dsIo *io);
 long lib3ds_io_seek(Lib3dsIo *io, long offset, Lib3dsIoSeek origin);
 long lib3ds_io_tell(Lib3dsIo *io);
 size_t lib3ds_io_read(Lib3dsIo *io, void *buffer, size_t size);
-size_t lib3ds_io_write(Lib3dsIo *io, const void *buffer, size_t size);
 void lib3ds_io_log(Lib3dsIo *io, Lib3dsLogLevel level, const char *format, ...);
 void lib3ds_io_log_indent(Lib3dsIo *io, int indent);
 void lib3ds_io_read_error(Lib3dsIo *io);
-void lib3ds_io_write_error(Lib3dsIo *io);
 
 uint8 lib3ds_io_read_byte(Lib3dsIo *io);
 uint16 lib3ds_io_read_word(Lib3dsIo *io);
@@ -56,16 +54,5 @@ float lib3ds_io_read_float(Lib3dsIo *io);
 void lib3ds_io_read_vector(Lib3dsIo *io, float v[3]);
 void lib3ds_io_read_rgb(Lib3dsIo *io, float rgb[3]);
 void lib3ds_io_read_string(Lib3dsIo *io, char *s, int buflen);
-
-void lib3ds_io_write_byte(Lib3dsIo *io, uint8 b);
-void lib3ds_io_write_word(Lib3dsIo *io, uint16 w);
-void lib3ds_io_write_dword(Lib3dsIo *io, uint32 d);
-void lib3ds_io_write_intb(Lib3dsIo *io, int8 b);
-void lib3ds_io_write_intw(Lib3dsIo *io, int16 w);
-void lib3ds_io_write_intd(Lib3dsIo *io, int32 d);
-void lib3ds_io_write_float(Lib3dsIo *io, float l);
-void lib3ds_io_write_vector(Lib3dsIo *io, float v[3]);
-void lib3ds_io_write_rgb(Lib3dsIo *io, float rgb[3]);
-void lib3ds_io_write_string(Lib3dsIo *io, const char *s);
 
 #endif

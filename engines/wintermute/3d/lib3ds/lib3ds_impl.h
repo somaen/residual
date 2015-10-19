@@ -282,32 +282,19 @@ extern void lib3ds_chunk_read_tell(Lib3dsChunk *c, Lib3dsIo *io);
 extern uint16 lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io);
 extern void lib3ds_chunk_read_reset(Lib3dsChunk *c, Lib3dsIo *io);
 extern void lib3ds_chunk_read_end(Lib3dsChunk *c, Lib3dsIo *io);
-extern void lib3ds_chunk_write(Lib3dsChunk *c, Lib3dsIo *io);
-extern void lib3ds_chunk_write_start(Lib3dsChunk *c, Lib3dsIo *io);
-extern void lib3ds_chunk_write_end(Lib3dsChunk *c, Lib3dsIo *io);
 extern const char *lib3ds_chunk_name(uint16 chunk);
 extern void lib3ds_chunk_unknown(uint16 chunk, Lib3dsIo *io);
 
 extern void lib3ds_atmosphere_read(Lib3dsAtmosphere *atmosphere, Lib3dsIo *io);
-extern void lib3ds_atmosphere_write(Lib3dsAtmosphere *atmosphere, Lib3dsIo *io);
 extern void lib3ds_background_read(Lib3dsBackground *background, Lib3dsIo *io);
-extern void lib3ds_background_write(Lib3dsBackground *background, Lib3dsIo *io);
 extern void lib3ds_shadow_read(Lib3dsShadow *shadow, Lib3dsIo *io);
-extern void lib3ds_shadow_write(Lib3dsShadow *shadow, Lib3dsIo *io);
-extern void lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io);
-extern void lib3ds_viewport_write(Lib3dsViewport *viewport, Lib3dsIo *io);
+extern void lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io);;
 extern void lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io);
-extern void lib3ds_material_write(Lib3dsMaterial *material, Lib3dsIo *io);
 extern void lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io);
-extern void lib3ds_camera_write(Lib3dsCamera *camera, Lib3dsIo *io);
 extern void lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io);
-extern void lib3ds_light_write(Lib3dsLight *light, Lib3dsIo *io);
 extern void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io);
-extern void lib3ds_mesh_write(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io);
 extern void lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io);
-extern void lib3ds_track_write(Lib3dsTrack *track, Lib3dsIo *io);
 extern void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io);
-extern void lib3ds_node_write(Lib3dsNode *node, uint16 node_id, uint16 parent_id, Lib3dsIo *io);
 
 typedef void (*Lib3dsFreeFunc)(void *ptr);
 

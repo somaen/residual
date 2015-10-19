@@ -132,22 +132,6 @@ lib3ds_background_read(Lib3dsBackground *background, Lib3dsIo *io) {
 }
 
 
-static void
-colorf_write(float rgb[3], Lib3dsIo *io) {
-	Lib3dsChunk c;
-
-	c.chunk = CHK_COLOR_F;
-	c.size = 18;
-	lib3ds_chunk_write(&c, io);
-	lib3ds_io_write_rgb(io, rgb);
-
-	c.chunk = CHK_LIN_COLOR_F;
-	c.size = 18;
-	lib3ds_chunk_write(&c, io);
-	lib3ds_io_write_rgb(io, rgb);
-}
-
-
 static int
 colorf_defined(float rgb[3]) {
 	int i;
@@ -158,58 +142,3 @@ colorf_defined(float rgb[3]) {
 	}
 	return (i < 3);
 }
-
-
-void
-lib3ds_background_write(Lib3dsBackground *background, Lib3dsIo *io) {
-	if (strlen(background->bitmap_name)) { /*---- LIB3DS_BIT_MAP ----*/
-		Lib3dsChunk c;
-		c.chunk = CHK_BIT_MAP;
-		c.size = 6 + 1 + (uint32)strlen(background->bitmap_name);
-		lib3ds_chunk_write(&c, io);
-		lib3ds_io_write_string(io, background->bitmap_name);
-	}
-
-	if (colorf_defined(background->solid_color)) { /*---- LIB3DS_SOLID_BGND ----*/
-		Lib3dsChunk c;
-		c.chunk = CHK_SOLID_BGND;
-		c.size = 42;
-		lib3ds_chunk_write(&c, io);
-		colorf_write(background->solid_color, io);
-	}
-
-	if (colorf_defined(background->gradient_top) ||
-	        colorf_defined(background->gradient_middle) ||
-	        colorf_defined(background->gradient_bottom)) { /*---- LIB3DS_V_GRADIENT ----*/
-		Lib3dsChunk c;
-		c.chunk = CHK_V_GRADIENT;
-		c.size = 118;
-		lib3ds_chunk_write(&c, io);
-		lib3ds_io_write_float(io, background->gradient_percent);
-		colorf_write(background->gradient_top, io);
-		colorf_write(background->gradient_middle, io);
-		colorf_write(background->gradient_bottom, io);
-	}
-
-	if (background->use_bitmap) { /*---- LIB3DS_USE_BIT_MAP ----*/
-		Lib3dsChunk c;
-		c.chunk = CHK_USE_BIT_MAP;
-		c.size = 6;
-		lib3ds_chunk_write(&c, io);
-	}
-
-	if (background->use_solid) { /*---- LIB3DS_USE_SOLID_BGND ----*/
-		Lib3dsChunk c;
-		c.chunk = CHK_USE_SOLID_BGND;
-		c.size = 6;
-		lib3ds_chunk_write(&c, io);
-	}
-
-	if (background->use_gradient) { /*---- LIB3DS_USE_V_GRADIENT ----*/
-		Lib3dsChunk c;
-		c.chunk = CHK_USE_V_GRADIENT;
-		c.size = 6;
-		lib3ds_chunk_write(&c, io);
-	}
-}
-

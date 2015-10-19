@@ -81,16 +81,6 @@ lib3ds_io_read(Lib3dsIo *io, void *buffer, size_t size) {
 }
 
 
-size_t
-lib3ds_io_write(Lib3dsIo *io, const void *buffer, size_t size) {
-	assert(io);
-	if (!io || !io->write_func) {
-		return 0;
-	}
-	return (*io->write_func)(io->self, buffer, size);
-}
-
-
 static void
 lib3ds_io_log_str(Lib3dsIo *io, Lib3dsLogLevel level, const char *str) {
 	if (!io || !io->log_func)
@@ -130,12 +120,6 @@ lib3ds_io_log_indent(Lib3dsIo *io, int indent) {
 void
 lib3ds_io_read_error(Lib3dsIo *io) {
 	lib3ds_io_log(io, LIB3DS_LOG_ERROR, "Reading from input stream failed.");
-}
-
-
-void
-lib3ds_io_write_error(Lib3dsIo *io) {
-	lib3ds_io_log(io, LIB3DS_LOG_ERROR, "Writing to output stream failed.");
 }
 
 
@@ -305,149 +289,3 @@ lib3ds_io_read_string(Lib3dsIo *io, char *s, int buflen) {
 	}
 }
 
-
-/*!
- * Writes a byte into a file stream.
- */
-void
-lib3ds_io_write_byte(Lib3dsIo *io, uint8 b) {
-	assert(io);
-	if (lib3ds_io_write(io, &b, 1) != 1) {
-		lib3ds_io_write_error(io);
-	}
-}
-
-
-/*!
- * Writes a word into a little endian file stream.
- */
-void
-lib3ds_io_write_word(Lib3dsIo *io, uint16 w) {
-	uint8 b[2];
-
-	assert(io);
-	b[1] = ((uint16)w & 0xFF00) >> 8;
-	b[0] = ((uint16)w & 0x00FF);
-	if (lib3ds_io_write(io, b, 2) != 2) {
-		lib3ds_io_write_error(io);
-	}
-}
-
-
-/*!
- * Writes a dword into a little endian file stream.
- */
-void
-lib3ds_io_write_dword(Lib3dsIo *io, uint32 d) {
-	uint8 b[4];
-
-	assert(io);
-	b[3] = (uint8)(((uint32)d & 0xFF000000) >> 24);
-	b[2] = (uint8)(((uint32)d & 0x00FF0000) >> 16);
-	b[1] = (uint8)(((uint32)d & 0x0000FF00) >> 8);
-	b[0] = (uint8)(((uint32)d & 0x000000FF));
-	if (lib3ds_io_write(io, b, 4) != 4) {
-		lib3ds_io_write_error(io);
-	}
-}
-
-
-/*!
- * Writes a signed byte in a file stream.
- */
-void
-lib3ds_io_write_intb(Lib3dsIo *io, int8 b) {
-	assert(io);
-	if (lib3ds_io_write(io, &b, 1) != 1) {
-		lib3ds_io_write_error(io);
-	}
-}
-
-
-/*!
- * Writes a signed word into a little endian file stream.
- */
-void
-lib3ds_io_write_intw(Lib3dsIo *io, int16 w) {
-	uint8 b[2];
-
-	assert(io);
-	b[1] = ((uint16)w & 0xFF00) >> 8;
-	b[0] = ((uint16)w & 0x00FF);
-	if (lib3ds_io_write(io, b, 2) != 2) {
-		lib3ds_io_write_error(io);
-	}
-}
-
-
-/*!
- * Writes a signed dword into a little endian file stream.
- */
-void
-lib3ds_io_write_intd(Lib3dsIo *io, int32 d) {
-	uint8 b[4];
-
-	assert(io);
-	b[3] = (uint8)(((uint32)d & 0xFF000000) >> 24);
-	b[2] = (uint8)(((uint32)d & 0x00FF0000) >> 16);
-	b[1] = (uint8)(((uint32)d & 0x0000FF00) >> 8);
-	b[0] = (uint8)(((uint32)d & 0x000000FF));
-	if (lib3ds_io_write(io, b, 4) != 4) {
-		lib3ds_io_write_error(io);
-	}
-}
-
-
-/*!
- * Writes a float into a little endian file stream.
- */
-void
-lib3ds_io_write_float(Lib3dsIo *io, float l) {
-	uint8 b[4];
-	Lib3dsDwordFloat d;
-
-	assert(io);
-	d.float_value = l;
-	b[3] = (uint8)(((uint32)d.dword_value & 0xFF000000) >> 24);
-	b[2] = (uint8)(((uint32)d.dword_value & 0x00FF0000) >> 16);
-	b[1] = (uint8)(((uint32)d.dword_value & 0x0000FF00) >> 8);
-	b[0] = (uint8)(((uint32)d.dword_value & 0x000000FF));
-	if (lib3ds_io_write(io, b, 4) != 4) {
-		lib3ds_io_write_error(io);
-	}
-}
-
-
-/*!
- * Writes a vector into a file stream in little endian format.
- */
-void
-lib3ds_io_write_vector(Lib3dsIo *io, float v[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
-		lib3ds_io_write_float(io, v[i]);
-	}
-}
-
-
-void
-lib3ds_io_write_rgb(Lib3dsIo *io, float rgb[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
-		lib3ds_io_write_float(io, rgb[i]);
-	}
-}
-
-
-/*!
- * Writes a zero-terminated string into a file stream.
- */
-void
-lib3ds_io_write_string(Lib3dsIo *io, const char *s) {
-	size_t len;
-	assert(io && s);
-	len = strlen(s);
-	if (lib3ds_io_write(io, s, len + 1) != len + 1) {
-		lib3ds_io_write_error(io);
-	}
-}

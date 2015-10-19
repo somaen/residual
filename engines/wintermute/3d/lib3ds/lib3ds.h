@@ -59,7 +59,6 @@ typedef struct Lib3dsIo {
 	long(*seek_func)(void *self, long offset, Lib3dsIoSeek origin);
 	long(*tell_func)(void *self);
 	size_t (*read_func)(void *self, void *buffer, size_t size);
-	size_t (*write_func)(void *self, const void *buffer, size_t size);
 	void (*log_func)(void *self, Lib3dsLogLevel level, int indent, const char *msg);
 } Lib3dsIo;
 

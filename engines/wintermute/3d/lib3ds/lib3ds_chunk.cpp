@@ -100,43 +100,6 @@ lib3ds_chunk_read_end(Lib3dsChunk *c, Lib3dsIo *io) {
 }
 
 
-/*!
- * Writes a 3d-Studio chunk header into a little endian file stream.
- *
- * \param c  The chunk to be written.
- * \param io The file stream.
- *
- * \return   True on success, False otherwise.
- */
-void
-lib3ds_chunk_write(Lib3dsChunk *c, Lib3dsIo *io) {
-	assert(c);
-	lib3ds_io_write_word(io, c->chunk);
-	lib3ds_io_write_dword(io, c->size);
-}
-
-
-void
-lib3ds_chunk_write_start(Lib3dsChunk *c, Lib3dsIo *io) {
-	assert(c);
-	c->size = 0;
-	c->cur = lib3ds_io_tell(io);
-	lib3ds_io_write_word(io, c->chunk);
-	lib3ds_io_write_dword(io, c->size);
-}
-
-
-void
-lib3ds_chunk_write_end(Lib3dsChunk *c, Lib3dsIo *io) {
-	assert(c);
-	c->size = lib3ds_io_tell(io) - c->cur;
-	lib3ds_io_seek(io, c->cur + 2, LIB3DS_SEEK_SET);
-	lib3ds_io_write_dword(io, c->size);
-	c->cur += c->size;
-	lib3ds_io_seek(io, c->cur, LIB3DS_SEEK_SET);
-}
-
-
 void
 lib3ds_chunk_unknown(uint16 chunk, Lib3dsIo *io) {
 	if (io->log_func) {

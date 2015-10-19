@@ -337,7 +337,7 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		}
 
 		case CHK_MESH_COLOR: {
-			mesh->color = lib3ds_io_read_byte(io);
+			mesh->color = stream->readByte();
 			break;
 		}
 

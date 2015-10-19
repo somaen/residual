@@ -85,11 +85,12 @@ lib3ds_material_free(Lib3dsMaterial *material) {
 }
 
 
-static void
-color_read(float rgb[3], Lib3dsIo *io) {
+static void color_read(float rgb[3], Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 	int have_lin = false;
+
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, 0, io);
 
@@ -98,7 +99,7 @@ color_read(float rgb[3], Lib3dsIo *io) {
 		case CHK_LIN_COLOR_24: {
 			int i;
 			for (i = 0; i < 3; ++i) {
-				rgb[i] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
+				rgb[i] = 1.0f * stream->readByte() / 255.0f;
 			}
 			have_lin = true;
 			break;
@@ -110,7 +111,7 @@ color_read(float rgb[3], Lib3dsIo *io) {
 			if (!have_lin) {
 				int i;
 				for (i = 0; i < 3; ++i) {
-					rgb[i] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
+					rgb[i] = 1.0f * stream->readByte() / 255.0f;
 				}
 			}
 			break;
@@ -223,37 +224,37 @@ static void texture_map_read(Lib3dsTextureMap *map, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_MAP_COL1: {
-			map->tint_1[0] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_1[1] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_1[2] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
+			map->tint_1[0] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_1[1] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_1[2] = 1.0f * stream->readByte() / 255.0f;
 			break;
 		}
 
 		case CHK_MAT_MAP_COL2: {
-			map->tint_2[0] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_2[1] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_2[2] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
+			map->tint_2[0] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_2[1] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_2[2] = 1.0f * stream->readByte() / 255.0f;
 			break;
 		}
 
 		case CHK_MAT_MAP_RCOL: {
-			map->tint_r[0] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_r[1] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_r[2] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
+			map->tint_r[0] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_r[1] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_r[2] = 1.0f * stream->readByte() / 255.0f;
 			break;
 		}
 
 		case CHK_MAT_MAP_GCOL: {
-			map->tint_g[0] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_g[1] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_g[2] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
+			map->tint_g[0] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_g[1] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_g[2] = 1.0f * stream->readByte() / 255.0f;
 			break;
 		}
 
 		case CHK_MAT_MAP_BCOL: {
-			map->tint_b[0] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_b[1] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
-			map->tint_b[2] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
+			map->tint_b[0] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_b[1] = 1.0f * stream->readByte() / 255.0f;
+			map->tint_b[2] = 1.0f * stream->readByte() / 255.0f;
 			break;
 		}
 

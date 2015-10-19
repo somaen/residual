@@ -115,18 +115,6 @@ void lib3ds_io_read_error(Lib3dsIo *io) {
 
 
 /*!
- * Read a byte from a file stream.
- */
-uint8 lib3ds_io_read_byte(Lib3dsIo *io) {
-	uint8 b;
-
-	assert(io);
-	lib3ds_io_read(io, &b, 1);
-	return (b);
-}
-
-
-/*!
  * Read a signed byte from a file stream.
  */
 int8 lib3ds_io_read_intb(Lib3dsIo *io) {

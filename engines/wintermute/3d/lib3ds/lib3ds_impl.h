@@ -63,10 +63,6 @@ typedef int32_t int32;
 #define LIB3DS_RAD_TO_DEG(x) ((180.0/LIB3DS_PI)*(x))
 #define LIB3DS_DEG_TO_RAD(x) ((LIB3DS_PI/180.0)*(x))
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef enum Lib3dsChunks {
 	CHK_NULL_CHUNK             = 0x0000,
 	CHK_M3DMAGIC               = 0x4D4D,   /*3DS file*/
@@ -384,9 +380,4 @@ extern void lib3ds_util_reserve_array(void ***ptr, int *n, int *size, int new_si
 extern void lib3ds_util_insert_array(void ***ptr, int *n, int *size, void *element, int index);
 extern void lib3ds_util_remove_array(void ***ptr, int *n, int index, Lib3dsFreeFunc free_func);
 
-#ifdef __cplusplus
-}
 #endif
-#endif
-
-

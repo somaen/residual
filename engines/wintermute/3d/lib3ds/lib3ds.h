@@ -36,10 +36,6 @@
 #endif
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /** @defgroup api API
     lib3ds public API. */
 /** @{ */
@@ -792,8 +788,4 @@ extern LIB3DSAPI void lib3ds_matrix_rotate(float m[4][4], float angle, float ax,
 extern LIB3DSAPI void lib3ds_matrix_camera(float m[4][4], float pos[3], float tgt[3], float roll);
 
 /** @} */
-#ifdef __cplusplus
-}
 #endif
-#endif
-

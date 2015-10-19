@@ -63,13 +63,15 @@ layer_fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 	int have_lin = false;
+	
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, CHK_LAYER_FOG, io);
 
 	at->layer_fog_near_y = lib3ds_io_read_float(io);
 	at->layer_fog_far_y = lib3ds_io_read_float(io);
 	at->layer_fog_density = lib3ds_io_read_float(io);
-	at->layer_fog_flags = lib3ds_io_read_dword(io);
+	at->layer_fog_flags = stream->readUint32LE();
 	lib3ds_chunk_read_tell(&c, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {

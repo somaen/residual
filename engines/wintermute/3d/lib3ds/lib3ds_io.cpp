@@ -136,15 +136,6 @@ uint16 lib3ds_io_read_word(Lib3dsIo *io) {
 
 
 /*!
- * Read a dword from file a stream in little endian format.
- */
-uint32 lib3ds_io_read_dword(Lib3dsIo *io) {
-	assert(io);
-	return io->stream->readUint32LE();
-}
-
-
-/*!
  * Read a signed byte from a file stream.
  */
 int8 lib3ds_io_read_intb(Lib3dsIo *io) {

@@ -508,6 +508,8 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 	uint16 chunk;
 	Lib3dsIoImpl *impl;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_io_setup(io);
 	impl = (Lib3dsIoImpl *)io->impl;
 
@@ -530,7 +532,7 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 		while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 			switch (chunk) {
 			case CHK_M3D_VERSION: {
-				file->mesh_version = lib3ds_io_read_dword(io);
+				file->mesh_version = stream->readUint32LE();
 				break;
 			}
 

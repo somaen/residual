@@ -244,6 +244,8 @@ face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	uint16 chunk;
 	int i;
 	uint16 nfaces;
+	
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, CHK_FACE_ARRAY, io);
 
@@ -286,7 +288,7 @@ face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			case CHK_SMOOTH_GROUP: {
 				int i;
 				for (i = 0; i < mesh->nfaces; ++i) {
-					mesh->faces[i].smoothing_group = lib3ds_io_read_dword(io);
+					mesh->faces[i].smoothing_group = stream->readUint32LE();
 				}
 				break;
 			}

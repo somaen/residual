@@ -35,9 +35,12 @@ void
 lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io) {
 	assert(c);
 	assert(io);
+
+	Common::SeekableReadStream *stream = io->stream;
+
 	c->cur = lib3ds_io_tell(io);
 	c->chunk = lib3ds_io_read_word(io);
-	c->size = lib3ds_io_read_dword(io);
+	c->size = stream->readUint32LE();
 	c->end = c->cur + c->size;
 	c->cur += 6;
 	if (c->size < 6) {
@@ -65,9 +68,10 @@ lib3ds_chunk_read_tell(Lib3dsChunk *c, Lib3dsIo *io) {
 }
 
 
-uint16
-lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
+uint16 lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 	Lib3dsChunk d;
+
+	Common::SeekableReadStream *stream = io->stream;
 
 	if (c->cur >= c->end) {
 		assert(c->cur == c->end);
@@ -76,7 +80,7 @@ lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 
 	lib3ds_io_seek(io, (long)c->cur, SEEK_SET);
 	d.chunk = lib3ds_io_read_word(io);
-	d.size = lib3ds_io_read_dword(io);
+	d.size = stream->readUint32LE();
 	c->cur += d.size;
 
 	if (io->log_func) {

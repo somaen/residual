@@ -430,8 +430,8 @@ lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 	Common::SeekableReadStream *stream = io->stream;
 
 	track->flags = lib3ds_io_read_word(io);
-	lib3ds_io_read_dword(io);
-	lib3ds_io_read_dword(io);
+	stream->readUint32LE();
+	stream->readUint32LE();
 	nkeys = stream->readSint32LE();
 	lib3ds_track_resize(track, nkeys);
 

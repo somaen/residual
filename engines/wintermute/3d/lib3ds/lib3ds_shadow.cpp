@@ -33,22 +33,22 @@ lib3ds_shadow_read(Lib3dsShadow *shadow, Lib3dsIo *io) {
 	}
 
 	case CHK_LO_SHADOW_BIAS: {
-		shadow->low_bias = lib3ds_io_read_float(io);
+		shadow->low_bias = lib3ds_io_read_float(stream);
 		break;
 	}
 
 	case CHK_HI_SHADOW_BIAS: {
-		shadow->hi_bias = lib3ds_io_read_float(io);
+		shadow->hi_bias = lib3ds_io_read_float(stream);
 		break;
 	}
 
 	case CHK_SHADOW_FILTER: {
-		shadow->filter = lib3ds_io_read_float(io);
+		shadow->filter = lib3ds_io_read_float(stream);
 		break;
 	}
 
 	case CHK_RAY_BIAS: {
-		shadow->ray_bias = lib3ds_io_read_float(io);
+		shadow->ray_bias = lib3ds_io_read_float(stream);
 		break;
 	}
 	}

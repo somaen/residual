@@ -120,7 +120,7 @@ static void color_read(float rgb[3], Lib3dsIo *io) {
 		case CHK_LIN_COLOR_F: {
 			int i;
 			for (i = 0; i < 3; ++i) {
-				rgb[i] = lib3ds_io_read_float(io);
+				rgb[i] = lib3ds_io_read_float(stream);
 			}
 			have_lin = true;
 			break;
@@ -130,7 +130,7 @@ static void color_read(float rgb[3], Lib3dsIo *io) {
 			if (!have_lin) {
 				int i;
 				for (i = 0; i < 3; ++i) {
-					rgb[i] = lib3ds_io_read_float(io);
+					rgb[i] = lib3ds_io_read_float(stream);
 				}
 			}
 			break;
@@ -197,29 +197,29 @@ static void texture_map_read(Lib3dsTextureMap *map, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_MAP_TEXBLUR:
-			map->blur = lib3ds_io_read_float(io);
+			map->blur = lib3ds_io_read_float(stream);
 			break;
 
 		case CHK_MAT_MAP_USCALE:
-			map->scale[0] = lib3ds_io_read_float(io);
+			map->scale[0] = lib3ds_io_read_float(stream);
 			break;
 
 		case CHK_MAT_MAP_VSCALE: {
-			map->scale[1] = lib3ds_io_read_float(io);
+			map->scale[1] = lib3ds_io_read_float(stream);
 			break;
 		}
 		case CHK_MAT_MAP_UOFFSET: {
-			map->offset[0] = lib3ds_io_read_float(io);
+			map->offset[0] = lib3ds_io_read_float(stream);
 			break;
 		}
 
 		case CHK_MAT_MAP_VOFFSET: {
-			map->offset[1] = lib3ds_io_read_float(io);
+			map->offset[1] = lib3ds_io_read_float(stream);
 			break;
 		}
 
 		case CHK_MAT_MAP_ANG: {
-			map->rotation = lib3ds_io_read_float(io);
+			map->rotation = lib3ds_io_read_float(stream);
 			break;
 		}
 
@@ -394,7 +394,7 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 			break;
 		}
 		case CHK_MAT_WIRE_SIZE: {
-			material->wire_size = lib3ds_io_read_float(io);
+			material->wire_size = lib3ds_io_read_float(stream);
 			break;
 		}
 

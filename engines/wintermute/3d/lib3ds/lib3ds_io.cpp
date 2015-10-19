@@ -111,12 +111,12 @@ int8 lib3ds_io_read_intb(Lib3dsIo *io) {
 /*!
  * Read a float from a file stream in little endian format.
  */
-float lib3ds_io_read_float(Lib3dsIo *io) {
+float lib3ds_io_read_float(Common::SeekableReadStream *stream) {
 	uint8 b[4];
 	Lib3dsDwordFloat d;
 
-	assert(io);
-	lib3ds_io_read(io, b, 4);
+	assert(stream);
+	stream->read(b, 4);
 	d.dword_value = ((uint32)b[3] << 24) |
 	                ((uint32)b[2] << 16) |
 	                ((uint32)b[1] << 8) |
@@ -131,19 +131,19 @@ float lib3ds_io_read_float(Lib3dsIo *io) {
  * \param io IO input handle.
  * \param v  The vector to store the data.
  */
-void lib3ds_io_read_vector(Lib3dsIo *io, float v[3]) {
-	assert(io);
-	v[0] = lib3ds_io_read_float(io);
-	v[1] = lib3ds_io_read_float(io);
-	v[2] = lib3ds_io_read_float(io);
+void lib3ds_io_read_vector(Common::SeekableReadStream *stream, float v[3]) {
+	assert(stream);
+	v[0] = lib3ds_io_read_float(stream);
+	v[1] = lib3ds_io_read_float(stream);
+	v[2] = lib3ds_io_read_float(stream);
 }
 
 
-void lib3ds_io_read_rgb(Lib3dsIo *io, float rgb[3]) {
-	assert(io);
-	rgb[0] = lib3ds_io_read_float(io);
-	rgb[1] = lib3ds_io_read_float(io);
-	rgb[2] = lib3ds_io_read_float(io);
+void lib3ds_io_read_rgb(Common::SeekableReadStream *stream, float rgb[3]) {
+	assert(stream);
+	rgb[0] = lib3ds_io_read_float(stream);
+	rgb[1] = lib3ds_io_read_float(stream);
+	rgb[2] = lib3ds_io_read_float(stream);
 }
 
 

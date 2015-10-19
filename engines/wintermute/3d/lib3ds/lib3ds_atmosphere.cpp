@@ -23,12 +23,14 @@ fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read_start(&c, CHK_FOG, io);
 
-	at->fog_near_plane = lib3ds_io_read_float(io);
-	at->fog_near_density = lib3ds_io_read_float(io);
-	at->fog_far_plane = lib3ds_io_read_float(io);
-	at->fog_far_density = lib3ds_io_read_float(io);
+	at->fog_near_plane = lib3ds_io_read_float(stream);
+	at->fog_near_density = lib3ds_io_read_float(stream);
+	at->fog_far_plane = lib3ds_io_read_float(stream);
+	at->fog_far_density = lib3ds_io_read_float(stream);
 	lib3ds_chunk_read_tell(&c, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
@@ -36,7 +38,7 @@ fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 		case CHK_LIN_COLOR_F: {
 			int i;
 			for (i = 0; i < 3; ++i) {
-				at->fog_color[i] = lib3ds_io_read_float(io);
+				at->fog_color[i] = lib3ds_io_read_float(stream);
 			}
 		}
 		break;
@@ -68,21 +70,21 @@ layer_fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 
 	lib3ds_chunk_read_start(&c, CHK_LAYER_FOG, io);
 
-	at->layer_fog_near_y = lib3ds_io_read_float(io);
-	at->layer_fog_far_y = lib3ds_io_read_float(io);
-	at->layer_fog_density = lib3ds_io_read_float(io);
+	at->layer_fog_near_y = lib3ds_io_read_float(stream);
+	at->layer_fog_far_y = lib3ds_io_read_float(stream);
+	at->layer_fog_density = lib3ds_io_read_float(stream);
 	at->layer_fog_flags = stream->readUint32LE();
 	lib3ds_chunk_read_tell(&c, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_F:
-			lib3ds_io_read_rgb(io, at->layer_fog_color);
+			lib3ds_io_read_rgb(stream, at->layer_fog_color);
 			have_lin = true;
 			break;
 
 		case CHK_COLOR_F:
-			lib3ds_io_read_rgb(io, at->layer_fog_color);
+			lib3ds_io_read_rgb(stream, at->layer_fog_color);
 			break;
 
 		default:
@@ -94,17 +96,18 @@ layer_fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 }
 
 
-static void
-distance_cue_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
+static void distance_cue_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read_start(&c, CHK_DISTANCE_CUE, io);
 
-	at->dist_cue_near_plane = lib3ds_io_read_float(io);
-	at->dist_cue_near_dimming = lib3ds_io_read_float(io);
-	at->dist_cue_far_plane = lib3ds_io_read_float(io);
-	at->dist_cue_far_dimming = lib3ds_io_read_float(io);
+	at->dist_cue_near_plane = lib3ds_io_read_float(stream);
+	at->dist_cue_near_dimming = lib3ds_io_read_float(stream);
+	at->dist_cue_far_plane = lib3ds_io_read_float(stream);
+	at->dist_cue_far_dimming = lib3ds_io_read_float(stream);
 	lib3ds_chunk_read_tell(&c, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {

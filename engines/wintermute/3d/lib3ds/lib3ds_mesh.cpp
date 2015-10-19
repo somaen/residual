@@ -330,7 +330,7 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			lib3ds_matrix_identity(mesh->matrix);
 			for (i = 0; i < 4; i++) {
 				for (j = 0; j < 3; j++) {
-					mesh->matrix[i][j] = lib3ds_io_read_float(io);
+					mesh->matrix[i][j] = lib3ds_io_read_float(stream);
 				}
 			}
 			break;
@@ -346,7 +346,7 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			uint16 nvertices = stream->readUint16LE();
 			lib3ds_mesh_resize_vertices(mesh, nvertices, mesh->texcos != NULL, mesh->vflags != NULL);
 			for (i = 0; i < mesh->nvertices; ++i) {
-				lib3ds_io_read_vector(io, mesh->vertices[i]);
+				lib3ds_io_read_vector(stream, mesh->vertices[i]);
 			}
 			break;
 		}
@@ -374,23 +374,23 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			//FIXME: mesh->map_type = lib3ds_io_read_word(io);
 
 			for (i = 0; i < 2; ++i) {
-				mesh->map_tile[i] = lib3ds_io_read_float(io);
+				mesh->map_tile[i] = lib3ds_io_read_float(stream);
 			}
 			for (i = 0; i < 3; ++i) {
-				mesh->map_pos[i] = lib3ds_io_read_float(io);
+				mesh->map_pos[i] = lib3ds_io_read_float(stream);
 			}
-			mesh->map_scale = lib3ds_io_read_float(io);
+			mesh->map_scale = lib3ds_io_read_float(stream);
 
 			lib3ds_matrix_identity(mesh->map_matrix);
 			for (i = 0; i < 4; i++) {
 				for (j = 0; j < 3; j++) {
-					mesh->map_matrix[i][j] = lib3ds_io_read_float(io);
+					mesh->map_matrix[i][j] = lib3ds_io_read_float(stream);
 				}
 			}
 			for (i = 0; i < 2; ++i) {
-				mesh->map_planar_size[i] = lib3ds_io_read_float(io);
+				mesh->map_planar_size[i] = lib3ds_io_read_float(stream);
 			}
-			mesh->map_cylinder_height = lib3ds_io_read_float(io);
+			mesh->map_cylinder_height = lib3ds_io_read_float(stream);
 			break;
 		}
 
@@ -402,8 +402,8 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 				lib3ds_mesh_resize_vertices(mesh, nvertices, 1, mesh->vflags != NULL);
 			}
 			for (i = 0; i < ntexcos; ++i) {
-				mesh->texcos[i][0] = lib3ds_io_read_float(io);
-				mesh->texcos[i][1] = lib3ds_io_read_float(io);
+				mesh->texcos[i][0] = lib3ds_io_read_float(stream);
+				mesh->texcos[i][1] = lib3ds_io_read_float(stream);
 			}
 			break;
 		}

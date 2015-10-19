@@ -71,26 +71,27 @@ lib3ds_camera_free(Lib3dsCamera *camera) {
  *
  * \see lib3ds_file_read
  */
-void
-lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
+void lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
+
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, CHK_N_CAMERA, io);
 
 	{
 		int i;
 		for (i = 0; i < 3; ++i) {
-			camera->position[i] = lib3ds_io_read_float(io);
+			camera->position[i] = lib3ds_io_read_float(stream);
 		}
 		for (i = 0; i < 3; ++i) {
-			camera->target[i] = lib3ds_io_read_float(io);
+			camera->target[i] = lib3ds_io_read_float(stream);
 		}
 	}
-	camera->roll = lib3ds_io_read_float(io);
+	camera->roll = lib3ds_io_read_float(stream);
 	{
 		float s;
-		s = lib3ds_io_read_float(io);
+		s = lib3ds_io_read_float(stream);
 		if (fabs(s) < LIB3DS_EPSILON) {
 			camera->fov = 45.0;
 		} else {
@@ -107,8 +108,8 @@ lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
 		break;
 
 		case CHK_CAM_RANGES: {
-			camera->near_range = lib3ds_io_read_float(io);
-			camera->far_range = lib3ds_io_read_float(io);
+			camera->near_range = lib3ds_io_read_float(stream);
+			camera->far_range = lib3ds_io_read_float(stream);
 		}
 		break;
 

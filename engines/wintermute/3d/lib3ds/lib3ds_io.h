@@ -43,9 +43,9 @@ void lib3ds_io_log_indent(Lib3dsIo *io, int indent);
 void lib3ds_io_read_error(Lib3dsIo *io);
 
 int8 lib3ds_io_read_intb(Lib3dsIo *io);
-float lib3ds_io_read_float(Lib3dsIo *io);
-void lib3ds_io_read_vector(Lib3dsIo *io, float v[3]);
-void lib3ds_io_read_rgb(Lib3dsIo *io, float rgb[3]);
+float lib3ds_io_read_float(Common::SeekableReadStream *stream);
+void lib3ds_io_read_vector(Common::SeekableReadStream *stream, float v[3]);
+void lib3ds_io_read_rgb(Common::SeekableReadStream *stream, float rgb[3]);
 void lib3ds_io_read_string(Lib3dsIo *io, char *s, int buflen);
 
 #endif

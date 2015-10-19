@@ -58,10 +58,10 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 					viewport->layout_views[cur].size[0] = stream->readSint16LE();
 					viewport->layout_views[cur].size[1] = stream->readSint16LE();
 					viewport->layout_views[cur].type = stream->readUint16LE();
-					viewport->layout_views[cur].zoom = lib3ds_io_read_float(io);
-					lib3ds_io_read_vector(io, viewport->layout_views[cur].center);
-					viewport->layout_views[cur].horiz_angle = lib3ds_io_read_float(io);
-					viewport->layout_views[cur].vert_angle = lib3ds_io_read_float(io);
+					viewport->layout_views[cur].zoom = lib3ds_io_read_float(stream);
+					lib3ds_io_read_vector(stream, viewport->layout_views[cur].center);
+					viewport->layout_views[cur].horiz_angle = lib3ds_io_read_float(stream);
+					viewport->layout_views[cur].vert_angle = lib3ds_io_read_float(stream);
 					lib3ds_io_read(io, viewport->layout_views[cur].camera, 11);
 					++cur;
 				}
@@ -84,53 +84,53 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 			switch (chunk) {
 			case CHK_VIEW_TOP: {
 				viewport->default_type = LIB3DS_VIEW_TOP;
-				lib3ds_io_read_vector(io, viewport->default_position);
-				viewport->default_width = lib3ds_io_read_float(io);
+				lib3ds_io_read_vector(stream, viewport->default_position);
+				viewport->default_width = lib3ds_io_read_float(stream);
 				break;
 			}
 
 			case CHK_VIEW_BOTTOM: {
 				viewport->default_type = LIB3DS_VIEW_BOTTOM;
-				lib3ds_io_read_vector(io, viewport->default_position);
-				viewport->default_width = lib3ds_io_read_float(io);
+				lib3ds_io_read_vector(stream, viewport->default_position);
+				viewport->default_width = lib3ds_io_read_float(stream);
 				break;
 			}
 
 			case CHK_VIEW_LEFT: {
 				viewport->default_type = LIB3DS_VIEW_LEFT;
-				lib3ds_io_read_vector(io, viewport->default_position);
-				viewport->default_width = lib3ds_io_read_float(io);
+				lib3ds_io_read_vector(stream, viewport->default_position);
+				viewport->default_width = lib3ds_io_read_float(stream);
 				break;
 			}
 
 			case CHK_VIEW_RIGHT: {
 				viewport->default_type = LIB3DS_VIEW_RIGHT;
-				lib3ds_io_read_vector(io, viewport->default_position);
-				viewport->default_width = lib3ds_io_read_float(io);
+				lib3ds_io_read_vector(stream, viewport->default_position);
+				viewport->default_width = lib3ds_io_read_float(stream);
 				break;
 			}
 
 			case CHK_VIEW_FRONT: {
 				viewport->default_type = LIB3DS_VIEW_FRONT;
-				lib3ds_io_read_vector(io, viewport->default_position);
-				viewport->default_width = lib3ds_io_read_float(io);
+				lib3ds_io_read_vector(stream, viewport->default_position);
+				viewport->default_width = lib3ds_io_read_float(stream);
 				break;
 			}
 
 			case CHK_VIEW_BACK: {
 				viewport->default_type = LIB3DS_VIEW_BACK;
-				lib3ds_io_read_vector(io, viewport->default_position);
-				viewport->default_width = lib3ds_io_read_float(io);
+				lib3ds_io_read_vector(stream, viewport->default_position);
+				viewport->default_width = lib3ds_io_read_float(stream);
 				break;
 			}
 
 			case CHK_VIEW_USER: {
 				viewport->default_type = LIB3DS_VIEW_USER;
-				lib3ds_io_read_vector(io, viewport->default_position);
-				viewport->default_width = lib3ds_io_read_float(io);
-				viewport->default_horiz_angle = lib3ds_io_read_float(io);
-				viewport->default_vert_angle = lib3ds_io_read_float(io);
-				viewport->default_roll_angle = lib3ds_io_read_float(io);
+				lib3ds_io_read_vector(stream, viewport->default_position);
+				viewport->default_width = lib3ds_io_read_float(stream);
+				viewport->default_horiz_angle = lib3ds_io_read_float(stream);
+				viewport->default_vert_angle = lib3ds_io_read_float(stream);
+				viewport->default_roll_angle = lib3ds_io_read_float(stream);
 				break;
 			}
 

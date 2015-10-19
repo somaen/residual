@@ -26,17 +26,19 @@ solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {
 	uint16 chunk;
 	int have_lin = false;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read_start(&c, CHK_SOLID_BGND, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_F:
-			lib3ds_io_read_rgb(io, background->solid_color);
+			lib3ds_io_read_rgb(stream, background->solid_color);
 			have_lin = true;
 			break;
 
 		case CHK_COLOR_F:
-			lib3ds_io_read_rgb(io, background->solid_color);
+			lib3ds_io_read_rgb(stream, background->solid_color);
 			break;
 
 		default:
@@ -55,22 +57,24 @@ v_gradient_read(Lib3dsBackground *background, Lib3dsIo *io) {
 	int index[2];
 	float col[2][3][3];
 	int have_lin = 0;
+	
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, CHK_V_GRADIENT, io);
 
-	background->gradient_percent = lib3ds_io_read_float(io);
+	background->gradient_percent = lib3ds_io_read_float(stream);
 	lib3ds_chunk_read_tell(&c, io);
 
 	index[0] = index[1] = 0;
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_COLOR_F:
-			lib3ds_io_read_rgb(io, col[0][index[0]]);
+			lib3ds_io_read_rgb(stream, col[0][index[0]]);
 			index[0]++;
 			break;
 
 		case CHK_LIN_COLOR_F:
-			lib3ds_io_read_rgb(io, col[1][index[1]]);
+			lib3ds_io_read_rgb(stream, col[1][index[1]]);
 			index[1]++;
 			have_lin = 1;
 			break;

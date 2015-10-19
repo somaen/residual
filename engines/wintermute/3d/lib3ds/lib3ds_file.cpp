@@ -226,6 +226,8 @@ static void ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 	uint16 chunk;
 	int have_lin = false;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read_start(&c, CHK_AMBIENT_LIGHT, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
@@ -233,7 +235,7 @@ static void ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 		case CHK_LIN_COLOR_F: {
 			int i;
 			for (i = 0; i < 3; ++i) {
-				file->ambient[i] = lib3ds_io_read_float(io);
+				file->ambient[i] = lib3ds_io_read_float(stream);
 			}
 			have_lin = true;
 			break;
@@ -245,7 +247,7 @@ static void ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 			if (!have_lin) {
 				int i;
 				for (i = 0; i < 3; ++i) {
-					file->ambient[i] = lib3ds_io_read_float(io);
+					file->ambient[i] = lib3ds_io_read_float(stream);
 				}
 			}
 			break;
@@ -276,7 +278,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_MASTER_SCALE: {
-			file->master_scale = lib3ds_io_read_float(io);
+			file->master_scale = lib3ds_io_read_float(stream);
 			break;
 		}
 
@@ -302,7 +304,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		case CHK_O_CONSTS: {
 			int i;
 			for (i = 0; i < 3; ++i) {
-				file->construction_plane[i] = lib3ds_io_read_float(io);
+				file->construction_plane[i] = lib3ds_io_read_float(stream);
 			}
 			break;
 		}

@@ -582,7 +582,7 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_PIVOT: {
 			if (node->type == LIB3DS_NODE_MESH_INSTANCE) {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-				lib3ds_io_read_vector(io, n->pivot);
+				lib3ds_io_read_vector(stream, n->pivot);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
 			}
@@ -602,8 +602,8 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_BOUNDBOX: {
 			if (node->type == LIB3DS_NODE_MESH_INSTANCE) {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-				lib3ds_io_read_vector(io, n->bbox_min);
-				lib3ds_io_read_vector(io, n->bbox_max);
+				lib3ds_io_read_vector(stream, n->bbox_min);
+				lib3ds_io_read_vector(stream, n->bbox_max);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
 			}
@@ -768,7 +768,7 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_MORPH_SMOOTH: {
 			if (node->type == LIB3DS_NODE_MESH_INSTANCE) {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-				n->morph_smooth = lib3ds_io_read_float(io);
+				n->morph_smooth = lib3ds_io_read_float(stream);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
 			}

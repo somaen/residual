@@ -54,16 +54,16 @@ static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 
 	light->spot_light = true;
 	for (int i = 0; i < 3; ++i) {
-		light->target[i] = lib3ds_io_read_float(io);
+		light->target[i] = lib3ds_io_read_float(stream);
 	}
-	light->hotspot = lib3ds_io_read_float(io);
-	light->falloff = lib3ds_io_read_float(io);
+	light->hotspot = lib3ds_io_read_float(stream);
+	light->falloff = lib3ds_io_read_float(stream);
 	lib3ds_chunk_read_tell(&c, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_DL_SPOT_ROLL:
-			light->roll = lib3ds_io_read_float(io);
+			light->roll = lib3ds_io_read_float(stream);
 			break;
 
 		case CHK_DL_SHADOWED: {
@@ -72,8 +72,8 @@ static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_LOCAL_SHADOW2: {
-			light->shadow_bias = lib3ds_io_read_float(io);
-			light->shadow_filter = lib3ds_io_read_float(io);
+			light->shadow_bias = lib3ds_io_read_float(stream);
+			light->shadow_filter = lib3ds_io_read_float(stream);
 			light->shadow_size = stream->readSint16LE();
 			break;
 		}
@@ -89,7 +89,7 @@ static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_SPOT_ASPECT: {
-			light->spot_aspect = lib3ds_io_read_float(io);
+			light->spot_aspect = lib3ds_io_read_float(stream);
 			break;
 		}
 
@@ -105,7 +105,7 @@ static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_RAY_BIAS: {
-			light->ray_bias = lib3ds_io_read_float(io);
+			light->ray_bias = lib3ds_io_read_float(stream);
 			break;
 		}
 
@@ -123,17 +123,18 @@ static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 }
 
 
-void
-lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
+void lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
+
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, CHK_N_DIRECT_LIGHT, io);
 
 	{
 		int i;
 		for (i = 0; i < 3; ++i) {
-			light->position[i] = lib3ds_io_read_float(io);
+			light->position[i] = lib3ds_io_read_float(stream);
 		}
 	}
 	lib3ds_chunk_read_tell(&c, io);
@@ -143,7 +144,7 @@ lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 		case CHK_COLOR_F: {
 			int i;
 			for (i = 0; i < 3; ++i) {
-				light->color[i] = lib3ds_io_read_float(io);
+				light->color[i] = lib3ds_io_read_float(stream);
 			}
 			break;
 		}
@@ -153,15 +154,15 @@ lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 			break;
 
 		case CHK_DL_OUTER_RANGE:
-			light->outer_range = lib3ds_io_read_float(io);
+			light->outer_range = lib3ds_io_read_float(stream);
 			break;
 
 		case CHK_DL_INNER_RANGE:
-			light->inner_range = lib3ds_io_read_float(io);
+			light->inner_range = lib3ds_io_read_float(stream);
 			break;
 
 		case CHK_DL_MULTIPLIER:
-			light->multiplier = lib3ds_io_read_float(io);
+			light->multiplier = lib3ds_io_read_float(stream);
 			break;
 
 		case CHK_DL_EXCLUDE: {
@@ -171,7 +172,7 @@ lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_ATTENUATE:
-			light->attenuation = lib3ds_io_read_float(io);
+			light->attenuation = lib3ds_io_read_float(stream);
 			break;
 
 		case CHK_DL_SPOTLIGHT: {

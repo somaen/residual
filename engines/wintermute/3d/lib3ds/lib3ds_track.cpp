@@ -407,19 +407,19 @@ tcb_read(Lib3dsKey *key, Lib3dsIo *io) {
 
 	key->flags = stream->readUint16LE();
 	if (key->flags & LIB3DS_KEY_USE_TENS) {
-		key->tens = lib3ds_io_read_float(io);
+		key->tens = lib3ds_io_read_float(stream);
 	}
 	if (key->flags & LIB3DS_KEY_USE_CONT) {
-		key->cont = lib3ds_io_read_float(io);
+		key->cont = lib3ds_io_read_float(stream);
 	}
 	if (key->flags & LIB3DS_KEY_USE_BIAS) {
-		key->bias = lib3ds_io_read_float(io);
+		key->bias = lib3ds_io_read_float(stream);
 	}
 	if (key->flags & LIB3DS_KEY_USE_EASE_TO) {
-		key->ease_to = lib3ds_io_read_float(io);
+		key->ease_to = lib3ds_io_read_float(stream);
 	}
 	if (key->flags & LIB3DS_KEY_USE_EASE_FROM) {
-		key->ease_from = lib3ds_io_read_float(io);
+		key->ease_from = lib3ds_io_read_float(stream);
 	}
 }
 
@@ -449,7 +449,7 @@ lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 		for (i = 0; i < nkeys; ++i) {
 			track->keys[i].frame = stream->readSint32LE();
 			tcb_read(&track->keys[i], io);
-			track->keys[i].value[0] = lib3ds_io_read_float(io);
+			track->keys[i].value[0] = lib3ds_io_read_float(stream);
 		}
 		break;
 
@@ -457,7 +457,7 @@ lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 		for (i = 0; i < nkeys; ++i) {
 			track->keys[i].frame = stream->readSint32LE();
 			tcb_read(&track->keys[i], io);
-			lib3ds_io_read_vector(io, track->keys[i].value);
+			lib3ds_io_read_vector(stream, track->keys[i].value);
 		}
 		break;
 
@@ -465,8 +465,8 @@ lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 		for (i = 0; i < nkeys; ++i) {
 			track->keys[i].frame = stream->readSint32LE();
 			tcb_read(&track->keys[i], io);
-			track->keys[i].value[3] = lib3ds_io_read_float(io);
-			lib3ds_io_read_vector(io, track->keys[i].value);
+			track->keys[i].value[3] = lib3ds_io_read_float(stream);
+			lib3ds_io_read_vector(stream, track->keys[i].value);
 		}
 		break;
 

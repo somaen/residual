@@ -403,7 +403,9 @@ lib3ds_track_eval_quat(Lib3dsTrack *track, float q[4], float t) {
 
 static void
 tcb_read(Lib3dsKey *key, Lib3dsIo *io) {
-	key->flags = lib3ds_io_read_word(io);
+	Common::SeekableReadStream *stream = io->stream;
+
+	key->flags = stream->readUint16LE();
 	if (key->flags & LIB3DS_KEY_USE_TENS) {
 		key->tens = lib3ds_io_read_float(io);
 	}
@@ -429,7 +431,7 @@ lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 
 	Common::SeekableReadStream *stream = io->stream;
 
-	track->flags = lib3ds_io_read_word(io);
+	track->flags = stream->readUint16LE();
 	stream->readUint32LE();
 	stream->readUint32LE();
 	nkeys = stream->readSint32LE();

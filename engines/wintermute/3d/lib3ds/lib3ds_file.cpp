@@ -381,7 +381,7 @@ static void kfdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_KFHDR: {
-			file->keyf_revision = lib3ds_io_read_word(io);
+			file->keyf_revision = stream->readUint16LE();
 			lib3ds_io_read_string(io, file->name, 12 + 1);
 			file->frames = stream->readSint32LE();
 			break;

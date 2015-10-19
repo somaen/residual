@@ -31,7 +31,7 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 	switch (c.chunk) {
 	case CHK_VIEWPORT_LAYOUT: {
 		int cur = 0;
-		viewport->layout_style = lib3ds_io_read_word(io);
+		viewport->layout_style = stream->readUint16LE();
 		viewport->layout_active = stream->readSint16LE();
 		stream->readSint16LE();
 		viewport->layout_swap = stream->readSint16LE();
@@ -42,22 +42,22 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 		while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 			switch (chunk) {
 			case CHK_VIEWPORT_SIZE: {
-				viewport->layout_position[0] = lib3ds_io_read_word(io);
-				viewport->layout_position[1] = lib3ds_io_read_word(io);
-				viewport->layout_size[0] = lib3ds_io_read_word(io);
-				viewport->layout_size[1] = lib3ds_io_read_word(io);
+				viewport->layout_position[0] = stream->readUint16LE();
+				viewport->layout_position[1] = stream->readUint16LE();
+				viewport->layout_size[0] = stream->readUint16LE();
+				viewport->layout_size[1] = stream->readUint16LE();
 				break;
 			}
 
 			case CHK_VIEWPORT_DATA_3: {
 				if (cur < LIB3DS_LAYOUT_MAX_VIEWS) {
 					stream->readSint16LE();
-					viewport->layout_views[cur].axis_lock = lib3ds_io_read_word(io);
+					viewport->layout_views[cur].axis_lock = stream->readUint16LE();
 					viewport->layout_views[cur].position[0] = stream->readSint16LE();
 					viewport->layout_views[cur].position[1] = stream->readSint16LE();
 					viewport->layout_views[cur].size[0] = stream->readSint16LE();
 					viewport->layout_views[cur].size[1] = stream->readSint16LE();
-					viewport->layout_views[cur].type = lib3ds_io_read_word(io);
+					viewport->layout_views[cur].type = stream->readUint16LE();
 					viewport->layout_views[cur].zoom = lib3ds_io_read_float(io);
 					lib3ds_io_read_vector(io, viewport->layout_views[cur].center);
 					viewport->layout_views[cur].horiz_angle = lib3ds_io_read_float(io);

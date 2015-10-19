@@ -39,7 +39,7 @@ lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io) {
 	Common::SeekableReadStream *stream = io->stream;
 
 	c->cur = lib3ds_io_tell(io);
-	c->chunk = lib3ds_io_read_word(io);
+	c->chunk = stream->readUint16LE();
 	c->size = stream->readUint32LE();
 	c->end = c->cur + c->size;
 	c->cur += 6;
@@ -79,7 +79,7 @@ uint16 lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 	}
 
 	lib3ds_io_seek(io, (long)c->cur, SEEK_SET);
-	d.chunk = lib3ds_io_read_word(io);
+	d.chunk = stream->readUint16LE();
 	d.size = stream->readUint32LE();
 	c->cur += d.size;
 

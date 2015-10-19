@@ -534,10 +534,11 @@ lib3ds_node_by_id(Lib3dsNode *node, uint16 node_id) {
 }
 
 
-void
-lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
+void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
+
+	Common::SeekableReadStream *stream = io->stream;
 
 	assert(node);
 	lib3ds_chunk_read_start(&c, 0, io);
@@ -558,7 +559,7 @@ lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0)  {
 		switch (chunk) {
 		case CHK_NODE_ID: {
-			node->node_id = lib3ds_io_read_word(io);
+			node->node_id = stream->readUint16LE();
 			lib3ds_io_log_indent(io, 1);
 			lib3ds_io_log(io, LIB3DS_LOG_INFO, "ID=%d", (short)node->node_id);
 			lib3ds_io_log_indent(io, -1);
@@ -567,9 +568,9 @@ lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 
 		case CHK_NODE_HDR: {
 			lib3ds_io_read_string(io, node->name, 64);
-			node->flags = lib3ds_io_read_word(io);
-			node->flags |= ((uint32)lib3ds_io_read_word(io)) << 16;
-			node->user_id = lib3ds_io_read_word(io);
+			node->flags = stream->readUint16LE();
+			node->flags |= ((uint32)stream->readUint16LE()) << 16;
+			node->user_id = stream->readUint16LE();
 
 			lib3ds_io_log_indent(io, 1);
 			lib3ds_io_log(io, LIB3DS_LOG_INFO, "NAME=%s", node->name);

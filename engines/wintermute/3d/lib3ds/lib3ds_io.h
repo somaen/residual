@@ -45,7 +45,6 @@ void lib3ds_io_log_indent(Lib3dsIo *io, int indent);
 void lib3ds_io_read_error(Lib3dsIo *io);
 
 uint8 lib3ds_io_read_byte(Lib3dsIo *io);
-uint16 lib3ds_io_read_word(Lib3dsIo *io);
 int8 lib3ds_io_read_intb(Lib3dsIo *io);
 float lib3ds_io_read_float(Lib3dsIo *io);
 void lib3ds_io_read_vector(Lib3dsIo *io, float v[3]);

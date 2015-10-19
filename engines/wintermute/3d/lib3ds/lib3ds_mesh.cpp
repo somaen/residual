@@ -250,14 +250,14 @@ face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	lib3ds_chunk_read_start(&c, CHK_FACE_ARRAY, io);
 
 	lib3ds_mesh_resize_faces(mesh, 0);
-	nfaces = lib3ds_io_read_word(io);
+	nfaces = stream->readUint16LE();
 	if (nfaces) {
 		lib3ds_mesh_resize_faces(mesh, nfaces);
 		for (i = 0; i < nfaces; ++i) {
-			mesh->faces[i].index[0] = lib3ds_io_read_word(io);
-			mesh->faces[i].index[1] = lib3ds_io_read_word(io);
-			mesh->faces[i].index[2] = lib3ds_io_read_word(io);
-			mesh->faces[i].flags = lib3ds_io_read_word(io);
+			mesh->faces[i].index[0] = stream->readUint16LE();
+			mesh->faces[i].index[1] = stream->readUint16LE();
+			mesh->faces[i].index[2] = stream->readUint16LE();
+			mesh->faces[i].flags = stream->readUint16LE();
 		}
 		lib3ds_chunk_read_tell(&c, io);
 
@@ -273,9 +273,9 @@ face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 				lib3ds_io_read_string(io, name, 64);
 				material = lib3ds_file_material_by_name(file, name);
 
-				n = lib3ds_io_read_word(io);
+				n = stream->readUint16LE();
 				for (i = 0; i < n; ++i) {
-					index = lib3ds_io_read_word(io);
+					index = stream->readUint16LE();
 					if (index < mesh->nfaces) {
 						mesh->faces[index].material = material;
 					} else {
@@ -318,6 +318,8 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read_start(&c, CHK_N_TRI_OBJECT, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
@@ -341,7 +343,7 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 
 		case CHK_POINT_ARRAY: {
 			int i;
-			uint16 nvertices = lib3ds_io_read_word(io);
+			uint16 nvertices = stream->readUint16LE();
 			lib3ds_mesh_resize_vertices(mesh, nvertices, mesh->texcos != NULL, mesh->vflags != NULL);
 			for (i = 0; i < mesh->nvertices; ++i) {
 				lib3ds_io_read_vector(io, mesh->vertices[i]);
@@ -351,11 +353,11 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 
 		case CHK_POINT_FLAG_ARRAY: {
 			int i;
-			uint16 nflags = lib3ds_io_read_word(io);
+			uint16 nflags = stream->readUint16LE();
 			uint16 nvertices = (mesh->nvertices >= nflags) ? mesh->nvertices : nflags;
 			lib3ds_mesh_resize_vertices(mesh, nvertices, mesh->texcos != NULL, 1);
 			for (i = 0; i < nflags; ++i) {
-				mesh->vflags[i] = lib3ds_io_read_word(io);
+				mesh->vflags[i] = stream->readUint16LE();
 			}
 			break;
 		}
@@ -394,7 +396,7 @@ lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 
 		case CHK_TEX_VERTS: {
 			int i;
-			uint16 ntexcos = lib3ds_io_read_word(io);
+			uint16 ntexcos = stream->readUint16LE();
 			uint16 nvertices = (mesh->nvertices >= ntexcos) ? mesh->nvertices : ntexcos;;
 			if (!mesh->texcos) {
 				lib3ds_mesh_resize_vertices(mesh, nvertices, 1, mesh->vflags != NULL);

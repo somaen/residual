@@ -191,7 +191,7 @@ static void texture_map_read(Lib3dsTextureMap *map, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_MAP_TILING: {
-			map->flags = lib3ds_io_read_word(io);
+			map->flags = stream->readUint16LE();
 			break;
 		}
 

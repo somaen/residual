@@ -19,7 +19,7 @@
 
 
 typedef struct Lib3dsChunkTable {
-	uint32_t chunk;
+	uint32 chunk;
 	const char *name;
 } Lib3dsChunkTable;
 
@@ -247,7 +247,7 @@ static Lib3dsChunkTable lib3ds_chunk_table[] = {
 
 
 const char *
-lib3ds_chunk_name(uint16_t chunk) {
+lib3ds_chunk_name(uint16 chunk) {
 	Lib3dsChunkTable *p;
 
 	for (p = lib3ds_chunk_table; p->name != 0; ++p) {

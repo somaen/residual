@@ -47,7 +47,7 @@ lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io) {
 
 
 void
-lib3ds_chunk_read_start(Lib3dsChunk *c, uint16_t chunk, Lib3dsIo *io) {
+lib3ds_chunk_read_start(Lib3dsChunk *c, uint16 chunk, Lib3dsIo *io) {
 	assert(c);
 	assert(io);
 	lib3ds_chunk_read(c, io);
@@ -64,7 +64,7 @@ lib3ds_chunk_read_tell(Lib3dsChunk *c, Lib3dsIo *io) {
 }
 
 
-uint16_t
+uint16
 lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 	Lib3dsChunk d;
 
@@ -137,7 +137,7 @@ lib3ds_chunk_write_end(Lib3dsChunk *c, Lib3dsIo *io) {
 
 
 void
-lib3ds_chunk_unknown(uint16_t chunk, Lib3dsIo *io) {
+lib3ds_chunk_unknown(uint16 chunk, Lib3dsIo *io) {
 	if (io->log_func) {
 		lib3ds_io_log(io, LIB3DS_LOG_WARN, "Unknown Chunk: %s (0x%X)", lib3ds_chunk_name(chunk), chunk);
 	}

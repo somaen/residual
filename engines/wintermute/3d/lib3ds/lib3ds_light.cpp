@@ -44,7 +44,7 @@ lib3ds_light_free(Lib3dsLight *light) {
 static void
 spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 	int i;
 
 	lib3ds_chunk_read_start(&c, CHK_DL_SPOTLIGHT, io);
@@ -123,7 +123,7 @@ spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 void
 lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 
 	lib3ds_chunk_read_start(&c, CHK_N_DIRECT_LIGHT, io);
 
@@ -272,7 +272,7 @@ lib3ds_light_write(Lib3dsLight *light, Lib3dsIo *io) {
 			lib3ds_chunk_write(&c, io);
 			lib3ds_io_write_float(io, light->shadow_bias);
 			lib3ds_io_write_float(io, light->shadow_filter);
-			lib3ds_io_write_intw(io, (int16_t)light->shadow_size);
+			lib3ds_io_write_intw(io, (int16)light->shadow_size);
 		}
 		if (light->see_cone) { /*---- LIB3DS_DL_SEE_CONE ----*/
 			Lib3dsChunk c;

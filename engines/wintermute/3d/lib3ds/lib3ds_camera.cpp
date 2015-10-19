@@ -71,7 +71,7 @@ lib3ds_camera_free(Lib3dsCamera *camera) {
 void
 lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 
 	lib3ds_chunk_read_start(&c, CHK_N_CAMERA, io);
 

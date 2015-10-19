@@ -479,7 +479,7 @@ lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 
 void
 tcb_write(Lib3dsKey *key, Lib3dsIo *io) {
-	lib3ds_io_write_word(io, (uint16_t)key->flags);
+	lib3ds_io_write_word(io, (uint16)key->flags);
 	if (key->flags & LIB3DS_KEY_USE_TENS) {
 		lib3ds_io_write_float(io, key->tens);
 	}
@@ -502,7 +502,7 @@ void
 lib3ds_track_write(Lib3dsTrack *track, Lib3dsIo *io) {
 	int i;
 
-	lib3ds_io_write_word(io, (uint16_t)track->flags);
+	lib3ds_io_write_word(io, (uint16)track->flags);
 	lib3ds_io_write_dword(io, 0);
 	lib3ds_io_write_dword(io, 0);
 	lib3ds_io_write_dword(io, track->nkeys);

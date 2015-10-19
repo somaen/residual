@@ -224,11 +224,11 @@ static void
 named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	char name[64];
-	uint16_t chunk;
+	uint16 chunk;
 	Lib3dsMesh *mesh = NULL;
 	Lib3dsCamera *camera = NULL;
 	Lib3dsLight *light = NULL;
-	uint32_t object_flags;
+	uint32 object_flags;
 
 	lib3ds_chunk_read_start(&c, CHK_NAMED_OBJECT, io);
 
@@ -310,7 +310,7 @@ named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 static void
 ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 	int have_lin = FALSE;
 
 	lib3ds_chunk_read_start(&c, CHK_AMBIENT_LIGHT, io);
@@ -350,7 +350,7 @@ ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 static void
 mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 
 	lib3ds_chunk_read_start(&c, CHK_MDATA, io);
 
@@ -459,7 +459,7 @@ compare_node_id2(const void *a, const void *b) {
 static void
 kfdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 	unsigned num_nodes = 0;
 	Lib3dsNode *last = NULL;
 
@@ -593,7 +593,7 @@ kfdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 int
 lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 	Lib3dsIoImpl *impl;
 
 	lib3ds_io_setup(io);
@@ -671,7 +671,7 @@ colorf_write(float rgb[3], Lib3dsIo *io) {
 
 
 static void
-object_flags_write(uint32_t flags, Lib3dsIo *io) {
+object_flags_write(uint32 flags, Lib3dsIo *io) {
 	if (flags) {
 		Lib3dsChunk c;
 		c.size = 6;
@@ -820,10 +820,10 @@ mdata_write(Lib3dsFile *file, Lib3dsIo *io) {
 
 
 static void
-nodes_write(Lib3dsNode *first_node, uint16_t *default_id, uint16_t parent_id, Lib3dsIo *io) {
+nodes_write(Lib3dsNode *first_node, uint16 *default_id, uint16 parent_id, Lib3dsIo *io) {
 	Lib3dsNode *p;
 	for (p = first_node; p != NULL; p = p->next) {
-		uint16_t node_id;
+		uint16 node_id;
 		if ((p->type == LIB3DS_NODE_AMBIENT_COLOR) || (p->node_id != 65535)) {
 			node_id = p->node_id;
 		} else {
@@ -852,9 +852,9 @@ kfdata_write(Lib3dsFile *file, Lib3dsIo *io) {
 		/*---- LIB3DS_KFHDR ----*/
 		Lib3dsChunk c;
 		c.chunk = CHK_KFHDR;
-		c.size = 6 + 2 + (uint32_t)strlen(file->name) + 1 + 4;
+		c.size = 6 + 2 + (uint32)strlen(file->name) + 1 + 4;
 		lib3ds_chunk_write(&c, io);
-		lib3ds_io_write_intw(io, (int16_t)file->keyf_revision);
+		lib3ds_io_write_intw(io, (int16)file->keyf_revision);
 		lib3ds_io_write_string(io, file->name);
 		lib3ds_io_write_intd(io, file->frames);
 	}
@@ -878,7 +878,7 @@ kfdata_write(Lib3dsFile *file, Lib3dsIo *io) {
 	lib3ds_viewport_write(&file->viewport_keyf, io);
 
 	{
-		uint16_t default_id = 0;
+		uint16 default_id = 0;
 		nodes_write(file->nodes, &default_id, 65535, io);
 	}
 
@@ -1134,7 +1134,7 @@ lib3ds_file_node_by_name(Lib3dsFile *file, const char *name, Lib3dsNodeType type
  * \see lib3ds_node_by_id
  */
 Lib3dsNode *
-lib3ds_file_node_by_id(Lib3dsFile *file, uint16_t node_id) {
+lib3ds_file_node_by_id(Lib3dsFile *file, uint16 node_id) {
 	Lib3dsNode *p, *q;
 
 	assert(file);
@@ -1253,7 +1253,7 @@ lib3ds_file_remove_node(Lib3dsFile *file, Lib3dsNode *node) {
 
 
 static void
-file_minmax_node_id_impl(Lib3dsFile *file, Lib3dsNode *node, uint16_t *min_id, uint16_t *max_id) {
+file_minmax_node_id_impl(Lib3dsFile *file, Lib3dsNode *node, uint16 *min_id, uint16 *max_id) {
 	Lib3dsNode *p;
 
 	if (min_id && (*min_id > node->node_id))
@@ -1270,7 +1270,7 @@ file_minmax_node_id_impl(Lib3dsFile *file, Lib3dsNode *node, uint16_t *min_id, u
 
 
 void
-lib3ds_file_minmax_node_id(Lib3dsFile *file, uint16_t *min_id, uint16_t *max_id) {
+lib3ds_file_minmax_node_id(Lib3dsFile *file, uint16 *min_id, uint16 *max_id) {
 	Lib3dsNode *p;
 
 	if (min_id)

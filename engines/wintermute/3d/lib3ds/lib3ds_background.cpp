@@ -21,7 +21,7 @@
 static void
 solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 	int have_lin = FALSE;
 
 	lib3ds_chunk_read_start(&c, CHK_SOLID_BGND, io);
@@ -49,7 +49,7 @@ solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {
 static void
 v_gradient_read(Lib3dsBackground *background, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 	int index[2];
 	float col[2][3][3];
 	int have_lin = 0;
@@ -163,7 +163,7 @@ lib3ds_background_write(Lib3dsBackground *background, Lib3dsIo *io) {
 	if (strlen(background->bitmap_name)) { /*---- LIB3DS_BIT_MAP ----*/
 		Lib3dsChunk c;
 		c.chunk = CHK_BIT_MAP;
-		c.size = 6 + 1 + (uint32_t)strlen(background->bitmap_name);
+		c.size = 6 + 1 + (uint32)strlen(background->bitmap_name);
 		lib3ds_chunk_write(&c, io);
 		lib3ds_io_write_string(io, background->bitmap_name);
 	}

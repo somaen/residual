@@ -19,7 +19,7 @@
 
 
 typedef union {
-	uint32_t dword_value;
+	uint32 dword_value;
 	float float_value;
 } Lib3dsDwordFloat;
 
@@ -139,9 +139,9 @@ lib3ds_io_write_error(Lib3dsIo *io) {
 /*!
  * Read a byte from a file stream.
  */
-uint8_t
+uint8
 lib3ds_io_read_byte(Lib3dsIo *io) {
-	uint8_t b;
+	uint8 b;
 
 	assert(io);
 	lib3ds_io_read(io, &b, 1);
@@ -152,15 +152,15 @@ lib3ds_io_read_byte(Lib3dsIo *io) {
 /**
  * Read a word from a file stream in little endian format.
  */
-uint16_t
+uint16
 lib3ds_io_read_word(Lib3dsIo *io) {
-	uint8_t b[2];
-	uint16_t w;
+	uint8 b[2];
+	uint16 w;
 
 	assert(io);
 	lib3ds_io_read(io, b, 2);
-	w = ((uint16_t)b[1] << 8) |
-	    ((uint16_t)b[0]);
+	w = ((uint16)b[1] << 8) |
+	    ((uint16)b[0]);
 	return (w);
 }
 
@@ -168,17 +168,17 @@ lib3ds_io_read_word(Lib3dsIo *io) {
 /*!
  * Read a dword from file a stream in little endian format.
  */
-uint32_t
+uint32
 lib3ds_io_read_dword(Lib3dsIo *io) {
-	uint8_t b[4];
-	uint32_t d;
+	uint8 b[4];
+	uint32 d;
 
 	assert(io);
 	lib3ds_io_read(io, b, 4);
-	d = ((uint32_t)b[3] << 24) |
-	    ((uint32_t)b[2] << 16) |
-	    ((uint32_t)b[1] << 8) |
-	    ((uint32_t)b[0]);
+	d = ((uint32)b[3] << 24) |
+	    ((uint32)b[2] << 16) |
+	    ((uint32)b[1] << 8) |
+	    ((uint32)b[0]);
 	return (d);
 }
 
@@ -186,9 +186,9 @@ lib3ds_io_read_dword(Lib3dsIo *io) {
 /*!
  * Read a signed byte from a file stream.
  */
-int8_t
+int8
 lib3ds_io_read_intb(Lib3dsIo *io) {
-	int8_t b;
+	int8 b;
 
 	assert(io);
 	lib3ds_io_read(io, &b, 1);
@@ -199,34 +199,34 @@ lib3ds_io_read_intb(Lib3dsIo *io) {
 /*!
  * Read a signed word from a file stream in little endian format.
  */
-int16_t
+int16
 lib3ds_io_read_intw(Lib3dsIo *io) {
-	uint8_t b[2];
-	uint16_t w;
+	uint8 b[2];
+	uint16 w;
 
 	assert(io);
 	lib3ds_io_read(io, b, 2);
-	w = ((uint16_t)b[1] << 8) |
-	    ((uint16_t)b[0]);
-	return ((int16_t)w);
+	w = ((uint16)b[1] << 8) |
+	    ((uint16)b[0]);
+	return ((int16)w);
 }
 
 
 /*!
  * Read a signed dword a from file stream in little endian format.
  */
-int32_t
+int32
 lib3ds_io_read_intd(Lib3dsIo *io) {
-	uint8_t b[4];
-	uint32_t d;
+	uint8 b[4];
+	uint32 d;
 
 	assert(io);
 	lib3ds_io_read(io, b, 4);
-	d = ((uint32_t)b[3] << 24) |
-	    ((uint32_t)b[2] << 16) |
-	    ((uint32_t)b[1] << 8) |
-	    ((uint32_t)b[0]);
-	return ((int32_t)d);
+	d = ((uint32)b[3] << 24) |
+	    ((uint32)b[2] << 16) |
+	    ((uint32)b[1] << 8) |
+	    ((uint32)b[0]);
+	return ((int32)d);
 }
 
 
@@ -235,15 +235,15 @@ lib3ds_io_read_intd(Lib3dsIo *io) {
  */
 float
 lib3ds_io_read_float(Lib3dsIo *io) {
-	uint8_t b[4];
+	uint8 b[4];
 	Lib3dsDwordFloat d;
 
 	assert(io);
 	lib3ds_io_read(io, b, 4);
-	d.dword_value = ((uint32_t)b[3] << 24) |
-	                ((uint32_t)b[2] << 16) |
-	                ((uint32_t)b[1] << 8) |
-	                ((uint32_t)b[0]);
+	d.dword_value = ((uint32)b[3] << 24) |
+	                ((uint32)b[2] << 16) |
+	                ((uint32)b[1] << 8) |
+	                ((uint32)b[0]);
 	return d.float_value;
 }
 
@@ -307,7 +307,7 @@ lib3ds_io_read_string(Lib3dsIo *io, char *s, int buflen) {
  * Writes a byte into a file stream.
  */
 void
-lib3ds_io_write_byte(Lib3dsIo *io, uint8_t b) {
+lib3ds_io_write_byte(Lib3dsIo *io, uint8 b) {
 	assert(io);
 	if (lib3ds_io_write(io, &b, 1) != 1) {
 		lib3ds_io_write_error(io);
@@ -319,12 +319,12 @@ lib3ds_io_write_byte(Lib3dsIo *io, uint8_t b) {
  * Writes a word into a little endian file stream.
  */
 void
-lib3ds_io_write_word(Lib3dsIo *io, uint16_t w) {
-	uint8_t b[2];
+lib3ds_io_write_word(Lib3dsIo *io, uint16 w) {
+	uint8 b[2];
 
 	assert(io);
-	b[1] = ((uint16_t)w & 0xFF00) >> 8;
-	b[0] = ((uint16_t)w & 0x00FF);
+	b[1] = ((uint16)w & 0xFF00) >> 8;
+	b[0] = ((uint16)w & 0x00FF);
 	if (lib3ds_io_write(io, b, 2) != 2) {
 		lib3ds_io_write_error(io);
 	}
@@ -335,14 +335,14 @@ lib3ds_io_write_word(Lib3dsIo *io, uint16_t w) {
  * Writes a dword into a little endian file stream.
  */
 void
-lib3ds_io_write_dword(Lib3dsIo *io, uint32_t d) {
-	uint8_t b[4];
+lib3ds_io_write_dword(Lib3dsIo *io, uint32 d) {
+	uint8 b[4];
 
 	assert(io);
-	b[3] = (uint8_t)(((uint32_t)d & 0xFF000000) >> 24);
-	b[2] = (uint8_t)(((uint32_t)d & 0x00FF0000) >> 16);
-	b[1] = (uint8_t)(((uint32_t)d & 0x0000FF00) >> 8);
-	b[0] = (uint8_t)(((uint32_t)d & 0x000000FF));
+	b[3] = (uint8)(((uint32)d & 0xFF000000) >> 24);
+	b[2] = (uint8)(((uint32)d & 0x00FF0000) >> 16);
+	b[1] = (uint8)(((uint32)d & 0x0000FF00) >> 8);
+	b[0] = (uint8)(((uint32)d & 0x000000FF));
 	if (lib3ds_io_write(io, b, 4) != 4) {
 		lib3ds_io_write_error(io);
 	}
@@ -353,7 +353,7 @@ lib3ds_io_write_dword(Lib3dsIo *io, uint32_t d) {
  * Writes a signed byte in a file stream.
  */
 void
-lib3ds_io_write_intb(Lib3dsIo *io, int8_t b) {
+lib3ds_io_write_intb(Lib3dsIo *io, int8 b) {
 	assert(io);
 	if (lib3ds_io_write(io, &b, 1) != 1) {
 		lib3ds_io_write_error(io);
@@ -365,12 +365,12 @@ lib3ds_io_write_intb(Lib3dsIo *io, int8_t b) {
  * Writes a signed word into a little endian file stream.
  */
 void
-lib3ds_io_write_intw(Lib3dsIo *io, int16_t w) {
-	uint8_t b[2];
+lib3ds_io_write_intw(Lib3dsIo *io, int16 w) {
+	uint8 b[2];
 
 	assert(io);
-	b[1] = ((uint16_t)w & 0xFF00) >> 8;
-	b[0] = ((uint16_t)w & 0x00FF);
+	b[1] = ((uint16)w & 0xFF00) >> 8;
+	b[0] = ((uint16)w & 0x00FF);
 	if (lib3ds_io_write(io, b, 2) != 2) {
 		lib3ds_io_write_error(io);
 	}
@@ -381,14 +381,14 @@ lib3ds_io_write_intw(Lib3dsIo *io, int16_t w) {
  * Writes a signed dword into a little endian file stream.
  */
 void
-lib3ds_io_write_intd(Lib3dsIo *io, int32_t d) {
-	uint8_t b[4];
+lib3ds_io_write_intd(Lib3dsIo *io, int32 d) {
+	uint8 b[4];
 
 	assert(io);
-	b[3] = (uint8_t)(((uint32_t)d & 0xFF000000) >> 24);
-	b[2] = (uint8_t)(((uint32_t)d & 0x00FF0000) >> 16);
-	b[1] = (uint8_t)(((uint32_t)d & 0x0000FF00) >> 8);
-	b[0] = (uint8_t)(((uint32_t)d & 0x000000FF));
+	b[3] = (uint8)(((uint32)d & 0xFF000000) >> 24);
+	b[2] = (uint8)(((uint32)d & 0x00FF0000) >> 16);
+	b[1] = (uint8)(((uint32)d & 0x0000FF00) >> 8);
+	b[0] = (uint8)(((uint32)d & 0x000000FF));
 	if (lib3ds_io_write(io, b, 4) != 4) {
 		lib3ds_io_write_error(io);
 	}
@@ -400,15 +400,15 @@ lib3ds_io_write_intd(Lib3dsIo *io, int32_t d) {
  */
 void
 lib3ds_io_write_float(Lib3dsIo *io, float l) {
-	uint8_t b[4];
+	uint8 b[4];
 	Lib3dsDwordFloat d;
 
 	assert(io);
 	d.float_value = l;
-	b[3] = (uint8_t)(((uint32_t)d.dword_value & 0xFF000000) >> 24);
-	b[2] = (uint8_t)(((uint32_t)d.dword_value & 0x00FF0000) >> 16);
-	b[1] = (uint8_t)(((uint32_t)d.dword_value & 0x0000FF00) >> 8);
-	b[0] = (uint8_t)(((uint32_t)d.dword_value & 0x000000FF));
+	b[3] = (uint8)(((uint32)d.dword_value & 0xFF000000) >> 24);
+	b[2] = (uint8)(((uint32)d.dword_value & 0x00FF0000) >> 16);
+	b[1] = (uint8)(((uint32)d.dword_value & 0x0000FF00) >> 8);
+	b[0] = (uint8)(((uint32)d.dword_value & 0x000000FF));
 	if (lib3ds_io_write(io, b, 4) != 4) {
 		lib3ds_io_write_error(io);
 	}

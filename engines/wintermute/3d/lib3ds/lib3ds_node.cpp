@@ -515,7 +515,7 @@ lib3ds_node_by_name(Lib3dsNode *node, const char *name, Lib3dsNodeType type) {
  * \return A pointer to the first matching node, or NULL if not found.
  */
 Lib3dsNode *
-lib3ds_node_by_id(Lib3dsNode *node, uint16_t node_id) {
+lib3ds_node_by_id(Lib3dsNode *node, uint16 node_id) {
 	Lib3dsNode *p, *q;
 
 	for (p = node->childs; p != 0; p = p->next) {
@@ -534,7 +534,7 @@ lib3ds_node_by_id(Lib3dsNode *node, uint16_t node_id) {
 void
 lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 
 	assert(node);
 	lib3ds_chunk_read_start(&c, 0, io);
@@ -565,7 +565,7 @@ lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_NODE_HDR: {
 			lib3ds_io_read_string(io, node->name, 64);
 			node->flags = lib3ds_io_read_word(io);
-			node->flags |= ((uint32_t)lib3ds_io_read_word(io)) << 16;
+			node->flags |= ((uint32)lib3ds_io_read_word(io)) << 16;
 			node->user_id = lib3ds_io_read_word(io);
 
 			lib3ds_io_log_indent(io, 1);
@@ -794,7 +794,7 @@ lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 
 
 void
-lib3ds_node_write(Lib3dsNode *node, uint16_t node_id, uint16_t parent_id, Lib3dsIo *io) {
+lib3ds_node_write(Lib3dsNode *node, uint16 node_id, uint16 parent_id, Lib3dsIo *io) {
 	Lib3dsChunk c;
 
 	switch (node->type) {
@@ -846,7 +846,7 @@ lib3ds_node_write(Lib3dsNode *node, uint16_t node_id, uint16_t parent_id, Lib3ds
 		/*---- CHK_NODE_HDR ----*/
 		Lib3dsChunk c;
 		c.chunk = CHK_NODE_HDR;
-		c.size = 6 + 1 + (uint32_t)strlen(node->name) + 2 + 2 + 2;
+		c.size = 6 + 1 + (uint32)strlen(node->name) + 2 + 2 + 2;
 		lib3ds_chunk_write(&c, io);
 		lib3ds_io_write_string(io, node->name);
 		lib3ds_io_write_word(io, node->flags & 0xffff);
@@ -886,7 +886,7 @@ lib3ds_node_write(Lib3dsNode *node, uint16_t node_id, uint16_t parent_id, Lib3ds
 				name = n->instance_name;
 
 				c.chunk = CHK_INSTANCE_NAME;
-				c.size = 6 + 1 + (uint32_t)strlen(name);
+				c.size = 6 + 1 + (uint32)strlen(name);
 				lib3ds_chunk_write(&c, io);
 				lib3ds_io_write_string(io, name);
 			}

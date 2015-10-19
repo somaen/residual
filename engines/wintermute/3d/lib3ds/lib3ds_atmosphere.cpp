@@ -21,7 +21,7 @@
 static void
 fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 
 	lib3ds_chunk_read_start(&c, CHK_FOG, io);
 
@@ -61,7 +61,7 @@ fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 static void
 layer_fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 	int have_lin = FALSE;
 
 	lib3ds_chunk_read_start(&c, CHK_LAYER_FOG, io);
@@ -95,7 +95,7 @@ layer_fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 static void
 distance_cue_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	Lib3dsChunk c;
-	uint16_t chunk;
+	uint16 chunk;
 
 	lib3ds_chunk_read_start(&c, CHK_DISTANCE_CUE, io);
 

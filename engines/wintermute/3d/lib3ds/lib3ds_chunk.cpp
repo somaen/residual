@@ -38,7 +38,7 @@ lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io) {
 
 	Common::SeekableReadStream *stream = io->stream;
 
-	c->cur = lib3ds_io_tell(io);
+	c->cur = stream->pos();
 	c->chunk = stream->readUint16LE();
 	c->size = stream->readUint32LE();
 	c->end = c->cur + c->size;
@@ -62,9 +62,8 @@ lib3ds_chunk_read_start(Lib3dsChunk *c, uint16 chunk, Lib3dsIo *io) {
 }
 
 
-void
-lib3ds_chunk_read_tell(Lib3dsChunk *c, Lib3dsIo *io) {
-	c->cur = lib3ds_io_tell(io);
+void lib3ds_chunk_read_tell(Lib3dsChunk *c, Lib3dsIo *io) {
+	c->cur = io->stream->pos();
 }
 
 

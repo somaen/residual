@@ -58,15 +58,6 @@ long lib3ds_io_seek(Lib3dsIo *io, long offset, int whence) {
 }
 
 
-long lib3ds_io_tell(Lib3dsIo *io) {
-	assert(io);
-	if (!io) {
-		return 0;
-	}
-	return io->stream->pos();
-}
-
-
 size_t lib3ds_io_read(Lib3dsIo *io, void *buffer, size_t size) {
 	assert(io);
 	if (!io) {

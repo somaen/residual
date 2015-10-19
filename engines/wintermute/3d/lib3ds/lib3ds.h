@@ -49,7 +49,7 @@ enum Lib3dsLogLevel {
 
 struct Lib3dsIo {
 	void   *impl;
-	Common::SeekableReadStream *self;
+	Common::SeekableReadStream *stream;
 	void (*log_func)(Common::SeekableReadStream *self, Lib3dsLogLevel level, int indent, const char *msg);
 };
 
@@ -220,21 +220,21 @@ struct Lib3dsMaterial {
 	float               specular[3];        /* Material specular reflectivity */
 	float               shininess;          /* Material specular exponent */
 	float               shin_strength;
-	int                 use_blur;
+	int32               use_blur;
 	float               blur;
 	float               transparency;
 	float               falloff;
-	int                 is_additive;
-	int                 self_illum_flag; /* bool */
+	int32               is_additive;
+	int32               self_illum_flag; /* bool */
 	float               self_illum;
-	int                 use_falloff;
-	int                 shading;
-	int                 soften;         /* bool */
-	int                 face_map;       /* bool */
-	int                 two_sided;      /* Material visible from back */
-	int                 map_decal;      /* bool */
-	int                 use_wire;
-	int                 use_wire_abs;
+	int32               use_falloff;
+	int32               shading;
+	int32               soften;         /* bool */
+	int32               face_map;       /* bool */
+	int32               two_sided;      /* Material visible from back */
+	int32               map_decal;      /* bool */
+	int32               use_wire;
+	int32               use_wire_abs;
 	float               wire_size;
 	Lib3dsTextureMap    texture1_map;
 	Lib3dsTextureMap    texture1_mask;
@@ -252,10 +252,10 @@ struct Lib3dsMaterial {
 	Lib3dsTextureMap    self_illum_mask;
 	Lib3dsTextureMap    reflection_map;
 	Lib3dsTextureMap    reflection_mask;
-	unsigned            autorefl_map_flags;
-	int                 autorefl_map_anti_alias;  /* 0=None, 1=Low, 2=Medium, 3=High */
-	int                 autorefl_map_size;
-	int                 autorefl_map_frame_step;
+	uint32              autorefl_map_flags;
+	int32               autorefl_map_anti_alias;  /* 0=None, 1=Low, 2=Medium, 3=High */
+	int32               autorefl_map_size;
+	int32               autorefl_map_frame_step;
 };
 
 /** Object flags for cameras, lights and meshes */

@@ -53,7 +53,7 @@ Lib3dsFile *lib3ds_file_open(Common::SeekableReadStream *stream) {
 
 	memset(&io, 0, sizeof(io));
 	
-	io.self = stream;
+	io.stream = stream;
 	io.log_func = NULL;
 
 	if (!lib3ds_file_read(file, &io)) {

@@ -20,7 +20,6 @@
     Vector mathematics implementation */
 
 #include "lib3ds_impl.h"
-#include <stdio.h>
 #include <math.h>
 
 void

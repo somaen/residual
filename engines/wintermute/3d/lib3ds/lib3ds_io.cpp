@@ -54,7 +54,7 @@ long lib3ds_io_seek(Lib3dsIo *io, long offset, int whence) {
 	if (!io) {
 		return 0;
 	}
-	return io->self->seek(offset, whence);
+	return io->stream->seek(offset, whence);
 }
 
 
@@ -63,7 +63,7 @@ long lib3ds_io_tell(Lib3dsIo *io) {
 	if (!io) {
 		return 0;
 	}
-	return io->self->pos();
+	return io->stream->pos();
 }
 
 
@@ -72,14 +72,14 @@ size_t lib3ds_io_read(Lib3dsIo *io, void *buffer, size_t size) {
 	if (!io) {
 		return 0;
 	}
-	return io->self->read(buffer, size);
+	return io->stream->read(buffer, size);
 }
 
 
 static void lib3ds_io_log_str(Lib3dsIo *io, Lib3dsLogLevel level, const char *str) {
 	if (!io || !io->log_func)
 		return;
-	(*io->log_func)(io->self, level, ((Lib3dsIoImpl *)io->impl)->log_indent, str);
+	(*io->log_func)(io->stream, level, ((Lib3dsIoImpl *)io->impl)->log_indent, str);
 }
 
 
@@ -131,7 +131,7 @@ uint8 lib3ds_io_read_byte(Lib3dsIo *io) {
  */
 uint16 lib3ds_io_read_word(Lib3dsIo *io) {
 	assert(io);
-	return io->self->readUint16LE();
+	return io->stream->readUint16LE();
 }
 
 
@@ -140,7 +140,7 @@ uint16 lib3ds_io_read_word(Lib3dsIo *io) {
  */
 uint32 lib3ds_io_read_dword(Lib3dsIo *io) {
 	assert(io);
-	return io->self->readUint32LE();
+	return io->stream->readUint32LE();
 }
 
 
@@ -157,20 +157,11 @@ int8 lib3ds_io_read_intb(Lib3dsIo *io) {
 
 
 /*!
- * Read a signed word from a file stream in little endian format.
- */
-int16 lib3ds_io_read_intw(Lib3dsIo *io) {
-	assert(io);
-	return io->self->readSint16LE();
-}
-
-
-/*!
  * Read a signed dword a from file stream in little endian format.
  */
 int32 lib3ds_io_read_intd(Lib3dsIo *io) {
 	assert(io);
-	return io->self->readSint32LE();
+	return io->stream->readSint32LE();
 }
 
 

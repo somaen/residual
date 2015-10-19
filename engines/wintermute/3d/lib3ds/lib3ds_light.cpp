@@ -44,16 +44,16 @@ lib3ds_light_free(Lib3dsLight *light) {
 }
 
 
-static void
-spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
+static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
-	int i;
+
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, CHK_DL_SPOTLIGHT, io);
 
 	light->spot_light = true;
-	for (i = 0; i < 3; ++i) {
+	for (int i = 0; i < 3; ++i) {
 		light->target[i] = lib3ds_io_read_float(io);
 	}
 	light->hotspot = lib3ds_io_read_float(io);
@@ -74,7 +74,7 @@ spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 		case CHK_DL_LOCAL_SHADOW2: {
 			light->shadow_bias = lib3ds_io_read_float(io);
 			light->shadow_filter = lib3ds_io_read_float(io);
-			light->shadow_size = lib3ds_io_read_intw(io);
+			light->shadow_size = stream->readSint16LE();
 			break;
 		}
 

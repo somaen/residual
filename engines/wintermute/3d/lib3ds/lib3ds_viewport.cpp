@@ -24,18 +24,20 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	memset(viewport, 0, sizeof(*viewport));
 	lib3ds_chunk_read_start(&c, 0, io);
 	switch (c.chunk) {
 	case CHK_VIEWPORT_LAYOUT: {
 		int cur = 0;
 		viewport->layout_style = lib3ds_io_read_word(io);
-		viewport->layout_active = lib3ds_io_read_intw(io);
-		lib3ds_io_read_intw(io);
-		viewport->layout_swap = lib3ds_io_read_intw(io);
-		lib3ds_io_read_intw(io);
-		viewport->layout_swap_prior = lib3ds_io_read_intw(io);
-		viewport->layout_swap_view = lib3ds_io_read_intw(io);
+		viewport->layout_active = stream->readSint16LE();
+		stream->readSint16LE();
+		viewport->layout_swap = stream->readSint16LE();
+		stream->readSint16LE();
+		viewport->layout_swap_prior = stream->readSint16LE();
+		viewport->layout_swap_view = stream->readSint16LE();
 		lib3ds_chunk_read_tell(&c, io);
 		while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 			switch (chunk) {
@@ -49,12 +51,12 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 
 			case CHK_VIEWPORT_DATA_3: {
 				if (cur < LIB3DS_LAYOUT_MAX_VIEWS) {
-					lib3ds_io_read_intw(io);
+					stream->readSint16LE();
 					viewport->layout_views[cur].axis_lock = lib3ds_io_read_word(io);
-					viewport->layout_views[cur].position[0] = lib3ds_io_read_intw(io);
-					viewport->layout_views[cur].position[1] = lib3ds_io_read_intw(io);
-					viewport->layout_views[cur].size[0] = lib3ds_io_read_intw(io);
-					viewport->layout_views[cur].size[1] = lib3ds_io_read_intw(io);
+					viewport->layout_views[cur].position[0] = stream->readSint16LE();
+					viewport->layout_views[cur].position[1] = stream->readSint16LE();
+					viewport->layout_views[cur].size[0] = stream->readSint16LE();
+					viewport->layout_views[cur].size[1] = stream->readSint16LE();
 					viewport->layout_views[cur].type = lib3ds_io_read_word(io);
 					viewport->layout_views[cur].zoom = lib3ds_io_read_float(io);
 					lib3ds_io_read_vector(io, viewport->layout_views[cur].center);

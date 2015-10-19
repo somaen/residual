@@ -23,10 +23,12 @@ void
 lib3ds_shadow_read(Lib3dsShadow *shadow, Lib3dsIo *io) {
 	Lib3dsChunk c;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read(&c, io);
 	switch (c.chunk) {
 	case CHK_SHADOW_MAP_SIZE: {
-		shadow->map_size = lib3ds_io_read_intw(io);
+		shadow->map_size = stream->readSint16LE();
 		break;
 	}
 

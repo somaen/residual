@@ -144,17 +144,18 @@ color_read(float rgb[3], Lib3dsIo *io) {
 }
 
 
-static void
-int_percentage_read(float *p, Lib3dsIo *io) {
+static void int_percentage_read(float *p, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
+	Common::SeekableReadStream *stream = io->stream;
+	
 	lib3ds_chunk_read_start(&c, 0, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_INT_PERCENTAGE: {
-			int16 i = lib3ds_io_read_intw(io);
+			int16 i = stream->readSint16LE();
 			*p = (float)(1.0 * i / 100.0);
 			break;
 		}
@@ -168,17 +169,18 @@ int_percentage_read(float *p, Lib3dsIo *io) {
 }
 
 
-static void
-texture_map_read(Lib3dsTextureMap *map, Lib3dsIo *io) {
+static void texture_map_read(Lib3dsTextureMap *map, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
+
+	Common::SeekableReadStream *stream = io->stream;
 
 	lib3ds_chunk_read_start(&c, 0, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_INT_PERCENTAGE: {
-			map->percent = 1.0f * lib3ds_io_read_intw(io) / 100.0f;
+			map->percent = 1.0f * stream->readSint16LE() / 100.0f;
 			break;
 		}
 
@@ -269,6 +271,8 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	assert(material);
 	lib3ds_chunk_read_start(&c, CHK_MAT_ENTRY, io);
 
@@ -345,7 +349,7 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_SHADING: {
-			material->shading = lib3ds_io_read_intw(io);
+			material->shading = stream->readSint16LE();
 			break;
 		}
 
@@ -490,7 +494,7 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 		case CHK_MAT_ACUBIC: {
 			lib3ds_io_read_intb(io);
 			material->autorefl_map_anti_alias = lib3ds_io_read_intb(io);
-			material->autorefl_map_flags = lib3ds_io_read_intw(io);
+			material->autorefl_map_flags = stream->readSint16LE();
 			material->autorefl_map_size = lib3ds_io_read_intd(io);
 			material->autorefl_map_frame_step = lib3ds_io_read_intd(io);
 			break;

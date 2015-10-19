@@ -1,6 +1,25 @@
 MODULE := engines/wintermute
 
 MODULE_OBJS := \
+	3d/lib3ds/lib3ds_atmosphere.o \
+	3d/lib3ds/lib3ds_background.o \
+	3d/lib3ds/lib3ds_camera.o \
+	3d/lib3ds/lib3ds_chunk.o \
+	3d/lib3ds/lib3ds_chunktable.o \
+	3d/lib3ds/lib3ds_file.o \
+	3d/lib3ds/lib3ds_io.o \
+	3d/lib3ds/lib3ds_light.o \
+	3d/lib3ds/lib3ds_material.o \
+	3d/lib3ds/lib3ds_math.o \
+	3d/lib3ds/lib3ds_matrix.o \
+	3d/lib3ds/lib3ds_mesh.o \
+	3d/lib3ds/lib3ds_node.o \
+	3d/lib3ds/lib3ds_quat.o \
+	3d/lib3ds/lib3ds_shadow.o \
+	3d/lib3ds/lib3ds_track.o \
+	3d/lib3ds/lib3ds_util.o \
+	3d/lib3ds/lib3ds_vector.o \
+	3d/lib3ds/lib3ds_viewport.o \
 	ad/ad_actor.o \
 	ad/ad_entity.o \
 	ad/ad_game.o \

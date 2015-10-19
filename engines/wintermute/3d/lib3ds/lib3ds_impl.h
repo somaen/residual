@@ -21,25 +21,10 @@
 
 /** @file lib3ds_impl.h
     Private header file used internally by lib3ds */
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/scummsys.h"
 #include "lib3ds.h"
 #include <setjmp.h>
-
-#ifdef _MSC_VER
-#pragma warning ( disable : 4996 )
-#pragma warning ( disable : 4100 )
-#endif
-
-#ifndef _MSC_VER
-#include <stdint.h>
-#else
-typedef unsigned __int8 uint8_t;
-typedef unsigned __int16 uint16_t;
-typedef unsigned __int32 uint32_t;
-typedef signed __int8 int8_t;
-typedef signed __int16 int16_t;
-typedef signed __int32 int32_t;
-#endif
 
 typedef uint8_t uint8;
 typedef uint16_t uint16;

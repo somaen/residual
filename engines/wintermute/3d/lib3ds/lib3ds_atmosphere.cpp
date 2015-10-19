@@ -16,7 +16,7 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_impl.h"
-
+#include "lib3ds_io.h"
 
 static void
 fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {

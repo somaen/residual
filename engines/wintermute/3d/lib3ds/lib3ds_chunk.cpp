@@ -74,7 +74,7 @@ lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 		return 0;
 	}
 
-	lib3ds_io_seek(io, (long)c->cur, LIB3DS_SEEK_SET);
+	lib3ds_io_seek(io, (long)c->cur, SEEK_SET);
 	d.chunk = lib3ds_io_read_word(io);
 	d.size = lib3ds_io_read_dword(io);
 	c->cur += d.size;
@@ -89,14 +89,14 @@ lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 
 void
 lib3ds_chunk_read_reset(Lib3dsChunk *c, Lib3dsIo *io) {
-	lib3ds_io_seek(io, -6, LIB3DS_SEEK_CUR);
+	lib3ds_io_seek(io, -6, SEEK_CUR);
 }
 
 
 void
 lib3ds_chunk_read_end(Lib3dsChunk *c, Lib3dsIo *io) {
 	((Lib3dsIoImpl *)io->impl)->log_indent--;
-	lib3ds_io_seek(io, c->end, LIB3DS_SEEK_SET);
+	lib3ds_io_seek(io, c->end, SEEK_SET);
 }
 
 

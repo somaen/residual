@@ -21,7 +21,7 @@
 
 /** @file lib3ds.h
     Header file for public API defined by lib3ds */
-
+#include "common/stream.h"
 #include <stddef.h>
 
 #ifndef LIB3DSAPI
@@ -40,12 +40,6 @@
     lib3ds public API. */
 /** @{ */
 
-typedef enum Lib3dsIoSeek {
-	LIB3DS_SEEK_SET     = 0,
-	LIB3DS_SEEK_CUR     = 1,
-	LIB3DS_SEEK_END     = 2
-} Lib3dsIoSeek;
-
 typedef enum Lib3dsLogLevel {
 	LIB3DS_LOG_ERROR    = 0,
 	LIB3DS_LOG_WARN     = 1,
@@ -53,14 +47,11 @@ typedef enum Lib3dsLogLevel {
 	LIB3DS_LOG_DEBUG    = 3
 } Lib3dsLogLevel;
 
-typedef struct Lib3dsIo {
+struct Lib3dsIo {
 	void   *impl;
-	void   *self;
-	long(*seek_func)(void *self, long offset, Lib3dsIoSeek origin);
-	long(*tell_func)(void *self);
-	size_t (*read_func)(void *self, void *buffer, size_t size);
-	void (*log_func)(void *self, Lib3dsLogLevel level, int indent, const char *msg);
-} Lib3dsIo;
+	Common::SeekableReadStream *self;
+	void (*log_func)(Common::SeekableReadStream *self, Lib3dsLogLevel level, int indent, const char *msg);
+};
 
 /* Atmosphere settings */
 typedef struct Lib3dsAtmosphere {

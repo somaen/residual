@@ -20,7 +20,8 @@
     Vector mathematics implementation */
 
 #include "lib3ds_impl.h"
-
+#include <stdio.h>
+#include <math.h>
 
 void
 lib3ds_vector_make(float c[3], float x, float y, float z) {

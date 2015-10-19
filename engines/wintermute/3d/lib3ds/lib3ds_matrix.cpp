@@ -20,7 +20,8 @@
     Matrix mathematics implementation */
 
 #include "lib3ds_impl.h"
-
+#include <string.h>
+#include <math.h>
 
 /*!
  * Clear a matrix to all zeros.

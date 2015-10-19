@@ -16,7 +16,9 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_impl.h"
-
+#include <string.h>
+#include <assert.h>
+#include <math.h>
 
 static void
 initialize_texture_map(Lib3dsTextureMap *map) {

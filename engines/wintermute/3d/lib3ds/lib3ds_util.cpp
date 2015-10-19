@@ -16,7 +16,8 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_impl.h"
-
+#include <string.h>
+#include <assert.h>
 
 void *lib3ds_util_realloc_array(void *ptr, int old_size, int new_size, int element_size) {
 	if (!ptr)

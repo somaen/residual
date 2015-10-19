@@ -16,7 +16,7 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_impl.h"
-
+#include <string.h>
 
 void
 lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {

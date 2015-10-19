@@ -23,15 +23,7 @@
     Private header file used internally by lib3ds */
 
 #include "lib3ds.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <math.h>
-#include <float.h>
-#include <assert.h>
 #include <setjmp.h>
-#include <stdarg.h>
 
 #ifdef _MSC_VER
 #pragma warning ( disable : 4996 )

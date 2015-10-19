@@ -20,7 +20,8 @@
     Quaternion mathematics implementation */
 
 #include "lib3ds_impl.h"
-
+#include <stdio.h>
+#include <math.h>
 
 /*!
  * Set a quaternion to Identity

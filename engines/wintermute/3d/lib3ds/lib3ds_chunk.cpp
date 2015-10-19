@@ -16,7 +16,7 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_impl.h"
-
+#include <assert.h>
 
 /*#define LIB3DS_CHUNK_DEBUG*/
 /*#define LIB3DS_CHUNK_WARNING*/

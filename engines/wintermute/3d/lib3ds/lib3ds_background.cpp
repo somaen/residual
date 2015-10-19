@@ -16,7 +16,8 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_impl.h"
-
+#include <string.h>
+#include <math.h>
 
 static void
 solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {

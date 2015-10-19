@@ -16,7 +16,7 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_impl.h"
-
+#include <math.h>
 
 void
 lib3ds_shadow_read(Lib3dsShadow *shadow, Lib3dsIo *io) {

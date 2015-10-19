@@ -276,7 +276,7 @@ setup_segment(Lib3dsTrack *track, int index, Lib3dsKey *pp, Lib3dsKey *p0, Lib3d
 
 void
 lib3ds_track_eval_bool(Lib3dsTrack *track, int *b, float t) {
-	*b = FALSE;
+	*b = false;
 	if (track) {
 		int index;
 		float u;
@@ -288,7 +288,7 @@ lib3ds_track_eval_bool(Lib3dsTrack *track, int *b, float t) {
 
 		index = find_index(track, t, &u);
 		if (index < 0) {
-			*b = FALSE;
+			*b = false;
 			return;
 		}
 		if (index >= track->nkeys) {

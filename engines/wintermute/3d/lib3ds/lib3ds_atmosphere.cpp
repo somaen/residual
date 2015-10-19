@@ -45,7 +45,7 @@ fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 			break;
 
 		case CHK_FOG_BGND: {
-			at->fog_background = TRUE;
+			at->fog_background = true;
 		}
 		break;
 
@@ -62,7 +62,7 @@ static void
 layer_fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
-	int have_lin = FALSE;
+	int have_lin = false;
 
 	lib3ds_chunk_read_start(&c, CHK_LAYER_FOG, io);
 
@@ -76,7 +76,7 @@ layer_fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_F:
 			lib3ds_io_read_rgb(io, at->layer_fog_color);
-			have_lin = TRUE;
+			have_lin = true;
 			break;
 
 		case CHK_COLOR_F:
@@ -108,7 +108,7 @@ distance_cue_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_DCUE_BGND: {
-			at->dist_cue_background = TRUE;
+			at->dist_cue_background = true;
 		}
 		break;
 
@@ -146,17 +146,17 @@ lib3ds_atmosphere_read(Lib3dsAtmosphere *atmosphere, Lib3dsIo *io) {
 	}
 
 	case CHK_USE_FOG: {
-		atmosphere->use_fog = TRUE;
+		atmosphere->use_fog = true;
 		break;
 	}
 
 	case CHK_USE_LAYER_FOG: {
-		atmosphere->use_layer_fog = TRUE;
+		atmosphere->use_layer_fog = true;
 		break;
 	}
 
 	case CHK_USE_DISTANCE_CUE: {
-		atmosphere->use_dist_cue = TRUE;
+		atmosphere->use_dist_cue = true;
 		break;
 	}
 	}

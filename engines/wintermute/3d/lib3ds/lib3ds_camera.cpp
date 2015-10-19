@@ -99,7 +99,7 @@ lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_CAM_SEE_CONE: {
-			camera->see_cone = TRUE;
+			camera->see_cone = true;
 		}
 		break;
 

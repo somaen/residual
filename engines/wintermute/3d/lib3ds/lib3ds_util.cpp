@@ -65,7 +65,7 @@ void lib3ds_util_insert_array(void ***ptr, int *n, int *size, void *element, int
 			new_size = 32;
 		}
 #endif
-		lib3ds_util_reserve_array(ptr, n, size, new_size, FALSE, NULL);
+		lib3ds_util_reserve_array(ptr, n, size, new_size, false, NULL);
 	}
 	assert(*ptr);
 	if (i < *n) {

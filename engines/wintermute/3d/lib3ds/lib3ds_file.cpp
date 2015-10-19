@@ -133,7 +133,7 @@ lib3ds_file_save(Lib3dsFile *file, const char *filename) {
 
 	f = fopen(filename, "wb");
 	if (!f) {
-		return FALSE;
+		return false;
 	}
 
 	memset(&io, 0, sizeof(io));
@@ -186,10 +186,10 @@ lib3ds_file_new() {
 void
 lib3ds_file_free(Lib3dsFile *file) {
 	assert(file);
-	lib3ds_file_reserve_materials(file, 0, TRUE);
-	lib3ds_file_reserve_cameras(file, 0, TRUE);
-	lib3ds_file_reserve_lights(file, 0, TRUE);
-	lib3ds_file_reserve_meshes(file, 0, TRUE);
+	lib3ds_file_reserve_materials(file, 0, true);
+	lib3ds_file_reserve_cameras(file, 0, true);
+	lib3ds_file_reserve_lights(file, 0, true);
+	lib3ds_file_reserve_meshes(file, 0, true);
 	{
 		Lib3dsNode *p, *q;
 
@@ -311,7 +311,7 @@ static void
 ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
-	int have_lin = FALSE;
+	int have_lin = false;
 
 	lib3ds_chunk_read_start(&c, CHK_AMBIENT_LIGHT, io);
 
@@ -322,7 +322,7 @@ ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 			for (i = 0; i < 3; ++i) {
 				file->ambient[i] = lib3ds_io_read_float(io);
 			}
-			have_lin = TRUE;
+			have_lin = true;
 			break;
 		}
 
@@ -601,7 +601,7 @@ lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 	if (setjmp(impl->jmpbuf) != 0) {
 		lib3ds_io_cleanup(io);
-		return FALSE;
+		return false;
 	}
 
 	lib3ds_chunk_read_start(&c, 0, io);
@@ -643,14 +643,14 @@ lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 	default:
 		lib3ds_chunk_unknown(c.chunk, io);
-		return FALSE;
+		return false;
 	}
 
 	lib3ds_chunk_read_end(&c, io);
 
 	memset(impl->jmpbuf, 0, sizeof(impl->jmpbuf));
 	lib3ds_io_cleanup(io);
-	return TRUE;
+	return true;
 }
 
 
@@ -904,7 +904,7 @@ lib3ds_file_write(Lib3dsFile *file, Lib3dsIo *io) {
 
 	if (setjmp(impl->jmpbuf) != 0) {
 		lib3ds_io_cleanup(io);
-		return FALSE;
+		return false;
 	}
 
 	c.chunk = CHK_M3DMAGIC;
@@ -927,7 +927,7 @@ lib3ds_file_write(Lib3dsFile *file, Lib3dsIo *io) {
 
 	memset(impl->jmpbuf, 0, sizeof(impl->jmpbuf));
 	lib3ds_io_cleanup(io);
-	return TRUE;
+	return true;
 }
 
 

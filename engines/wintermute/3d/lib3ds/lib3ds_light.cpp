@@ -49,7 +49,7 @@ spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 
 	lib3ds_chunk_read_start(&c, CHK_DL_SPOTLIGHT, io);
 
-	light->spot_light = TRUE;
+	light->spot_light = true;
 	for (i = 0; i < 3; ++i) {
 		light->target[i] = lib3ds_io_read_float(io);
 	}
@@ -64,7 +64,7 @@ spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 			break;
 
 		case CHK_DL_SHADOWED: {
-			light->shadowed = TRUE;
+			light->shadowed = true;
 			break;
 		}
 
@@ -76,12 +76,12 @@ spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_SEE_CONE: {
-			light->see_cone = TRUE;
+			light->see_cone = true;
 			break;
 		}
 
 		case CHK_DL_SPOT_RECTANGULAR: {
-			light->rectangular_spot = TRUE;
+			light->rectangular_spot = true;
 			break;
 		}
 
@@ -91,13 +91,13 @@ spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_SPOT_PROJECTOR: {
-			light->use_projector = TRUE;
+			light->use_projector = true;
 			lib3ds_io_read_string(io, light->projector, 64);
 			break;
 		}
 
 		case CHK_DL_SPOT_OVERSHOOT: {
-			light->spot_overshoot = TRUE;
+			light->spot_overshoot = true;
 			break;
 		}
 
@@ -107,7 +107,7 @@ spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_RAYSHAD: {
-			light->ray_shadows = TRUE;
+			light->ray_shadows = true;
 			break;
 		}
 
@@ -146,7 +146,7 @@ lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 		}
 
 		case CHK_DL_OFF:
-			light->off = TRUE;
+			light->off = true;
 			break;
 
 		case CHK_DL_OUTER_RANGE:

@@ -56,13 +56,6 @@ typedef int8_t int8;
 typedef int16_t int16;
 typedef int32_t int32;
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
-
 #define LIB3DS_EPSILON (1e-5)
 #define LIB3DS_PI 3.14159265358979323846
 #define LIB3DS_TWOPI (2.0*LIB3DS_PI)

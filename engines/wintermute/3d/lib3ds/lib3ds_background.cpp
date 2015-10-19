@@ -22,7 +22,7 @@ static void
 solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
-	int have_lin = FALSE;
+	int have_lin = false;
 
 	lib3ds_chunk_read_start(&c, CHK_SOLID_BGND, io);
 
@@ -30,7 +30,7 @@ solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_F:
 			lib3ds_io_read_rgb(io, background->solid_color);
-			have_lin = TRUE;
+			have_lin = true;
 			break;
 
 		case CHK_COLOR_F:
@@ -113,17 +113,17 @@ lib3ds_background_read(Lib3dsBackground *background, Lib3dsIo *io) {
 	}
 
 	case CHK_USE_BIT_MAP: {
-		background->use_bitmap = TRUE;
+		background->use_bitmap = true;
 		break;
 	}
 
 	case CHK_USE_SOLID_BGND: {
-		background->use_solid = TRUE;
+		background->use_solid = true;
 		break;
 	}
 
 	case CHK_USE_V_GRADIENT: {
-		background->use_gradient = TRUE;
+		background->use_gradient = true;
 		break;
 	}
 	}

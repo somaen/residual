@@ -86,7 +86,7 @@ static void
 color_read(float rgb[3], Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
-	int have_lin = FALSE;
+	int have_lin = false;
 
 	lib3ds_chunk_read_start(&c, 0, io);
 
@@ -97,7 +97,7 @@ color_read(float rgb[3], Lib3dsIo *io) {
 			for (i = 0; i < 3; ++i) {
 				rgb[i] = 1.0f * lib3ds_io_read_byte(io) / 255.0f;
 			}
-			have_lin = TRUE;
+			have_lin = true;
 			break;
 		}
 
@@ -118,7 +118,7 @@ color_read(float rgb[3], Lib3dsIo *io) {
 			for (i = 0; i < 3; ++i) {
 				rgb[i] = lib3ds_io_read_float(io);
 			}
-			have_lin = TRUE;
+			have_lin = true;
 			break;
 		}
 
@@ -326,7 +326,7 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_USE_XPFALL: {
-			material->use_falloff = TRUE;
+			material->use_falloff = true;
 			break;
 		}
 
@@ -337,7 +337,7 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_USE_REFBLUR: {
-			material->use_blur = TRUE;
+			material->use_blur = true;
 			break;
 		}
 
@@ -347,42 +347,42 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_SELF_ILLUM: {
-			material->self_illum_flag = TRUE;
+			material->self_illum_flag = true;
 			break;
 		}
 
 		case CHK_MAT_TWO_SIDE: {
-			material->two_sided = TRUE;
+			material->two_sided = true;
 			break;
 		}
 
 		case CHK_MAT_DECAL: {
-			material->map_decal = TRUE;
+			material->map_decal = true;
 			break;
 		}
 
 		case CHK_MAT_ADDITIVE: {
-			material->is_additive = TRUE;
+			material->is_additive = true;
 			break;
 		}
 
 		case CHK_MAT_FACEMAP: {
-			material->face_map = TRUE;
+			material->face_map = true;
 			break;
 		}
 
 		case CHK_MAT_PHONGSOFT: {
-			material->soften = TRUE;
+			material->soften = true;
 			break;
 		}
 
 		case CHK_MAT_WIRE: {
-			material->use_wire = TRUE;
+			material->use_wire = true;
 			break;
 		}
 
 		case CHK_MAT_WIREABS: {
-			material->use_wire_abs = TRUE;
+			material->use_wire_abs = true;
 			break;
 		}
 		case CHK_MAT_WIRE_SIZE: {

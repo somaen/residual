@@ -256,7 +256,7 @@ lib3ds_matrix_inv(float m[4][4]) {
 		/* Product of pivots, gives determinant when finished */
 		determinat *= pvt_val;
 		if (fabs(determinat) < LIB3DS_EPSILON) {
-			return (FALSE); /* Matrix is singular (zero determinant) */
+			return (false); /* Matrix is singular (zero determinant) */
 		}
 
 		/* "Interchange" rows (with sign change stuff) */
@@ -321,7 +321,7 @@ lib3ds_matrix_inv(float m[4][4]) {
 				m[i][j] = hold;
 			}
 	}
-	return (TRUE);
+	return (true);
 }
 
 

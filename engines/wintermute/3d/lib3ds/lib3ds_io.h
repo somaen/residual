@@ -37,7 +37,6 @@ struct Lib3dsIoImpl {
 void lib3ds_io_setup(Lib3dsIo *io);
 void lib3ds_io_cleanup(Lib3dsIo *io);
 
-long lib3ds_io_seek(Lib3dsIo *io, long offset, int whence);
 size_t lib3ds_io_read(Lib3dsIo *io, void *buffer, size_t size);
 void lib3ds_io_log(Lib3dsIo *io, Lib3dsLogLevel level, const char *format, ...);
 void lib3ds_io_log_indent(Lib3dsIo *io, int indent);

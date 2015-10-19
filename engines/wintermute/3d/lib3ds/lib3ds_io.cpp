@@ -49,15 +49,6 @@ void lib3ds_io_cleanup(Lib3dsIo *io) {
 }
 
 
-long lib3ds_io_seek(Lib3dsIo *io, long offset, int whence) {
-	assert(io);
-	if (!io) {
-		return 0;
-	}
-	return io->stream->seek(offset, whence);
-}
-
-
 size_t lib3ds_io_read(Lib3dsIo *io, void *buffer, size_t size) {
 	assert(io);
 	if (!io) {

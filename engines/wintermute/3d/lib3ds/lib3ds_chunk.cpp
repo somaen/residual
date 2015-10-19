@@ -77,7 +77,7 @@ uint16 lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 		return 0;
 	}
 
-	lib3ds_io_seek(io, (long)c->cur, SEEK_SET);
+	io->stream->seek(c->cur, SEEK_SET);
 	d.chunk = stream->readUint16LE();
 	d.size = stream->readUint32LE();
 	c->cur += d.size;
@@ -90,21 +90,18 @@ uint16 lib3ds_chunk_read_next(Lib3dsChunk *c, Lib3dsIo *io) {
 }
 
 
-void
-lib3ds_chunk_read_reset(Lib3dsChunk *c, Lib3dsIo *io) {
-	lib3ds_io_seek(io, -6, SEEK_CUR);
+void lib3ds_chunk_read_reset(Lib3dsChunk *c, Lib3dsIo *io) {
+	io->stream->seek(-6, SEEK_CUR);
 }
 
 
-void
-lib3ds_chunk_read_end(Lib3dsChunk *c, Lib3dsIo *io) {
+void lib3ds_chunk_read_end(Lib3dsChunk *c, Lib3dsIo *io) {
 	((Lib3dsIoImpl *)io->impl)->log_indent--;
-	lib3ds_io_seek(io, c->end, SEEK_SET);
+	io->stream->seek(c->end, SEEK_SET);
 }
 
 
-void
-lib3ds_chunk_unknown(uint16 chunk, Lib3dsIo *io) {
+void lib3ds_chunk_unknown(uint16 chunk, Lib3dsIo *io) {
 	if (io->log_func) {
 		lib3ds_io_log(io, LIB3DS_LOG_WARN, "Unknown Chunk: %s (0x%X)", lib3ds_chunk_name(chunk), chunk);
 	}

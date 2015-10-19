@@ -48,7 +48,6 @@ uint8 lib3ds_io_read_byte(Lib3dsIo *io);
 uint16 lib3ds_io_read_word(Lib3dsIo *io);
 uint32 lib3ds_io_read_dword(Lib3dsIo *io);
 int8 lib3ds_io_read_intb(Lib3dsIo *io);
-int32 lib3ds_io_read_intd(Lib3dsIo *io);
 float lib3ds_io_read_float(Lib3dsIo *io);
 void lib3ds_io_read_vector(Lib3dsIo *io, float v[3]);
 void lib3ds_io_read_rgb(Lib3dsIo *io, float rgb[3]);

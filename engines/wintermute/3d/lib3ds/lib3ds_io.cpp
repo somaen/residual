@@ -157,15 +157,6 @@ int8 lib3ds_io_read_intb(Lib3dsIo *io) {
 
 
 /*!
- * Read a signed dword a from file stream in little endian format.
- */
-int32 lib3ds_io_read_intd(Lib3dsIo *io) {
-	assert(io);
-	return io->stream->readSint32LE();
-}
-
-
-/*!
  * Read a float from a file stream in little endian format.
  */
 float lib3ds_io_read_float(Lib3dsIo *io) {

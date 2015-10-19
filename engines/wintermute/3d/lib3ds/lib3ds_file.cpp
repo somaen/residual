@@ -264,12 +264,14 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read_start(&c, CHK_MDATA, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_MESH_VERSION: {
-			file->mesh_version = lib3ds_io_read_intd(io);
+			file->mesh_version = stream->readSint32LE();
 			break;
 		}
 
@@ -372,6 +374,8 @@ static void kfdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 	unsigned num_nodes = 0;
 	Lib3dsNode *last = NULL;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	lib3ds_chunk_read_start(&c, CHK_KFDATA, io);
 
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
@@ -379,18 +383,18 @@ static void kfdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		case CHK_KFHDR: {
 			file->keyf_revision = lib3ds_io_read_word(io);
 			lib3ds_io_read_string(io, file->name, 12 + 1);
-			file->frames = lib3ds_io_read_intd(io);
+			file->frames = stream->readSint32LE();
 			break;
 		}
 
 		case CHK_KFSEG: {
-			file->segment_from = lib3ds_io_read_intd(io);
-			file->segment_to = lib3ds_io_read_intd(io);
+			file->segment_from = stream->readSint32LE();
+			file->segment_to = stream->readSint32LE();
 			break;
 		}
 
 		case CHK_KFCURTIME: {
-			file->current_frame = lib3ds_io_read_intd(io);
+			file->current_frame = stream->readSint32LE();
 			break;
 		}
 

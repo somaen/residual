@@ -495,8 +495,8 @@ lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 			lib3ds_io_read_intb(io);
 			material->autorefl_map_anti_alias = lib3ds_io_read_intb(io);
 			material->autorefl_map_flags = stream->readSint16LE();
-			material->autorefl_map_size = lib3ds_io_read_intd(io);
-			material->autorefl_map_frame_step = lib3ds_io_read_intd(io);
+			material->autorefl_map_size = stream->readSint32LE();
+			material->autorefl_map_frame_step = stream->readSint32LE();
 			break;
 		}
 

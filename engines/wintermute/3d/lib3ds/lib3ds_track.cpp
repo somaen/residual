@@ -17,6 +17,9 @@
 */
 #include "lib3ds_impl.h"
 #include "lib3ds_io.h"
+#include "lib3ds_vector.h"
+#include "lib3ds_quat.h"
+#include "lib3ds_math.h"
 #include <string.h>
 #include <assert.h>
 #include <math.h>
@@ -357,8 +360,7 @@ lib3ds_track_eval_float(Lib3dsTrack *track, float *f, float t) {
 }
 
 
-void
-lib3ds_track_eval_vector(Lib3dsTrack *track, float v[3], float t) {
+void lib3ds_track_eval_vector(Lib3dsTrack *track, float v[3], float t) {
 	lib3ds_vector_zero(v);
 	if (track) {
 		assert(track->type == LIB3DS_TRACK_VECTOR);

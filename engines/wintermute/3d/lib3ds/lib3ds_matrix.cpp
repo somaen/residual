@@ -20,6 +20,9 @@
     Matrix mathematics implementation */
 
 #include "lib3ds_impl.h"
+#include "lib3ds_matrix.h"
+#include "lib3ds_vector.h"
+#include "lib3ds_quat.h"
 #include <string.h>
 #include <math.h>
 

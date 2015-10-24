@@ -271,7 +271,7 @@ face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 				int material;
 
 				lib3ds_io_read_string(io, name, 64);
-				material = lib3ds_file_material_by_name(file, name);
+				material = file->materialByName(name);
 
 				n = stream->readUint16LE();
 				for (i = 0; i < n; ++i) {

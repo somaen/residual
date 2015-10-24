@@ -512,111 +512,109 @@ struct Lib3dsSpotlightNode {
 };
 
 struct Lib3dsFile {
-	unsigned            user_id;
-	void               *user_ptr;
-	unsigned            mesh_version;
-	unsigned            keyf_revision;
+	unsigned            _userId;
+	void               *_userPtr;
+	unsigned            _meshVersion;
+	unsigned            _keyfRevision;
 	char                name[12 + 1];
-	float               master_scale;
-	float               construction_plane[3];
+	float               _masterScale;
+	float               constructionPlane[3];
 	float               ambient[3];
-	Lib3dsShadow        shadow;
-	Lib3dsBackground    background;
-	Lib3dsAtmosphere    atmosphere;
-	Lib3dsViewport      viewport;
-	Lib3dsViewport      viewport_keyf;
-	int                 frames;
-	int                 segment_from;
-	int                 segment_to;
-	int                 current_frame;
-	int                 materials_size;
-	int                 nmaterials;
-	Lib3dsMaterial    **materials;
-	int                 cameras_size;
-	int                 ncameras;
-	Lib3dsCamera      **cameras;
-	int                 lights_size;
-	int                 nlights;
-	Lib3dsLight       **lights;
-	int                 meshes_size;
-	int                 nmeshes;
-	Lib3dsMesh        **meshes;
-	Lib3dsNode         *nodes;
+	Lib3dsShadow        _shadow;
+	Lib3dsBackground    _background;
+	Lib3dsAtmosphere    _atmosphere;
+	Lib3dsViewport      _viewport;
+	Lib3dsViewport      _viewportKeyf;
+	int                 _frames;
+	int                 _segmentFrom;
+	int                 _segmentTo;
+	int                 _currentFrame;
+	int                 _materialsSize;
+	int                 _nmaterials;
+	Lib3dsMaterial    **_materials;
+	int                 _camerasSize;
+	int                 _ncameras;
+	Lib3dsCamera      **_cameras;
+	int                 _lightsSize;
+	int                 _nlights;
+	Lib3dsLight       **_lights;
+	int                 _meshesSize;
+	int                 _nmeshes;
+	Lib3dsMesh        **_meshes;
+	Lib3dsNode         *_nodes;
+	
+	Lib3dsFile();
+	~Lib3dsFile();
+	
+	void reserveMaterials(int size, int force);
+	void reserveCameras(int size, int force);
+	void reserveLights(int size, int force);
+	void reserveMeshes(int size, int force);
+
+	void insertMaterial(Lib3dsMaterial *material, int index);
+	void insertCamera(Lib3dsCamera *camera, int index);
+	void insertLight(Lib3dsLight *light, int index);
+	void insertMesh(Lib3dsMesh *mesh, int index);
+	void insertNode(Lib3dsNode *node, Lib3dsNode *at);
+
+	void removeMaterial(int index);
+	void removeCamera(int index);
+	void removeMesh(int index);
+	void removeLight(int index);
+	void removeNode(Lib3dsNode *node);
+
+	int materialByName(const char *name);
+	int cameraByName(const char *name);
+	int lightByName(const char *name);
+	int meshByName(const char *name);
+	Lib3dsNode *nodeByName(const char *name, Lib3dsNodeType type);
+
+	Lib3dsMesh *meshForNode(Lib3dsNode *node);
+	Lib3dsNode *nodeById(unsigned short node_id);
+	void appendNode(Lib3dsNode *node, Lib3dsNode *parent);
+	void minmaxNodeId(unsigned short *min_id, unsigned short *max_id);
+	void createNodesForMeshes();
+	/**
+	    This function computes the bounding box of meshes, cameras
+	    and lights defined in the 3D editor.
+	
+	    \param include_meshes   Include meshes in bounding box calculation.
+	    \param include_cameras  Include cameras in bounding box calculation.
+	    \param include_lights   Include lights in bounding box calculation.
+	    \param bmin             Returned minimum x,y,z values.
+	    \param bmax             Returned maximum x,y,z values.
+	 */
+	void boundingBoxOfObjects(
+    	int include_meshes,
+    	int include_cameras,
+    	int include_lights,
+    	float bmin[3],
+    	float bmax[3]);
+
+	/**
+	    This function computes the bounding box of mesh, camera
+	    and light instances defined in the Keyframer.
+	
+	    \param include_meshes   Include meshes in bounding box calculation.
+	    \param include_cameras  Include cameras in bounding box calculation.
+	    \param include_lights   Include lights in bounding box calculation.
+	    \param bmin             Returned minimum x,y,z values.
+	    \param bmax             Returned maximum x,y,z values.
+	    \param matrix           A matrix describing the coordinate system to
+	                            calculate the bounding box in.
+	 */
+	void boundingBoxOfNodes(
+    	int include_meshes,
+    	int include_cameras,
+    	int include_lights,
+    	float bmin[3],
+    	float bmax[3],
+    	float matrix[4][4]);
+
 };
 
 extern LIB3DSAPI Lib3dsFile *lib3ds_file_open(const char *filename);
-extern LIB3DSAPI int lib3ds_file_save(Lib3dsFile *file, const char *filename);
-extern LIB3DSAPI Lib3dsFile *lib3ds_file_new();
-extern LIB3DSAPI void lib3ds_file_free(Lib3dsFile *file);
-extern LIB3DSAPI void lib3ds_file_eval(Lib3dsFile *file, float t);
 extern LIB3DSAPI int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io);
-extern LIB3DSAPI int lib3ds_file_write(Lib3dsFile *file, Lib3dsIo *io);
-extern LIB3DSAPI void lib3ds_file_reserve_materials(Lib3dsFile *file, int size, int force);
-extern LIB3DSAPI void lib3ds_file_insert_material(Lib3dsFile *file, Lib3dsMaterial *material, int index);
-extern LIB3DSAPI void lib3ds_file_remove_material(Lib3dsFile *file, int index);
-extern LIB3DSAPI int lib3ds_file_material_by_name(Lib3dsFile *file, const char *name);
-extern LIB3DSAPI void lib3ds_file_reserve_cameras(Lib3dsFile *file, int size, int force);
-extern LIB3DSAPI void lib3ds_file_insert_camera(Lib3dsFile *file, Lib3dsCamera *camera, int index);
-extern LIB3DSAPI void lib3ds_file_remove_camera(Lib3dsFile *file, int index);
-extern LIB3DSAPI int lib3ds_file_camera_by_name(Lib3dsFile *file, const char *name);
-extern LIB3DSAPI void lib3ds_file_reserve_lights(Lib3dsFile *file, int size, int force);
-extern LIB3DSAPI void lib3ds_file_insert_light(Lib3dsFile *file, Lib3dsLight *light, int index);
-extern LIB3DSAPI void lib3ds_file_remove_light(Lib3dsFile *file, int index);
-extern LIB3DSAPI int lib3ds_file_light_by_name(Lib3dsFile *file, const char *name);
-extern LIB3DSAPI void lib3ds_file_reserve_meshes(Lib3dsFile *file, int size, int force);
-extern LIB3DSAPI void lib3ds_file_insert_mesh(Lib3dsFile *file, Lib3dsMesh *mesh, int index);
-extern LIB3DSAPI void lib3ds_file_remove_mesh(Lib3dsFile *file, int index);
-extern LIB3DSAPI int lib3ds_file_mesh_by_name(Lib3dsFile *file, const char *name);
-extern LIB3DSAPI Lib3dsMesh *lib3ds_file_mesh_for_node(Lib3dsFile *file, Lib3dsNode *node);
-extern LIB3DSAPI Lib3dsNode *lib3ds_file_node_by_name(Lib3dsFile *file, const char *name, Lib3dsNodeType type);
-extern LIB3DSAPI Lib3dsNode *lib3ds_file_node_by_id(Lib3dsFile *file, unsigned short node_id);
-extern LIB3DSAPI void lib3ds_file_append_node(Lib3dsFile *file, Lib3dsNode *node, Lib3dsNode *parent);
-extern LIB3DSAPI void lib3ds_file_insert_node(Lib3dsFile *file, Lib3dsNode *node, Lib3dsNode *at);
-extern LIB3DSAPI void lib3ds_file_remove_node(Lib3dsFile *file, Lib3dsNode *node);
-extern LIB3DSAPI void lib3ds_file_minmax_node_id(Lib3dsFile *file, unsigned short *min_id, unsigned short *max_id);
-extern LIB3DSAPI void lib3ds_file_create_nodes_for_meshes(Lib3dsFile *file);
-
-
-/**
-    This function computes the bounding box of meshes, cameras
-    and lights defined in the 3D editor.
-
-    \param file             The Lib3dsFile object to be examined.
-    \param include_meshes   Include meshes in bounding box calculation.
-    \param include_cameras  Include cameras in bounding box calculation.
-    \param include_lights   Include lights in bounding box calculation.
-    \param bmin             Returned minimum x,y,z values.
-    \param bmax             Returned maximum x,y,z values.
- */
-extern LIB3DSAPI void lib3ds_file_bounding_box_of_objects(
-    Lib3dsFile *file,
-    int include_meshes,
-    int include_cameras,
-    int include_lights,
-    float bmin[3],
-    float bmax[3]);
-
-/**
-    This function computes the bounding box of mesh, camera
-    and light instances defined in the Keyframer.
-
-    \param file             The Lib3dsFile object to be examined.
-    \param include_meshes   Include meshes in bounding box calculation.
-    \param include_cameras  Include cameras in bounding box calculation.
-    \param include_lights   Include lights in bounding box calculation.
-    \param bmin             Returned minimum x,y,z values.
-    \param bmax             Returned maximum x,y,z values.
-    \param matrix           A matrix describing the coordinate system to
-                            calculate the bounding box in.
- */
-extern LIB3DSAPI void lib3ds_file_bounding_box_of_nodes(
-    Lib3dsFile *file,
-    int include_meshes,
-    int include_cameras,
-    int include_lights,
-    float bmin[3],
-    float bmax[3],
-    float matrix[4][4]);
 
 extern LIB3DSAPI Lib3dsMaterial *lib3ds_material_new(const char *name);
 extern LIB3DSAPI void lib3ds_material_free(Lib3dsMaterial *material);

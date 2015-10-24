@@ -347,31 +347,39 @@ struct Lib3dsFace {
 
 /* Triangular mesh object */
 struct Lib3dsMesh {
-	unsigned        user_id;
-	void           *user_ptr;
-	char            name[64];            /**< Mesh name. Don't use more than 8 characters  */
-	unsigned        object_flags;        /**< @see Lib3dsObjectFlags */
-	int             color;               /**< Index to editor palette [0..255] */
-	float           matrix[4][4];        /**< Transformation matrix for mesh data */
-	unsigned short  nvertices;           /**< Number of vertices in vertex array (max. 65535) */
-	float(*vertices)[3];
-	float(*texcos)[2];
-	unsigned short *vflags;
-	unsigned short  nfaces;              /**< Number of faces in face array (max. 65535) */
-	Lib3dsFace     *faces;
-	char            box_front[64];
-	char            box_back[64];
-	char            box_left[64];
-	char            box_right[64];
-	char            box_top[64];
-	char            box_bottom[64];
-	int             map_type;
-	float           map_pos[3];
-	float           map_matrix[4][4];
-	float           map_scale;
-	float           map_tile[2];
-	float           map_planar_size[2];
-	float           map_cylinder_height;
+	unsigned        _userId;
+	void           *_userPtr;
+	char            _name[64];            /**< Mesh name. Don't use more than 8 characters  */
+	unsigned        _objectFlags;        /**< @see Lib3dsObjectFlags */
+	int             _color;               /**< Index to editor palette [0..255] */
+	float           _matrix[4][4];        /**< Transformation matrix for mesh data */
+	unsigned short  _nVertices;           /**< Number of vertices in vertex array (max. 65535) */
+	float(*_vertices)[3];
+	float(*_texCos)[2];
+	unsigned short *_vFlags;
+	unsigned short  _nFaces;              /**< Number of faces in face array (max. 65535) */
+	Lib3dsFace     *_faces;
+	char            _boxFront[64];
+	char            _boxBack[64];
+	char            _boxLeft[64];
+	char            _boxRight[64];
+	char            _boxTop[64];
+	char            _boxBottom[64];
+	int             _mapType;
+	float           _mapPos[3];
+	float           _mapMatrix[4][4];
+	float           _mapScale;
+	float           _mapTile[2];
+	float           _mapPlanarSize[2];
+	float           _mapCylinderHeight;
+	
+	Lib3dsMesh(const char *name);
+	~Lib3dsMesh();
+	void resizeVertices(int nvertices, int use_texcos, int use_flags);
+	void resizeFaces(int nfaces);
+	void boundingBox(float bmin[3], float bmax[3]);
+	void calculateFaceNormals(float(*face_normals)[3]);
+	void calculateVertexNormals(float(*normals)[3]);
 };
 
 enum Lib3dsNodeType {
@@ -622,13 +630,6 @@ extern LIB3DSAPI Lib3dsCamera *lib3ds_camera_new(const char *name);
 extern LIB3DSAPI void lib3ds_camera_free(Lib3dsCamera *mesh);
 extern LIB3DSAPI Lib3dsLight *lib3ds_light_new(const char *name);
 extern LIB3DSAPI void lib3ds_light_free(Lib3dsLight *mesh);
-extern LIB3DSAPI Lib3dsMesh *lib3ds_mesh_new(const char *name);
-extern LIB3DSAPI void lib3ds_mesh_free(Lib3dsMesh *mesh);
-extern LIB3DSAPI void lib3ds_mesh_resize_vertices(Lib3dsMesh *mesh, int nvertices, int use_texcos, int use_flags);
-extern LIB3DSAPI void lib3ds_mesh_resize_faces(Lib3dsMesh *mesh, int nfaces);
-extern LIB3DSAPI void lib3ds_mesh_bounding_box(Lib3dsMesh *mesh, float bmin[3], float bmax[3]);
-extern LIB3DSAPI void lib3ds_mesh_calculate_face_normals(Lib3dsMesh *mesh, float(*face_normals)[3]);
-extern LIB3DSAPI void lib3ds_mesh_calculate_vertex_normals(Lib3dsMesh *mesh, float(*normals)[3]);
 
 extern LIB3DSAPI Lib3dsNode *lib3ds_node_new(Lib3dsNodeType type);
 extern LIB3DSAPI Lib3dsAmbientColorNode *lib3ds_node_new_ambient_color(float color0[3]);
@@ -650,6 +651,40 @@ extern LIB3DSAPI void lib3ds_track_eval_bool(Lib3dsTrack *track, int *b, float t
 extern LIB3DSAPI void lib3ds_track_eval_float(Lib3dsTrack *track, float *f, float t);
 extern LIB3DSAPI void lib3ds_track_eval_vector(Lib3dsTrack *track, float v[3], float t);
 extern LIB3DSAPI void lib3ds_track_eval_quat(Lib3dsTrack *track, float q[4], float t);
+
+template<typename T>
+void lib3ds_util_reserve_array_delete(T ***ptr, int *n, int *size, int new_size, int force) {
+	assert(ptr && n && size);
+	if ((*size < new_size) || force) {
+		if (force) {
+			int i;
+			for (i = new_size; i < *n; ++i) {
+				delete((*ptr)[i]);
+				(*ptr)[i] = nullptr;
+			}
+		}
+		*ptr = (T **)realloc(*ptr, sizeof(T *) * new_size);
+		*size = new_size;
+		if (*n > new_size) {
+			*n = new_size;
+		}
+	}
+}
+
+template<typename T>
+void lib3ds_util_remove_array_delete(T ***ptr, int *n, int index) {
+	assert(ptr && n);
+	if ((index >= 0) && (index < *n)) {
+		assert(*ptr);
+		delete ((*ptr)[index]);
+
+		if (index < *n - 1) {
+			memmove(&(*ptr)[index], &(*ptr)[index + 1], sizeof(T *) * (*n - index - 1));
+		}
+		*n = *n - 1;
+	}
+}
+
 
 /** @} */
 #endif

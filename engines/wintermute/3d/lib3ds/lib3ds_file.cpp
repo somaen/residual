@@ -127,7 +127,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsMesh *mesh = NULL;
 	Lib3dsCamera *camera = NULL;
 	Lib3dsLight *light = NULL;
-	uint32 object_flags;
+	uint32 objectFlags;
 
 	lib3ds_chunk_read_start(&c, CHK_NAMED_OBJECT, io);
 
@@ -135,11 +135,11 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	lib3ds_io_log(io, LIB3DS_LOG_INFO, "  NAME=%s", name);
 	lib3ds_chunk_read_tell(&c, io);
 
-	object_flags = 0;
+	objectFlags = 0;
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_N_TRI_OBJECT: {
-			mesh = lib3ds_mesh_new(name);
+			mesh = new Lib3dsMesh(name);
 			file->insertMesh(mesh, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_mesh_read(file, mesh, io);
@@ -163,31 +163,31 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_OBJ_HIDDEN:
-			object_flags |= LIB3DS_OBJECT_HIDDEN;
+			objectFlags |= LIB3DS_OBJECT_HIDDEN;
 			break;
 
 		case CHK_OBJ_DOESNT_CAST:
-			object_flags |= LIB3DS_OBJECT_DOESNT_CAST;
+			objectFlags |= LIB3DS_OBJECT_DOESNT_CAST;
 			break;
 
 		case CHK_OBJ_VIS_LOFTER:
-			object_flags |= LIB3DS_OBJECT_VIS_LOFTER;
+			objectFlags |= LIB3DS_OBJECT_VIS_LOFTER;
 			break;
 
 		case CHK_OBJ_MATTE:
-			object_flags |= LIB3DS_OBJECT_MATTE;
+			objectFlags |= LIB3DS_OBJECT_MATTE;
 			break;
 
 		case CHK_OBJ_DONT_RCVSHADOW:
-			object_flags |= LIB3DS_OBJECT_DONT_RCVSHADOW;
+			objectFlags |= LIB3DS_OBJECT_DONT_RCVSHADOW;
 			break;
 
 		case CHK_OBJ_FAST:
-			object_flags |= LIB3DS_OBJECT_FAST;
+			objectFlags |= LIB3DS_OBJECT_FAST;
 			break;
 
 		case CHK_OBJ_FROZEN:
-			object_flags |= LIB3DS_OBJECT_FROZEN;
+			objectFlags |= LIB3DS_OBJECT_FROZEN;
 			break;
 
 		default:
@@ -196,11 +196,11 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	}
 
 	if (mesh)
-		mesh->object_flags = object_flags;
+		mesh->_objectFlags = objectFlags;
 	if (camera)
-		camera->object_flags = object_flags;
+		camera->object_flags = objectFlags;
 	if (light)
-		light->object_flags = object_flags;
+		light->object_flags = objectFlags;
 
 	lib3ds_chunk_read_end(&c, io);
 }
@@ -634,8 +634,7 @@ int Lib3dsFile::lightByName(const char *name) {
 
 
 void Lib3dsFile::reserveMeshes(int size, int force) {
-	lib3ds_util_reserve_array((void ** *)&_meshes, &_nmeshes, &_meshesSize,
-	                          size, force, (Lib3dsFreeFunc)lib3ds_mesh_free);
+	lib3ds_util_reserve_array_delete(&_meshes, &_nmeshes, &_meshesSize, size, force);
 }
 
 
@@ -645,13 +644,13 @@ void Lib3dsFile::insertMesh(Lib3dsMesh *mesh, int index) {
 
 
 void Lib3dsFile::removeMesh(int index) {
-	lib3ds_util_remove_array((void ** *)&_meshes, &_nmeshes, index, (Lib3dsFreeFunc)lib3ds_mesh_free);
+	lib3ds_util_remove_array_delete(&_meshes, &_nmeshes, index);
 }
 
 
 int Lib3dsFile::meshByName(const char *name) {
 	for (int i = 0; i < _nmeshes; ++i) {
-		if (strcmp(_meshes[i]->name, name) == 0) {
+		if (strcmp(_meshes[i]->_name, name) == 0) {
 			return (i);
 		}
 	}
@@ -867,7 +866,7 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 	if (include_meshes) {
 		float lmin[3], lmax[3];
 		for (int i = 0; i < _nmeshes; ++i) {
-			lib3ds_mesh_bounding_box(_meshes[i], lmin, lmax);
+			_meshes[i]->boundingBox(lmin, lmax);
 			lib3ds_vector_min(bmin, lmin);
 			lib3ds_vector_max(bmax, lmax);
 		}
@@ -912,14 +911,14 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 				int i;
 
 				mesh = file->_meshes[index];
-				lib3ds_matrix_copy(inv_matrix, mesh->matrix);
+				lib3ds_matrix_copy(inv_matrix, mesh->_matrix);
 				lib3ds_matrix_inv(inv_matrix);
 				lib3ds_matrix_mult(M, matrix, node->matrix);
 				lib3ds_matrix_translate(M, -n->pivot[0], -n->pivot[1], -n->pivot[2]);
 				lib3ds_matrix_mult(M, M, inv_matrix);
 
-				for (i = 0; i < mesh->nvertices; ++i) {
-					lib3ds_vector_transform(v, M, mesh->vertices[i]);
+				for (i = 0; i < mesh->_nVertices; ++i) {
+					lib3ds_vector_transform(v, M, mesh->_vertices[i]);
 					lib3ds_vector_min(bmin, v);
 					lib3ds_vector_max(bmax, v);
 				}
@@ -991,7 +990,7 @@ void Lib3dsFile::createNodesForMeshes() {
 	for (int i = 0; i < _nmeshes; ++i) {
 		Lib3dsMesh *mesh = _meshes[i];
 		p = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
-		strcpy(p->name, mesh->name);
+		strcpy(p->name, mesh->_name);
 		insertNode(p, NULL);
 	}
 }

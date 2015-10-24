@@ -137,7 +137,7 @@ lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instance_name, float
 
 	node = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
 	if (mesh) {
-		strcpy(node->name, mesh->name);
+		strcpy(node->name, mesh->_name);
 	} else {
 		strcpy(node->name, "$$$DUMMY");
 	}

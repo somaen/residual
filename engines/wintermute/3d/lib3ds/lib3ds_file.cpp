@@ -147,7 +147,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_N_CAMERA: {
-			camera = lib3ds_camera_new(name);
+			camera = new Lib3dsCamera(name);
 			file->insertCamera(camera, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_camera_read(camera, io);
@@ -198,7 +198,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	if (mesh)
 		mesh->_objectFlags = objectFlags;
 	if (camera)
-		camera->object_flags = objectFlags;
+		camera->_objectFlags = objectFlags;
 	if (light)
 		light->object_flags = objectFlags;
 
@@ -582,8 +582,7 @@ int Lib3dsFile::materialByName(const char *name) {
 
 
 void Lib3dsFile::reserveCameras(int size, int force) {
-	lib3ds_util_reserve_array((void ** *)&_cameras, &_ncameras, &_camerasSize,
-	                          size, force, (Lib3dsFreeFunc)lib3ds_camera_free);
+	lib3ds_util_reserve_array_delete(&_cameras, &_ncameras, &_camerasSize, size, force);
 }
 
 
@@ -593,13 +592,13 @@ void Lib3dsFile::insertCamera(Lib3dsCamera *camera, int index) {
 
 
 void Lib3dsFile::removeCamera(int index) {
-	lib3ds_util_remove_array((void ** *)&_cameras, &_ncameras, index, (Lib3dsFreeFunc)lib3ds_camera_free);
+	lib3ds_util_remove_array_delete(&_cameras, &_ncameras, index);
 }
 
 
 int Lib3dsFile::cameraByName(const char *name) {
 	for (int i = 0; i < _ncameras; ++i) {
-		if (strcmp(_cameras[i]->name, name) == 0) {
+		if (strcmp(_cameras[i]->_name, name) == 0) {
 			return (i);
 		}
 	}
@@ -873,10 +872,10 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 	}
 	if (include_cameras) {
 		for (int i = 0; i < _ncameras; ++i) {
-			lib3ds_vector_min(bmin, _cameras[i]->position);
-			lib3ds_vector_max(bmax, _cameras[i]->position);
-			lib3ds_vector_min(bmin, _cameras[i]->target);
-			lib3ds_vector_max(bmax, _cameras[i]->target);
+			lib3ds_vector_min(bmin, _cameras[i]->_position);
+			lib3ds_vector_max(bmax, _cameras[i]->_position);
+			lib3ds_vector_min(bmin, _cameras[i]->_target);
+			lib3ds_vector_max(bmax, _cameras[i]->_target);
 		}
 	}
 	if (include_lights) {

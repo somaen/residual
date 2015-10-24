@@ -31,32 +31,19 @@
  *
  * \return Lib3dsCamera object or NULL on failure.
  */
-Lib3dsCamera *
-lib3ds_camera_new(const char *name) {
-	Lib3dsCamera *camera;
-
+Lib3dsCamera::Lib3dsCamera(const char *name) {
 	assert(name);
 	assert(strlen(name) < 64);
 
-	camera = (Lib3dsCamera *)calloc(sizeof(Lib3dsCamera), 1);
-	if (!camera) {
-		return (0);
-	}
-	strcpy(camera->name, name);
-	camera->fov = 45.0f;
-	return (camera);
+	strcpy(this->_name, name);
+	_fov = 45.0f;
 }
 
 
 /*!
  * Free a Lib3dsCamera object and all of its resources.
- *
- * \param camera Lib3dsCamera object to be freed.
  */
-void
-lib3ds_camera_free(Lib3dsCamera *camera) {
-	memset(camera, 0, sizeof(Lib3dsCamera));
-	free(camera);
+Lib3dsCamera::~Lib3dsCamera() {
 }
 
 
@@ -80,22 +67,21 @@ void lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
 	lib3ds_chunk_read_start(&c, CHK_N_CAMERA, io);
 
 	{
-		int i;
-		for (i = 0; i < 3; ++i) {
-			camera->position[i] = lib3ds_io_read_float(stream);
+		for (int i = 0; i < 3; ++i) {
+			camera->_position[i] = lib3ds_io_read_float(stream);
 		}
-		for (i = 0; i < 3; ++i) {
-			camera->target[i] = lib3ds_io_read_float(stream);
+		for (int i = 0; i < 3; ++i) {
+			camera->_target[i] = lib3ds_io_read_float(stream);
 		}
 	}
-	camera->roll = lib3ds_io_read_float(stream);
+	camera->_roll = lib3ds_io_read_float(stream);
 	{
 		float s;
 		s = lib3ds_io_read_float(stream);
 		if (fabs(s) < LIB3DS_EPSILON) {
-			camera->fov = 45.0;
+			camera->_fov = 45.0;
 		} else {
-			camera->fov = 2400.0f / s;
+			camera->_fov = 2400.0f / s;
 		}
 	}
 	lib3ds_chunk_read_tell(&c, io);
@@ -103,13 +89,13 @@ void lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_CAM_SEE_CONE: {
-			camera->see_cone = true;
+			camera->_seeCone = true;
 		}
 		break;
 
 		case CHK_CAM_RANGES: {
-			camera->near_range = lib3ds_io_read_float(stream);
-			camera->far_range = lib3ds_io_read_float(stream);
+			camera->_nearRange = lib3ds_io_read_float(stream);
+			camera->_farRange = lib3ds_io_read_float(stream);
 		}
 		break;
 

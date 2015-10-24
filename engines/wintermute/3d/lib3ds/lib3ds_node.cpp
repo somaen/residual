@@ -177,17 +177,17 @@ lib3ds_node_new_camera(Lib3dsCamera *camera) {
 
 	assert(camera);
 	node = lib3ds_node_new(LIB3DS_NODE_CAMERA);
-	strcpy(node->name, camera->name);
+	strcpy(node->name, camera->_name);
 
 	n = (Lib3dsCameraNode *)node;
 	lib3ds_track_resize(&n->pos_track, 1);
-	lib3ds_vector_copy(n->pos_track.keys[0].value, camera->position);
+	lib3ds_vector_copy(n->pos_track.keys[0].value, camera->_position);
 
 	lib3ds_track_resize(&n->fov_track, 1);
-	n->fov_track.keys[0].value[0] = camera->fov;
+	n->fov_track.keys[0].value[0] = camera->_fov;
 
 	lib3ds_track_resize(&n->roll_track, 1);
-	n->roll_track.keys[0].value[0] = camera->roll;
+	n->roll_track.keys[0].value[0] = camera->_roll;
 
 	return n;
 }
@@ -200,11 +200,11 @@ lib3ds_node_new_camera_target(Lib3dsCamera *camera) {
 
 	assert(camera);
 	node = lib3ds_node_new(LIB3DS_NODE_CAMERA_TARGET);
-	strcpy(node->name, camera->name);
+	strcpy(node->name, camera->_name);
 
 	n = (Lib3dsTargetNode *)node;
 	lib3ds_track_resize(&n->pos_track, 1);
-	lib3ds_vector_copy(n->pos_track.keys[0].value, camera->target);
+	lib3ds_vector_copy(n->pos_track.keys[0].value, camera->_target);
 
 	return n;
 }

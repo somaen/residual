@@ -271,17 +271,20 @@ enum Lib3dsObjectFlags {
 
 /** Camera object */
 struct Lib3dsCamera {
-	unsigned    user_id;
-	void       *user_ptr;
-	char        name[64];
-	unsigned    object_flags; /*< @see Lib3dsObjectFlags */
-	float       position[3];
-	float       target[3];
-	float       roll;
-	float       fov;
-	int         see_cone;
-	float       near_range;
-	float       far_range;
+	unsigned    _userId;
+	void       *_userPtr;
+	char        _name[64];
+	unsigned    _objectFlags; /*< @see Lib3dsObjectFlags */
+	float       _position[3];
+	float       _target[3];
+	float       _roll;
+	float       _fov;
+	int         _seeCone;
+	float       _nearRange;
+	float       _farRange;
+	
+	Lib3dsCamera(const char *name);
+	~Lib3dsCamera();
 };
 
 /** Light object */
@@ -626,8 +629,6 @@ extern LIB3DSAPI int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io);
 
 extern LIB3DSAPI Lib3dsMaterial *lib3ds_material_new(const char *name);
 extern LIB3DSAPI void lib3ds_material_free(Lib3dsMaterial *material);
-extern LIB3DSAPI Lib3dsCamera *lib3ds_camera_new(const char *name);
-extern LIB3DSAPI void lib3ds_camera_free(Lib3dsCamera *mesh);
 extern LIB3DSAPI Lib3dsLight *lib3ds_light_new(const char *name);
 extern LIB3DSAPI void lib3ds_light_free(Lib3dsLight *mesh);
 

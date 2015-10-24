@@ -215,7 +215,6 @@ void Lib3dsMesh::calculateVertexNormals(float(*normals)[3]) {
 static void face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
-	int i;
 	uint16 nfaces;
 	
 	Common::SeekableReadStream *stream = io->stream;
@@ -226,7 +225,7 @@ static void face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	nfaces = stream->readUint16LE();
 	if (nfaces) {
 		mesh->resizeFaces(nfaces);
-		for (i = 0; i < nfaces; ++i) {
+		for (int i = 0; i < nfaces; ++i) {
 			mesh->_faces[i].index[0] = stream->readUint16LE();
 			mesh->_faces[i].index[1] = stream->readUint16LE();
 			mesh->_faces[i].index[2] = stream->readUint16LE();
@@ -239,7 +238,6 @@ static void face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			case CHK_MSH_MAT_GROUP: {
 				char name[64];
 				unsigned n;
-				unsigned i;
 				int index;
 				int material;
 
@@ -247,7 +245,7 @@ static void face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 				material = file->materialByName(name);
 
 				n = stream->readUint16LE();
-				for (i = 0; i < n; ++i) {
+				for (unsigned i = 0; i < n; ++i) {
 					index = stream->readUint16LE();
 					if (index < mesh->_nFaces) {
 						mesh->_faces[index].material = material;
@@ -259,8 +257,7 @@ static void face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			}
 
 			case CHK_SMOOTH_GROUP: {
-				int i;
-				for (i = 0; i < mesh->_nFaces; ++i) {
+				for (int i = 0; i < mesh->_nFaces; ++i) {
 					mesh->_faces[i].smoothing_group = stream->readUint32LE();
 				}
 				break;
@@ -365,13 +362,12 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		}
 
 		case CHK_TEX_VERTS: {
-			int i;
 			uint16 ntexcos = stream->readUint16LE();
 			uint16 nvertices = (mesh->_nVertices >= ntexcos) ? mesh->_nVertices : ntexcos;;
 			if (!mesh->_texCos) {
 				mesh->resizeVertices(nvertices, 1, mesh->_vFlags != NULL);
 			}
-			for (i = 0; i < ntexcos; ++i) {
+			for (int i = 0; i < ntexcos; ++i) {
 				mesh->_texCos[i][0] = lib3ds_io_read_float(stream);
 				mesh->_texCos[i][1] = lib3ds_io_read_float(stream);
 			}
@@ -388,7 +384,6 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		   has negative determinant */
 		float inv_matrix[4][4], M[4][4];
 		float tmp[3];
-		int i;
 
 		lib3ds_matrix_copy(inv_matrix, mesh->_matrix);
 		lib3ds_matrix_inv(inv_matrix);
@@ -397,7 +392,7 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		lib3ds_matrix_scale(M, -1.0f, 1.0f, 1.0f);
 		lib3ds_matrix_mult(M, M, inv_matrix);
 
-		for (i = 0; i < mesh->_nVertices; ++i) {
+		for (int i = 0; i < mesh->_nVertices; ++i) {
 			lib3ds_vector_transform(tmp, M, mesh->_vertices[i]);
 			lib3ds_vector_copy(mesh->_vertices[i], tmp);
 		}

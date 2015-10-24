@@ -658,8 +658,7 @@ void lib3ds_util_reserve_array_delete(T ***ptr, int *n, int *size, int new_size,
 	assert(ptr && n && size);
 	if ((*size < new_size) || force) {
 		if (force) {
-			int i;
-			for (i = new_size; i < *n; ++i) {
+			for (int i = new_size; i < *n; ++i) {
 				delete((*ptr)[i]);
 				(*ptr)[i] = nullptr;
 			}

@@ -22,27 +22,22 @@
 #include "lib3ds_impl.h"
 #include <math.h>
 
-void
-lib3ds_vector_make(float c[3], float x, float y, float z) {
+void lib3ds_vector_make(float c[3], float x, float y, float z) {
 	c[0] = x;
 	c[1] = y;
 	c[2] = z;
 }
 
 
-void
-lib3ds_vector_zero(float c[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+void lib3ds_vector_zero(float c[3]) {
+	for (int i = 0; i < 3; ++i) {
 		c[i] = 0.0f;
 	}
 }
 
 
-void
-lib3ds_vector_copy(float dst[3], float src[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+void lib3ds_vector_copy(float dst[3], float src[3]) {
+	for (int i = 0; i < 3; ++i) {
 		dst[i] = src[i];
 	}
 }
@@ -55,10 +50,8 @@ lib3ds_vector_copy(float dst[3], float src[3]) {
  * \param a First addend.
  * \param b Second addend.
  */
-void
-lib3ds_vector_add(float c[3], float a[3], float b[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+void lib3ds_vector_add(float c[3], float a[3], float b[3]) {
+	for (int i = 0; i < 3; ++i) {
 		c[i] = a[i] + b[i];
 	}
 }
@@ -71,10 +64,8 @@ lib3ds_vector_add(float c[3], float a[3], float b[3]) {
  * \param a Addend.
  * \param b Minuend.
  */
-void
-lib3ds_vector_sub(float c[3], float a[3], float b[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+void lib3ds_vector_sub(float c[3], float a[3], float b[3]) {
+	for (int i = 0; i < 3; ++i) {
 		c[i] = a[i] - b[i];
 	}
 }
@@ -87,10 +78,8 @@ lib3ds_vector_sub(float c[3], float a[3], float b[3]) {
  * \param a Vector to be multiplied.
  * \param k Scalar.
  */
-void
-lib3ds_vector_scalar_mul(float c[3], float a[3], float k) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+void lib3ds_vector_scalar_mul(float c[3], float a[3], float k) {
+	for (int i = 0; i < 3; ++i) {
 		c[i] = a[i] * k;
 	}
 }
@@ -103,8 +92,7 @@ lib3ds_vector_scalar_mul(float c[3], float a[3], float k) {
  * \param a First vector.
  * \param b Second vector.
  */
-void
-lib3ds_vector_cross(float c[3], float a[3], float b[3]) {
+void lib3ds_vector_cross(float c[3], float a[3], float b[3]) {
 	c[0] = a[1] * b[2] - a[2] * b[1];
 	c[1] = a[2] * b[0] - a[0] * b[2];
 	c[2] = a[0] * b[1] - a[1] * b[0];
@@ -119,8 +107,7 @@ lib3ds_vector_cross(float c[3], float a[3], float b[3]) {
  *
  * \return Dot product.
  */
-float
-lib3ds_vector_dot(float a[3], float b[3]) {
+float lib3ds_vector_dot(float a[3], float b[3]) {
 	return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
 }
 
@@ -134,8 +121,7 @@ lib3ds_vector_dot(float a[3], float b[3]) {
  *
  * \return Length of vector.
  */
-float
-lib3ds_vector_length(float c[3]) {
+float lib3ds_vector_length(float c[3]) {
 	return ((float)sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]));
 }
 
@@ -147,8 +133,7 @@ lib3ds_vector_length(float c[3]) {
  *
  * \param c Vector to normalize.
  */
-void
-lib3ds_vector_normalize(float c[3]) {
+void lib3ds_vector_normalize(float c[3]) {
 	float l, m;
 
 	l = (float)sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]);
@@ -182,8 +167,7 @@ lib3ds_vector_normalize(float c[3]) {
  * \param b Base point of both lines.
  * \param c Endpoint of second line.
  */
-void
-lib3ds_vector_normal(float n[3], float a[3], float b[3], float c[3]) {
+void lib3ds_vector_normal(float n[3], float a[3], float b[3], float c[3]) {
 	float p[3], q[3];
 
 	lib3ds_vector_sub(p, c, b);
@@ -216,10 +200,8 @@ lib3ds_vector_transform(float c[3], float m[4][4], float a[3]) {
  *
  * Computes minimum values of x,y,z independently.
  */
-void
-lib3ds_vector_min(float c[3], float a[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+void lib3ds_vector_min(float c[3], float a[3]) {
+	for (int i = 0; i < 3; ++i) {
 		if (a[i] < c[i]) {
 			c[i] = a[i];
 		}
@@ -232,10 +214,8 @@ lib3ds_vector_min(float c[3], float a[3]) {
  *
  * Computes maximum values of x,y,z independently.
  */
-void
-lib3ds_vector_max(float c[3], float a[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+void lib3ds_vector_max(float c[3], float a[3]) {
+	for (int i = 0; i < 3; ++i) {
 		if (a[i] > c[i]) {
 			c[i] = a[i];
 		}

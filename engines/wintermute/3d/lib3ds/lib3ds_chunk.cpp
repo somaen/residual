@@ -31,8 +31,7 @@
  *
  * \return   True on success, False otherwise.
  */
-void
-lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io) {
+void lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io) {
 	assert(c);
 	assert(io);
 
@@ -50,8 +49,7 @@ lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io) {
 }
 
 
-void
-lib3ds_chunk_read_start(Lib3dsChunk *c, uint16 chunk, Lib3dsIo *io) {
+void lib3ds_chunk_read_start(Lib3dsChunk *c, uint16 chunk, Lib3dsIo *io) {
 	assert(c);
 	assert(io);
 	lib3ds_chunk_read(c, io);

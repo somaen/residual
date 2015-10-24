@@ -36,8 +36,7 @@ fog_read(Lib3dsAtmosphere *at, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_F: {
-			int i;
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				at->fog_color[i] = lib3ds_io_read_float(stream);
 			}
 		}

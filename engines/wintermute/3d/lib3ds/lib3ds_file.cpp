@@ -218,8 +218,7 @@ static void ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_F: {
-			int i;
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				file->ambient[i] = lib3ds_io_read_float(stream);
 			}
 			have_lin = true;
@@ -230,8 +229,7 @@ static void ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 			/* gamma corrected color chunk
 			   replaced in 3ds R3 by LIN_COLOR_24 */
 			if (!have_lin) {
-				int i;
-				for (i = 0; i < 3; ++i) {
+				for (int i = 0; i < 3; ++i) {
 					file->ambient[i] = lib3ds_io_read_float(stream);
 				}
 			}
@@ -287,8 +285,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_O_CONSTS: {
-			int i;
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				file->constructionPlane[i] = lib3ds_io_read_float(stream);
 			}
 			break;
@@ -904,19 +901,17 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 			if (index < 0)
 				index = file->meshByName(node->name);
 			if (index >= 0) {
-				Lib3dsMesh *mesh;
 				float inv_matrix[4][4], M[4][4];
 				float v[3];
-				int i;
 
-				mesh = file->_meshes[index];
+				Lib3dsMesh *mesh = file->_meshes[index];
 				lib3ds_matrix_copy(inv_matrix, mesh->_matrix);
 				lib3ds_matrix_inv(inv_matrix);
 				lib3ds_matrix_mult(M, matrix, node->matrix);
 				lib3ds_matrix_translate(M, -n->pivot[0], -n->pivot[1], -n->pivot[2]);
 				lib3ds_matrix_mult(M, M, inv_matrix);
 
-				for (i = 0; i < mesh->_nVertices; ++i) {
+				for (int i = 0; i < mesh->_nVertices; ++i) {
 					lib3ds_vector_transform(v, M, mesh->_vertices[i]);
 					lib3ds_vector_min(bmin, v);
 					lib3ds_vector_max(bmax, v);

@@ -84,8 +84,7 @@ v_gradient_read(Lib3dsBackground *background, Lib3dsIo *io) {
 		}
 	}
 	{
-		int i;
-		for (i = 0; i < 3; ++i) {
+		for (int i = 0; i < 3; ++i) {
 			background->gradient_top[i] = col[have_lin][0][i];
 			background->gradient_middle[i] = col[have_lin][1][i];
 			background->gradient_bottom[i] = col[have_lin][2][i];
@@ -136,13 +135,11 @@ lib3ds_background_read(Lib3dsBackground *background, Lib3dsIo *io) {
 }
 
 
-static int
-colorf_defined(float rgb[3]) {
-	int i;
-	for (i = 0; i < 3; ++i) {
+static int colorf_defined(float rgb[3]) {
+	for (int i = 0; i < 3; ++i) {
 		if (fabs(rgb[i]) > LIB3DS_EPSILON) {
-			break;
+			return true;
 		}
 	}
-	return (i < 3);
+	return false;
 }

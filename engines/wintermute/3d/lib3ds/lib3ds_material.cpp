@@ -97,8 +97,7 @@ static void color_read(float rgb[3], Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_24: {
-			int i;
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				rgb[i] = 1.0f * stream->readByte() / 255.0f;
 			}
 			have_lin = true;
@@ -109,8 +108,7 @@ static void color_read(float rgb[3], Lib3dsIo *io) {
 			/* gamma corrected color chunk
 			   replaced in 3ds R3 by LIN_COLOR_24 */
 			if (!have_lin) {
-				int i;
-				for (i = 0; i < 3; ++i) {
+				for (int i = 0; i < 3; ++i) {
 					rgb[i] = 1.0f * stream->readByte() / 255.0f;
 				}
 			}
@@ -118,8 +116,7 @@ static void color_read(float rgb[3], Lib3dsIo *io) {
 		}
 
 		case CHK_LIN_COLOR_F: {
-			int i;
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				rgb[i] = lib3ds_io_read_float(stream);
 			}
 			have_lin = true;
@@ -128,8 +125,7 @@ static void color_read(float rgb[3], Lib3dsIo *io) {
 
 		case CHK_COLOR_F: {
 			if (!have_lin) {
-				int i;
-				for (i = 0; i < 3; ++i) {
+				for (int i = 0; i < 3; ++i) {
 					rgb[i] = lib3ds_io_read_float(stream);
 				}
 			}

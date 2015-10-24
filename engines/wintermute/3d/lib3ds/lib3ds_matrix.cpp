@@ -31,12 +31,11 @@
  *
  * \param m Matrix to be cleared.
  */
-void
-lib3ds_matrix_zero(float m[4][4]) {
-	int i, j;
-
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) m[i][j] = 0.0f;
+void lib3ds_matrix_zero(float m[4][4]) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			m[i][j] = 0.0f;
+		}
 	}
 }
 
@@ -46,22 +45,22 @@ lib3ds_matrix_zero(float m[4][4]) {
  *
  * \param m Matrix to be set.
  */
-void
-lib3ds_matrix_identity(float m[4][4]) {
-	int i, j;
-
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) m[i][j] = 0.0;
+void lib3ds_matrix_identity(float m[4][4]) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			m[i][j] = 0.0;
+		}
 	}
-	for (i = 0; i < 4; i++) m[i][i] = 1.0;
+	for (int i = 0; i < 4; i++) {
+		m[i][i] = 1.0;
+	}
 }
 
 
 /*!
  * Copy a matrix.
  */
-void
-lib3ds_matrix_copy(float dest[4][4], float src[4][4]) {
+void lib3ds_matrix_copy(float dest[4][4], float src[4][4]) {
 	memcpy(dest, src, 16 * sizeof(float));
 }
 
@@ -69,12 +68,9 @@ lib3ds_matrix_copy(float dest[4][4], float src[4][4]) {
 /*!
  * Negate a matrix -- all elements negated.
  */
-void
-lib3ds_matrix_neg(float m[4][4]) {
-	int i, j;
-
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 4; i++) {
+void lib3ds_matrix_neg(float m[4][4]) {
+	for (int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
 			m[j][i] = -m[j][i];
 		}
 	}
@@ -84,14 +80,10 @@ lib3ds_matrix_neg(float m[4][4]) {
 /*!
  * Transpose a matrix in place.
  */
-void
-lib3ds_matrix_transpose(float m[4][4]) {
-	int i, j;
-	float swp;
-
-	for (j = 0; j < 4; j++) {
-		for (i = j + 1; i < 4; i++) {
-			swp = m[j][i];
+void lib3ds_matrix_transpose(float m[4][4]) {
+	for (int j = 0; j < 4; j++) {
+		for (int i = j + 1; i < 4; i++) {
+			float swp = m[j][i];
 			m[j][i] = m[i][j];
 			m[i][j] = swp;
 		}
@@ -102,12 +94,9 @@ lib3ds_matrix_transpose(float m[4][4]) {
 /*!
  * Add two matrices.
  */
-void
-lib3ds_matrix_add(float m[4][4], float a[4][4], float b[4][4]) {
-	int i, j;
-
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 4; i++) {
+void lib3ds_matrix_add(float m[4][4], float a[4][4], float b[4][4]) {
+	for (int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
 			m[j][i] = a[j][i] + b[j][i];
 		}
 	}
@@ -121,12 +110,9 @@ lib3ds_matrix_add(float m[4][4], float a[4][4], float b[4][4]) {
  * \param a Addend.
  * \param b Minuend.
  */
-void
-lib3ds_matrix_sub(float m[4][4], float a[4][4], float b[4][4]) {
-	int i, j;
-
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 4; i++) {
+void lib3ds_matrix_sub(float m[4][4], float a[4][4], float b[4][4]) {
+	for (int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
 			m[j][i] = a[j][i] - b[j][i];
 		}
 	}
@@ -136,17 +122,13 @@ lib3ds_matrix_sub(float m[4][4], float a[4][4], float b[4][4]) {
 /*!
  * Multiplies a matrix by a second one (m = m * n).
  */
-void
-lib3ds_matrix_mult(float m[4][4], float a[4][4], float b[4][4]) {
+void lib3ds_matrix_mult(float m[4][4], float a[4][4], float b[4][4]) {
 	float tmp[4][4];
-	int i, j, k;
-	float ab;
-
 	memcpy(tmp, a, 16 * sizeof(float));
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 4; i++) {
-			ab = 0.0f;
-			for (k = 0; k < 4; k++) ab += tmp[k][i] * b[j][k];
+	for (int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
+			float ab = 0.0f;
+			for (int k = 0; k < 4; k++) ab += tmp[k][i] * b[j][k];
 			m[j][i] = ab;
 		}
 	}
@@ -159,31 +141,24 @@ lib3ds_matrix_mult(float m[4][4], float a[4][4], float b[4][4]) {
  * \param m Matrix to be set.
  * \param k Scalar.
  */
-void
-lib3ds_matrix_scalar(float m[4][4], float k) {
-	int i, j;
-
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 4; i++) {
+void lib3ds_matrix_scalar(float m[4][4], float k) {
+	for (int j = 0; j < 4; j++) {
+		for (int i = 0; i < 4; i++) {
 			m[j][i] *= k;
 		}
 	}
 }
 
 
-static float
-det2x2(
-    float a, float b,
-    float c, float d) {
+static float det2x2(float a, float b,
+					  float c, float d) {
 	return ((a) * (d) - (b) * (c));
 }
 
 
-static float
-det3x3(
-    float a1, float a2, float a3,
-    float b1, float b2, float b3,
-    float c1, float c2, float c3) {
+static float det3x3(float a1, float a2, float a3,
+					  float b1, float b2, float b3,
+					  float c1, float c2, float c3) {
 	return (
 	           a1 * det2x2(b2, b3, c2, c3) -
 	           b1 * det2x2(a2, a3, c2, c3) +
@@ -195,8 +170,7 @@ det3x3(
 /*!
  * Find determinant of a matrix.
  */
-float
-lib3ds_matrix_det(float m[4][4]) {
+float lib3ds_matrix_det(float m[4][4]) {
 	float a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4, d1, d2, d3, d4;
 
 	a1 = m[0][0];
@@ -233,8 +207,7 @@ lib3ds_matrix_det(float m[4][4]) {
  *
  * GGemsII, K.Wu, Fast Matrix Inversion
  */
-int
-lib3ds_matrix_inv(float m[4][4]) {
+int lib3ds_matrix_inv(float m[4][4]) {
 	int i, j, k;
 	int pvt_i[4], pvt_j[4];            /* Locations of pivot elements */
 	float pvt_val;               /* Value of current pivot element */
@@ -332,11 +305,8 @@ lib3ds_matrix_inv(float m[4][4]) {
 /*!
  * Apply a translation to a matrix.
  */
-void
-lib3ds_matrix_translate(float m[4][4], float x, float y, float z) {
-	int i;
-
-	for (i = 0; i < 3; i++) {
+void lib3ds_matrix_translate(float m[4][4], float x, float y, float z) {
+	for (int i = 0; i < 3; i++) {
 		m[3][i] += m[0][i] * x + m[1][i] * y + m[2][i] * z;
 	}
 }
@@ -345,11 +315,8 @@ lib3ds_matrix_translate(float m[4][4], float x, float y, float z) {
 /*!
  * Apply scale factors to a matrix.
  */
-void
-lib3ds_matrix_scale(float m[4][4], float x, float y, float z) {
-	int i;
-
-	for (i = 0; i < 4; i++) {
+void lib3ds_matrix_scale(float m[4][4], float x, float y, float z) {
+	for (int i = 0; i < 4; i++) {
 		m[0][i] *= x;
 		m[1][i] *= y;
 		m[2][i] *= z;
@@ -360,8 +327,7 @@ lib3ds_matrix_scale(float m[4][4], float x, float y, float z) {
 /*!
  * Apply a rotation about an arbitrary axis to a matrix.
  */
-void
-lib3ds_matrix_rotate_quat(float m[4][4], float q[4]) {
+void lib3ds_matrix_rotate_quat(float m[4][4], float q[4]) {
 	float s, xs, ys, zs, wx, wy, wz, xx, xy, xz, yy, yz, zz, l;
 	float R[4][4];
 
@@ -404,8 +370,7 @@ lib3ds_matrix_rotate_quat(float m[4][4], float q[4]) {
 /*!
  * Apply a rotation about an arbitrary axis to a matrix.
  */
-void
-lib3ds_matrix_rotate(float m[4][4], float angle, float ax, float ay, float az) {
+void lib3ds_matrix_rotate(float m[4][4], float angle, float ax, float ay, float az) {
 	float q[4];
 	float axis[3];
 
@@ -427,8 +392,7 @@ lib3ds_matrix_rotate(float m[4][4], float angle, float ax, float ay, float az) {
  * \param tgt Camera target
  * \param roll Roll angle
  */
-void
-lib3ds_matrix_camera(float matrix[4][4], float pos[3], float tgt[3], float roll) {
+void lib3ds_matrix_camera(float matrix[4][4], float pos[3], float tgt[3], float roll) {
 	float M[4][4];
 	float x[3], y[3], z[3];
 
@@ -466,9 +430,3 @@ lib3ds_matrix_camera(float matrix[4][4], float pos[3], float tgt[3], float roll)
 	lib3ds_matrix_mult(matrix, matrix, M);
 	lib3ds_matrix_translate(matrix, -pos[0], -pos[1], -pos[2]);
 }
-
-
-
-
-
-

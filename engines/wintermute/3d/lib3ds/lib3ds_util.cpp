@@ -36,8 +36,7 @@ void lib3ds_util_reserve_array(void ***ptr, int *n, int *size, int new_size, int
 	assert(ptr && n && size);
 	if ((*size < new_size) || force) {
 		if (force && free_func) {
-			int i;
-			for (i = new_size; i < *n; ++i) {
+			for (int i = new_size; i < *n; ++i) {
 				free_func((*ptr)[i]);
 				(*ptr)[i] = 0;
 			}
@@ -52,9 +51,8 @@ void lib3ds_util_reserve_array(void ***ptr, int *n, int *size, int new_size, int
 
 
 void lib3ds_util_insert_array(void ***ptr, int *n, int *size, void *element, int index) {
-	int i;
 	assert(ptr && n && size && element);
-	i = ((index >= 0) && (index < *n)) ? index : *n;
+	int i = ((index >= 0) && (index < *n)) ? index : *n;
 	if (i >= *size) {
 		int new_size = 2 * (*size);
 #ifdef _DEBUG

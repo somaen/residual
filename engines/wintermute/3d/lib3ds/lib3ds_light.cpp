@@ -21,8 +21,7 @@
 #include <assert.h>
 #include <math.h>
 
-Lib3dsLight *
-lib3ds_light_new(const char *name) {
+Lib3dsLight *lib3ds_light_new(const char *name) {
 	Lib3dsLight *light;
 
 	assert(name);
@@ -37,8 +36,7 @@ lib3ds_light_new(const char *name) {
 }
 
 
-void
-lib3ds_light_free(Lib3dsLight *light) {
+void lib3ds_light_free(Lib3dsLight *light) {
 	memset(light, 0, sizeof(Lib3dsLight));
 	free(light);
 }
@@ -132,8 +130,7 @@ void lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 	lib3ds_chunk_read_start(&c, CHK_N_DIRECT_LIGHT, io);
 
 	{
-		int i;
-		for (i = 0; i < 3; ++i) {
+		for (int i = 0; i < 3; ++i) {
 			light->position[i] = lib3ds_io_read_float(stream);
 		}
 	}
@@ -142,8 +139,7 @@ void lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_COLOR_F: {
-			int i;
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				light->color[i] = lib3ds_io_read_float(stream);
 			}
 			break;

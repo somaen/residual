@@ -246,8 +246,7 @@ static Lib3dsChunkTable lib3ds_chunk_table[] = {
 };
 
 
-const char *
-lib3ds_chunk_name(uint16 chunk) {
+const char *lib3ds_chunk_name(uint16 chunk) {
 	Lib3dsChunkTable *p;
 
 	for (p = lib3ds_chunk_table; p->name != 0; ++p) {

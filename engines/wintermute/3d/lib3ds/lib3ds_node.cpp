@@ -129,13 +129,10 @@ lib3ds_node_new_ambient_color(float color0[3]) {
 }
 
 
-Lib3dsMeshInstanceNode *
-lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instance_name, float pos0[3], float scl0[3], float rot0[4]) {
-	Lib3dsNode *node;
+Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instance_name, float pos0[3], float scl0[3], float rot0[4]) {
 	Lib3dsMeshInstanceNode *n;
-	int i;
 
-	node = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
+	Lib3dsNode *node = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
 	if (mesh) {
 		strcpy(node->name, mesh->_name);
 	} else {
@@ -161,9 +158,9 @@ lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instance_name, float
 
 	lib3ds_track_resize(&n->rot_track, 1);
 	if (rot0) {
-		for (i = 0; i < 4; ++i) n->rot_track.keys[0].value[i] = rot0[i];
+		for (int i = 0; i < 4; ++i) n->rot_track.keys[0].value[i] = rot0[i];
 	} else {
-		for (i = 0; i < 4; ++i) n->rot_track.keys[0].value[i] = 0;
+		for (int i = 0; i < 4; ++i) n->rot_track.keys[0].value[i] = 0;
 	}
 
 	return n;

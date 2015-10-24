@@ -19,8 +19,7 @@
 #include "lib3ds_io.h"
 #include <math.h>
 
-void
-lib3ds_shadow_read(Lib3dsShadow *shadow, Lib3dsIo *io) {
+void lib3ds_shadow_read(Lib3dsShadow *shadow, Lib3dsIo *io) {
 	Lib3dsChunk c;
 
 	Common::SeekableReadStream *stream = io->stream;

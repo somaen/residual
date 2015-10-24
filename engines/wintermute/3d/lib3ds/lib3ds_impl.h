@@ -27,11 +27,6 @@
 #include <setjmp.h>
 
 #define LIB3DS_EPSILON (1e-5)
-#define LIB3DS_PI 3.14159265358979323846
-#define LIB3DS_TWOPI (2.0*LIB3DS_PI)
-#define LIB3DS_HALFPI (LIB3DS_PI/2.0)
-#define LIB3DS_RAD_TO_DEG(x) ((180.0/LIB3DS_PI)*(x))
-#define LIB3DS_DEG_TO_RAD(x) ((LIB3DS_PI/180.0)*(x))
 
 typedef enum Lib3dsChunks {
 	CHK_NULL_CHUNK             = 0x0000,

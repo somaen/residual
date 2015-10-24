@@ -116,7 +116,7 @@ rot_key_setup(Lib3dsKey *prev, Lib3dsKey *cur, Lib3dsKey *next, float a[4], floa
 
 	assert(cur);
 	if (prev) {
-		if (cur->value[3] > LIB3DS_TWOPI - LIB3DS_EPSILON) {
+		if (cur->value[3] > (2*M_PI) - LIB3DS_EPSILON) {
 			lib3ds_quat_axis_angle(qm, cur->value, 0.0f);
 			lib3ds_quat_ln(qm);
 		} else {
@@ -126,7 +126,7 @@ rot_key_setup(Lib3dsKey *prev, Lib3dsKey *cur, Lib3dsKey *next, float a[4], floa
 		}
 	}
 	if (next) {
-		if (next->value[3] > LIB3DS_TWOPI - LIB3DS_EPSILON) {
+		if (next->value[3] > (2*M_PI) - LIB3DS_EPSILON) {
 			lib3ds_quat_axis_angle(qp, next->value, 0.0f);
 			lib3ds_quat_ln(qp);
 		} else {

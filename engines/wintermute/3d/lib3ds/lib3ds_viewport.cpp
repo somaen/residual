@@ -62,7 +62,7 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 					lib3ds_io_read_vector(stream, viewport->layout_views[cur].center);
 					viewport->layout_views[cur].horiz_angle = lib3ds_io_read_float(stream);
 					viewport->layout_views[cur].vert_angle = lib3ds_io_read_float(stream);
-					lib3ds_io_read(io, viewport->layout_views[cur].camera, 11);
+					stream->read(viewport->layout_views[cur].camera, 11);
 					++cur;
 				}
 				break;
@@ -136,7 +136,7 @@ lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 
 			case CHK_VIEW_CAMERA: {
 				viewport->default_type = LIB3DS_VIEW_CAMERA;
-				lib3ds_io_read(io, viewport->default_camera, 11);
+				stream->read(viewport->default_camera, 11);
 				break;
 			}
 

@@ -48,16 +48,6 @@ void lib3ds_io_cleanup(Lib3dsIo *io) {
 	free(impl);
 }
 
-
-size_t lib3ds_io_read(Lib3dsIo *io, void *buffer, size_t size) {
-	assert(io);
-	if (!io) {
-		return 0;
-	}
-	return io->stream->read(buffer, size);
-}
-
-
 static void lib3ds_io_log_str(Lib3dsIo *io, Lib3dsLogLevel level, const char *str) {
 	if (!io || !io->log_func)
 		return;
@@ -148,9 +138,11 @@ void lib3ds_io_read_string(Lib3dsIo *io, char *s, int buflen) {
 	char c;
 	int k = 0;
 
+	Common::SeekableReadStream *stream = io->stream;
+
 	assert(io);
 	for (;;) {
-		if (lib3ds_io_read(io, &c, 1) != 1) {
+		if (stream->read(&c, 1) != 1) {
 			lib3ds_io_read_error(io);
 		}
 		*s++ = c;

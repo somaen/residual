@@ -52,7 +52,7 @@ static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 
 	light->spot_light = true;
 	for (int i = 0; i < 3; ++i) {
-		light->target[i] = lib3ds_io_read_float(stream);
+		light->target.setValue(i, lib3ds_io_read_float(stream));
 	}
 	light->hotspot = lib3ds_io_read_float(stream);
 	light->falloff = lib3ds_io_read_float(stream);

@@ -253,9 +253,8 @@ void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, float q[4]) {
  */
 void lib3ds_matrix_rotate(Math::Matrix4 &m, float angle, float ax, float ay, float az) {
 	float q[4];
-	float axis[3];
 
-	lib3ds_vector_make(axis, ax, ay, az);
+	Math::Vector3d axis(ax, ay, az);
 	lib3ds_quat_axis_angle(q, axis, angle);
 	lib3ds_matrix_rotate_quat(m, q);
 }
@@ -273,41 +272,38 @@ void lib3ds_matrix_rotate(Math::Matrix4 &m, float angle, float ax, float ay, flo
  * \param tgt Camera target
  * \param roll Roll angle
  */
-void lib3ds_matrix_camera(Math::Matrix4 &matrix, float pos[3], float tgt[3], float roll) {
+void lib3ds_matrix_camera(Math::Matrix4 &matrix, const Math::Vector3d &pos, const Math::Vector3d &tgt, float roll) {
 	Math::Matrix4 M;
-	float x[3], y[3], z[3];
 
-	lib3ds_vector_sub(y, tgt, pos);
-	lib3ds_vector_normalize(y);
+	Math::Vector3d y = tgt - pos;
+	y.normalize();
 
-	if (y[0] != 0. || y[1] != 0) {
-		z[0] = 0;
-		z[1] = 0;
-		z[2] = 1.0;
+	Math::Vector3d z;
+
+	if (y.getValue(0) != 0. || y.getValue(1) != 0) {
+		z = Math::Vector3d(0, 0, 1);
 	} else { /* Special case:  looking straight up or down z axis */
-		z[0] = -1.0;
-		z[1] = 0;
-		z[2] = 0;
+		z = Math::Vector3d(-1.0, 0, 0);
 	}
 
-	lib3ds_vector_cross(x, y, z);
-	lib3ds_vector_cross(z, x, y);
-	lib3ds_vector_normalize(x);
-	lib3ds_vector_normalize(z);
+	Math::Vector3d x = Math::Vector3d::crossProduct(y, z);
+	z = Math::Vector3d::crossProduct(x, y);
+	x.normalize();
+	z.normalize();
 
 	lib3ds_matrix_identity(M);
-	M.setValue(0, 0, x[0]);
-	M.setValue(1, 0, x[1]);
-	M.setValue(2, 0, x[2]);
-	M.setValue(0, 1, y[0]);
-	M.setValue(1, 1, y[1]);
-	M.setValue(2, 1, y[2]);
-	M.setValue(0, 2, z[0]);
-	M.setValue(1, 2, z[1]);
-	M.setValue(2, 2, z[2]);
+	M.setValue(0, 0, x.getValue(0));
+	M.setValue(1, 0, x.getValue(1));
+	M.setValue(2, 0, x.getValue(2));
+	M.setValue(0, 1, y.getValue(0));
+	M.setValue(1, 1, y.getValue(1));
+	M.setValue(2, 1, y.getValue(2));
+	M.setValue(0, 2, z.getValue(0));
+	M.setValue(1, 2, z.getValue(1));
+	M.setValue(2, 2, z.getValue(2));
 
 	lib3ds_matrix_identity(matrix);
 	lib3ds_matrix_rotate(matrix, roll, 0, 1, 0);
 	lib3ds_matrix_mult(matrix, matrix, M);
-	lib3ds_matrix_translate(matrix, -pos[0], -pos[1], -pos[2]);
+	lib3ds_matrix_translate(matrix, -pos.getValue(0), -pos.getValue(1), -pos.getValue(2));
 }

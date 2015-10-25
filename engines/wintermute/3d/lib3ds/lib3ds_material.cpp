@@ -21,8 +21,7 @@
 #include <assert.h>
 #include <math.h>
 
-static void
-initialize_texture_map(Lib3dsTextureMap *map) {
+static void initialize_texture_map(Lib3dsTextureMap *map) {
 	map->flags = 0x10;
 	map->percent = 1.0f;
 	map->scale[0] = 1.0f;
@@ -38,8 +37,7 @@ initialize_texture_map(Lib3dsTextureMap *map) {
  * \return A pointer to the Lib3dsMaterial structure.
  *  If the structure cannot be allocated, NULL is returned.
  */
-Lib3dsMaterial *
-lib3ds_material_new(const char *name) {
+Lib3dsMaterial *lib3ds_material_new(const char *name) {
 	Lib3dsMaterial *mat;
 
 	mat = (Lib3dsMaterial *)calloc(sizeof(Lib3dsMaterial), 1);
@@ -78,8 +76,7 @@ lib3ds_material_new(const char *name) {
 }
 
 
-void
-lib3ds_material_free(Lib3dsMaterial *material) {
+void lib3ds_material_free(Lib3dsMaterial *material) {
 	memset(material, 0, sizeof(Lib3dsMaterial));
 	free(material);
 }
@@ -263,8 +260,7 @@ static void texture_map_read(Lib3dsTextureMap *map, Lib3dsIo *io) {
 }
 
 
-void
-lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
+void lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 

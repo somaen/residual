@@ -20,70 +20,35 @@
     Vector mathematics implementation */
 
 #include "lib3ds_impl.h"
+#include "math/vector3d.h"
 #include <math.h>
 
-void lib3ds_vector_make(float c[3], float x, float y, float z) {
-	c[0] = x;
-	c[1] = y;
-	c[2] = z;
+void lib3ds_vector_make(Math::Vector3d &c, float x, float y, float z) {
+	c = Math::Vector3d(x, y, z);
 }
 
 
-void lib3ds_vector_zero(float c[3]) {
+void lib3ds_vector_zero(Math::Vector3d &c) {
+	for (int i = 0; i < 3; ++i) {
+		c.setValue(i, 0.0f);
+	}
+}
+
+void lib3ds_vector_zero(float c[4]) {
 	for (int i = 0; i < 3; ++i) {
 		c[i] = 0.0f;
 	}
 }
 
-
-void lib3ds_vector_copy(float dst[3], float src[3]) {
+void lib3ds_vector_copy(float dst[3], const Math::Vector3d &src) {
 	for (int i = 0; i < 3; ++i) {
-		dst[i] = src[i];
+		dst[i] = src.getValue(i);
 	}
 }
 
-
-/*!
- * Add two vectors.
- *
- * \param c Result.
- * \param a First addend.
- * \param b Second addend.
- */
-void lib3ds_vector_add(float c[3], float a[3], float b[3]) {
-	for (int i = 0; i < 3; ++i) {
-		c[i] = a[i] + b[i];
-	}
+void lib3ds_vector_copy(Math::Vector3d &dst, const Math::Vector3d &src) {
+	dst = src;
 }
-
-
-/*!
- * Subtract two vectors.
- *
- * \param c Result.
- * \param a Addend.
- * \param b Minuend.
- */
-void lib3ds_vector_sub(float c[3], float a[3], float b[3]) {
-	for (int i = 0; i < 3; ++i) {
-		c[i] = a[i] - b[i];
-	}
-}
-
-
-/*!
- * Multiply a vector by a scalar.
- *
- * \param c Result.
- * \param a Vector to be multiplied.
- * \param k Scalar.
- */
-void lib3ds_vector_scalar_mul(float c[3], float a[3], float k) {
-	for (int i = 0; i < 3; ++i) {
-		c[i] = a[i] * k;
-	}
-}
-
 
 /*!
  * Compute cross product.
@@ -92,23 +57,8 @@ void lib3ds_vector_scalar_mul(float c[3], float a[3], float k) {
  * \param a First vector.
  * \param b Second vector.
  */
-void lib3ds_vector_cross(float c[3], float a[3], float b[3]) {
-	c[0] = a[1] * b[2] - a[2] * b[1];
-	c[1] = a[2] * b[0] - a[0] * b[2];
-	c[2] = a[0] * b[1] - a[1] * b[0];
-}
-
-
-/*!
- * Compute dot product.
- *
- * \param a First vector.
- * \param b Second vector.
- *
- * \return Dot product.
- */
-float lib3ds_vector_dot(float a[3], float b[3]) {
-	return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
+void lib3ds_vector_cross(Math::Vector3d &c, const Math::Vector3d &a, const Math::Vector3d &b) {
+	c = Math::Vector3d::crossProduct(a, b);
 }
 
 
@@ -121,8 +71,8 @@ float lib3ds_vector_dot(float a[3], float b[3]) {
  *
  * \return Length of vector.
  */
-float lib3ds_vector_length(float c[3]) {
-	return ((float)sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]));
+float lib3ds_vector_length(Math::Vector3d &c) {
+	return c.getMagnitude();
 }
 
 
@@ -133,26 +83,23 @@ float lib3ds_vector_length(float c[3]) {
  *
  * \param c Vector to normalize.
  */
-void lib3ds_vector_normalize(float c[3]) {
-	float l, m;
+static void lib3ds_vector_normalize(Math::Vector3d &c) {
+	float *p = c.getData();
 
-	l = (float)sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]);
+	float l = c.getMagnitude();
 	if (fabs(l) < LIB3DS_EPSILON) {
-		if ((c[0] >= c[1]) && (c[0] >= c[2])) {
-			c[0] = 1.0f;
-			c[1] = c[2] = 0.0f;
-		} else if (c[1] >= c[2]) {
-			c[1] = 1.0f;
-			c[0] = c[2] = 0.0f;
+		if ((p[0] >= p[1]) && (p[0] >= p[2])) {
+			p[0] = 1.0f;
+			p[1] = p[2] = 0.0f;
+		} else if (p[1] >= p[2]) {
+			p[1] = 1.0f;
+			p[0] = p[2] = 0.0f;
 		} else {
-			c[2] = 1.0f;
-			c[0] = c[1] = 0.0f;
+			p[2] = 1.0f;
+			p[0] = p[1] = 0.0f;
 		}
 	} else {
-		m = 1.0f / l;
-		c[0] *= m;
-		c[1] *= m;
-		c[2] *= m;
+		c.normalize();
 	}
 }
 
@@ -167,13 +114,11 @@ void lib3ds_vector_normalize(float c[3]) {
  * \param b Base point of both lines.
  * \param c Endpoint of second line.
  */
-void lib3ds_vector_normal(float n[3], float a[3], float b[3], float c[3]) {
-	float p[3], q[3];
-
-	lib3ds_vector_sub(p, c, b);
-	lib3ds_vector_sub(q, a, b);
-	lib3ds_vector_cross(n, p, q);
-	lib3ds_vector_normalize(n);
+void lib3ds_vector_normal(Math::Vector3d &n, const Math::Vector3d &a, const Math::Vector3d &b, const Math::Vector3d &c) {
+	Math::Vector3d p = c - b;
+	Math::Vector3d q = a - b;
+	n = Math::Vector3d::crossProduct(p, q);
+	n.normalize();
 }
 
 
@@ -187,10 +132,10 @@ void lib3ds_vector_normal(float n[3], float a[3], float b[3], float c[3]) {
  * \param m Transformation matrix.
  * \param a Input point.
  */
-void lib3ds_vector_transform(float c[3], const Math::Matrix4 &m, float a[3]) {
-	c[0] = m.getValue(0, 0) * a[0] + m.getValue(1, 0) * a[1] + m.getValue(2, 0) * a[2] + m.getValue(3, 0);
-	c[1] = m.getValue(0, 1) * a[0] + m.getValue(1, 1) * a[1] + m.getValue(2, 1) * a[2] + m.getValue(3, 1);
-	c[2] = m.getValue(0, 2) * a[0] + m.getValue(1, 2) * a[1] + m.getValue(2, 2) * a[2] + m.getValue(3, 2);
+void lib3ds_vector_transform(Math::Vector3d &c, const Math::Matrix4 &m, const Math::Vector3d &a) {
+	c.setValue(0, m.getValue(0, 0) * a.getValue(0) + m.getValue(1, 0) * a.getValue(1) + m.getValue(2, 0) * a.getValue(2) + m.getValue(3, 0));
+	c.setValue(1, m.getValue(0, 1) * a.getValue(0) + m.getValue(1, 1) * a.getValue(1) + m.getValue(2, 1) * a.getValue(2) + m.getValue(3, 1));
+	c.setValue(2, m.getValue(0, 2) * a.getValue(0) + m.getValue(1, 2) * a.getValue(1) + m.getValue(2, 2) * a.getValue(2) + m.getValue(3, 2));
 }
 
 
@@ -199,10 +144,10 @@ void lib3ds_vector_transform(float c[3], const Math::Matrix4 &m, float a[3]) {
  *
  * Computes minimum values of x,y,z independently.
  */
-void lib3ds_vector_min(float c[3], float a[3]) {
+void lib3ds_vector_min(Math::Vector3d &c, const Math::Vector3d &a) {
 	for (int i = 0; i < 3; ++i) {
-		if (a[i] < c[i]) {
-			c[i] = a[i];
+		if (a.getValue(i) < c.getValue(i)) {
+			c.setValue(i, a.getValue(i));
 		}
 	}
 }
@@ -213,17 +158,16 @@ void lib3ds_vector_min(float c[3], float a[3]) {
  *
  * Computes maximum values of x,y,z independently.
  */
-void lib3ds_vector_max(float c[3], float a[3]) {
+void lib3ds_vector_max(Math::Vector3d &c, const Math::Vector3d &a) {
 	for (int i = 0; i < 3; ++i) {
-		if (a[i] > c[i]) {
-			c[i] = a[i];
+		if (a.getValue(i) > c.getValue(i)) {
+			c.setValue(i, a.getValue(i));
 		}
 	}
 }
 
 
-void
-lib3ds_vector_dump(float c[3]) {
-	fprintf(stderr, "%f %f %f\n", c[0], c[1], c[2]);
+void lib3ds_vector_dump(Math::Vector3d &c) {
+	fprintf(stderr, "%f %f %f\n", c.getValue(0), c.getValue(1), c.getValue(2));
 }
 

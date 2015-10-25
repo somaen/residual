@@ -23,6 +23,7 @@
     Header file for public API defined by lib3ds */
 #include "common/stream.h"
 #include "math/matrix4.h"
+#include "common/array.h"
 #include <stddef.h>
 
 #ifndef LIB3DSAPI
@@ -136,7 +137,7 @@ struct Lib3dsView {
 	short       position[2];
 	short       size[2];
 	float       zoom;
-	float       center[3];
+	Math::Vector3d center;
 	float       horiz_angle;
 	float       vert_angle;
 	char        camera[11];
@@ -156,7 +157,7 @@ struct Lib3dsViewport {
 	int             layout_nviews;
 	Lib3dsView      layout_views[LIB3DS_LAYOUT_MAX_VIEWS];
 	int             default_type;
-	float           default_position[3];
+	Math::Vector3d  default_position;
 	float           default_width;
 	float           default_horiz_angle;
 	float           default_vert_angle;
@@ -290,35 +291,35 @@ struct Lib3dsCamera {
 
 /** Light object */
 struct Lib3dsLight {
-	unsigned    user_id;
-	void       *user_ptr;
-	char        name[64];
-	unsigned    object_flags;
-	int         spot_light;     /* bool */
-	int         see_cone;
-	float       color[3];
-	float       position[3];
-	float       target[3];
-	float       roll;
-	int         off;              /* bool */
-	float       outer_range;
-	float       inner_range;
-	float       multiplier;
+	unsigned       user_id;
+	void          *user_ptr;
+	char           name[64];
+	unsigned       object_flags;
+	int            spot_light;     /* bool */
+	int            see_cone;
+	float          color[3];
+	float          position[3];
+	Math::Vector3d target;
+	float          roll;
+	int            off;              /* bool */
+	float          outer_range;
+	float          inner_range;
+	float          multiplier;
 	/*const char**  excludes;*/
-	float       attenuation;
-	int         rectangular_spot;   /* bool */
-	int         shadowed;           /* bool */
-	float       shadow_bias;
-	float       shadow_filter;
-	int         shadow_size;
-	float       spot_aspect;
-	int         use_projector;
-	char        projector[64];
-	int         spot_overshoot;      /* bool */
-	int         ray_shadows;         /* bool */
-	float       ray_bias;
-	float       hotspot;
-	float       falloff;
+	float          attenuation;
+	int            rectangular_spot;   /* bool */
+	int            shadowed;           /* bool */
+	float          shadow_bias;
+	float          shadow_filter;
+	int            shadow_size;
+	float          spot_aspect;
+	int            use_projector;
+	char           projector[64];
+	int            spot_overshoot;      /* bool */
+	int            ray_shadows;         /* bool */
+	float          ray_bias;
+	float          hotspot;
+	float          falloff;
 };
 
 /* Texture map projection */
@@ -351,39 +352,39 @@ struct Lib3dsFace {
 
 /* Triangular mesh object */
 struct Lib3dsMesh {
-	unsigned        _userId;
-	void           *_userPtr;
-	char            _name[64];            /**< Mesh name. Don't use more than 8 characters  */
-	unsigned        _objectFlags;        /**< @see Lib3dsObjectFlags */
-	int             _color;               /**< Index to editor palette [0..255] */
-	Math::Matrix4   _matrix;        /**< Transformation matrix for mesh data */
-	unsigned short  _nVertices;           /**< Number of vertices in vertex array (max. 65535) */
-	float(*_vertices)[3];
-	float(*_texCos)[2];
-	unsigned short *_vFlags;
-	unsigned short  _nFaces;              /**< Number of faces in face array (max. 65535) */
-	Lib3dsFace     *_faces;
-	char            _boxFront[64];
-	char            _boxBack[64];
-	char            _boxLeft[64];
-	char            _boxRight[64];
-	char            _boxTop[64];
-	char            _boxBottom[64];
-	int             _mapType;
-	float           _mapPos[3];
-	Math::Matrix4   _mapMatrix;
-	float           _mapScale;
-	float           _mapTile[2];
-	float           _mapPlanarSize[2];
-	float           _mapCylinderHeight;
+	unsigned                       _userId;
+	void                          *_userPtr;
+	char                           _name[64];            /**< Mesh name. Don't use more than 8 characters  */
+	unsigned                       _objectFlags;        /**< @see Lib3dsObjectFlags */
+	int                            _color;               /**< Index to editor palette [0..255] */
+	Math::Matrix4                  _matrix;        /**< Transformation matrix for mesh data */
+	unsigned short                 _nVertices;           /**< Number of vertices in vertex array (max. 65535) */
+	Common::Array<Math::Vector3d>  _vertices;
+	float                        (*_texCos)[2];
+	unsigned short                *_vFlags;
+	unsigned short                 _nFaces;              /**< Number of faces in face array (max. 65535) */
+	Lib3dsFace                    *_faces;
+	char                           _boxFront[64];
+	char                           _boxBack[64];
+	char                           _boxLeft[64];
+	char                           _boxRight[64];
+	char                           _boxTop[64];
+	char                           _boxBottom[64];
+	int                            _mapType;
+	float                          _mapPos[3];
+	Math::Matrix4                  _mapMatrix;
+	float                          _mapScale;
+	float                          _mapTile[2];
+	float                          _mapPlanarSize[2];
+	float                          _mapCylinderHeight;
 	
 	Lib3dsMesh(const char *name);
 	~Lib3dsMesh();
 	void resizeVertices(int nvertices, int use_texcos, int use_flags);
 	void resizeFaces(int nfaces);
-	void boundingBox(float bmin[3], float bmax[3]);
-	void calculateFaceNormals(float(*face_normals)[3]);
-	void calculateVertexNormals(float(*normals)[3]);
+	void boundingBox(Math::Vector3d &bmin, Math::Vector3d &bmax);
+	Common::Array<Math::Vector3d> calculateFaceNormals();
+	Common::Array<Math::Vector3d> calculateVertexNormals();
 };
 
 enum Lib3dsNodeType {
@@ -463,20 +464,20 @@ struct Lib3dsTrack {
 
 struct Lib3dsAmbientColorNode {
 	Lib3dsNode      base;
-	float           color[3];
+	Math::Vector3d  color;
 	Lib3dsTrack     color_track;
 };
 
 struct Lib3dsMeshInstanceNode {
 	Lib3dsNode      base;
-	float           pivot[3];
+	Math::Vector3d  pivot;
 	char            instance_name[64];
-	float           bbox_min[3];
-	float           bbox_max[3];
+	Math::Vector3d  bbox_min;
+	Math::Vector3d  bbox_max;
 	int             hide;
-	float           pos[3];
+	Math::Vector3d  pos;
 	float           rot[4];
-	float           scl[3];
+	Math::Vector3d  scl;
 	float           morph_smooth;
 	char            morph[64];
 	Lib3dsTrack     pos_track;
@@ -487,7 +488,7 @@ struct Lib3dsMeshInstanceNode {
 
 struct Lib3dsCameraNode {
 	Lib3dsNode      base;
-	float           pos[3];
+	Math::Vector3d  pos;
 	float           fov;
 	float           roll;
 	Lib3dsTrack     pos_track;
@@ -497,22 +498,22 @@ struct Lib3dsCameraNode {
 
 struct Lib3dsTargetNode {
 	Lib3dsNode      base;
-	float           pos[3];
+	Math::Vector3d  pos;
 	Lib3dsTrack     pos_track;
 };
 
 struct Lib3dsOmnilightNode {
 	Lib3dsNode      base;
-	float           pos[3];
-	float           color[3];
+	Math::Vector3d  pos;
+	Math::Vector3d  color;
 	Lib3dsTrack     pos_track;
 	Lib3dsTrack     color_track;
 };
 
 struct Lib3dsSpotlightNode {
 	Lib3dsNode      base;
-	float           pos[3];
-	float           color[3];
+	Math::Vector3d  pos;
+	Math::Vector3d  color;
 	float           hotspot;
 	float           falloff;
 	float           roll;
@@ -600,8 +601,8 @@ struct Lib3dsFile {
     	int include_meshes,
     	int include_cameras,
     	int include_lights,
-    	float bmin[3],
-    	float bmax[3]);
+    	Math::Vector3d &bmin,
+		Math::Vector3d &bmax);
 
 	/**
 	    This function computes the bounding box of mesh, camera
@@ -619,8 +620,8 @@ struct Lib3dsFile {
     	int include_meshes,
     	int include_cameras,
     	int include_lights,
-    	float bmin[3],
-    	float bmax[3],
+		Math::Vector3d &bmin,
+		Math::Vector3d &bmax, 
     	const Math::Matrix4 &matrix);
 
 };
@@ -651,7 +652,7 @@ extern LIB3DSAPI void lib3ds_track_free(Lib3dsTrack *track);
 extern LIB3DSAPI void lib3ds_track_resize(Lib3dsTrack *track, int nkeys);
 extern LIB3DSAPI void lib3ds_track_eval_bool(Lib3dsTrack *track, int *b, float t);
 extern LIB3DSAPI void lib3ds_track_eval_float(Lib3dsTrack *track, float *f, float t);
-extern LIB3DSAPI void lib3ds_track_eval_vector(Lib3dsTrack *track, float v[3], float t);
+extern LIB3DSAPI void lib3ds_track_eval_vector(Lib3dsTrack *track, Math::Vector3d &v, float t);
 extern LIB3DSAPI void lib3ds_track_eval_quat(Lib3dsTrack *track, float q[4], float t);
 
 template<typename T>

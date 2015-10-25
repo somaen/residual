@@ -351,11 +351,11 @@ void lib3ds_track_eval_float(Lib3dsTrack *track, float *f, float t) {
 }
 
 
-void lib3ds_track_eval_vector(Lib3dsTrack *track, float v[3], float t) {
-	lib3ds_vector_zero(v);
+void lib3ds_track_eval_vector(Lib3dsTrack *track, Math::Vector3d &v, float t) {
+	v = Math::Vector3d(0, 0, 0);
 	if (track) {
 		assert(track->type == LIB3DS_TRACK_VECTOR);
-		track_eval_linear(track, v, t);
+		track_eval_linear(track, v.getData(), t);
 	}
 }
 
@@ -447,7 +447,9 @@ void lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 		for (i = 0; i < nkeys; ++i) {
 			track->keys[i].frame = stream->readSint32LE();
 			tcb_read(&track->keys[i], io);
-			lib3ds_io_read_vector(stream, track->keys[i].value);
+			Math::Vector3d tmp;
+			lib3ds_io_read_vector(stream, tmp);
+			lib3ds_vector_copy(track->keys[i].value, tmp);
 		}
 		break;
 
@@ -456,7 +458,9 @@ void lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io) {
 			track->keys[i].frame = stream->readSint32LE();
 			tcb_read(&track->keys[i], io);
 			track->keys[i].value[3] = lib3ds_io_read_float(stream);
-			lib3ds_io_read_vector(stream, track->keys[i].value);
+			Math::Vector3d tmp;
+			lib3ds_io_read_vector(stream, tmp);
+			lib3ds_vector_copy(track->keys[i].value, tmp);
 		}
 		break;
 

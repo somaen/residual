@@ -109,11 +109,11 @@ float lib3ds_io_read_float(Common::SeekableReadStream *stream) {
  * \param io IO input handle.
  * \param v  The vector to store the data.
  */
-void lib3ds_io_read_vector(Common::SeekableReadStream *stream, float v[3]) {
+void lib3ds_io_read_vector(Common::SeekableReadStream *stream, Math::Vector3d &v) {
 	assert(stream);
-	v[0] = lib3ds_io_read_float(stream);
-	v[1] = lib3ds_io_read_float(stream);
-	v[2] = lib3ds_io_read_float(stream);
+	v.setValue(0, lib3ds_io_read_float(stream));
+	v.setValue(1, lib3ds_io_read_float(stream));
+	v.setValue(2, lib3ds_io_read_float(stream));
 }
 
 

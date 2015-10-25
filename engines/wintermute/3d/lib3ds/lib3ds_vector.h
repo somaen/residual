@@ -36,19 +36,14 @@
 #endif
 #endif
 
-extern LIB3DSAPI void lib3ds_vector_make(
-    float c[3],
-    float x,
-    float y,
-    float z);
 
 /**
     Sets all components of a vector to zero.
     \param c
         The Pointer to the vector.
 */
-extern LIB3DSAPI void lib3ds_vector_zero(
-    float c[3]);
+extern LIB3DSAPI void lib3ds_vector_zero(float c[4]);
+extern LIB3DSAPI void lib3ds_vector_zero(Math::Vector3d &c);
 
 /**
     Copies all components of a vector to another vector.
@@ -57,31 +52,21 @@ extern LIB3DSAPI void lib3ds_vector_zero(
     \param src
         [in] The source vector.
 */
-extern LIB3DSAPI void lib3ds_vector_copy(
-    float dst[3],
-    float src[3]);
+extern LIB3DSAPI void lib3ds_vector_copy(float dst[4], const Math::Vector3d &src);
+extern LIB3DSAPI void lib3ds_vector_copy(Math::Vector3d &dst, const Math::Vector3d &src);
 
 /**
     Negates all components of a vector.
     \param c
         The Pointer to the vector.
 */
-extern LIB3DSAPI void lib3ds_vector_neg(
-    float c[3]);
-
-extern LIB3DSAPI void lib3ds_vector_make(float c[3], float x, float y, float z);
-extern LIB3DSAPI void lib3ds_vector_zero(float c[3]);
-extern LIB3DSAPI void lib3ds_vector_add(float c[3], float a[3], float b[3]);
-extern LIB3DSAPI void lib3ds_vector_sub(float c[3], float a[3], float b[3]);
-extern LIB3DSAPI void lib3ds_vector_scalar_mul(float c[3], float a[3], float k);
-extern LIB3DSAPI void lib3ds_vector_cross(float c[3], float a[3], float b[3]);
-extern LIB3DSAPI float lib3ds_vector_dot(float a[3], float b[3]);
-extern LIB3DSAPI float lib3ds_vector_length(float c[3]);
-extern LIB3DSAPI void lib3ds_vector_normalize(float c[3]);
-extern LIB3DSAPI void lib3ds_vector_normal(float n[3], float a[3], float b[3], float c[3]);
-extern LIB3DSAPI void lib3ds_vector_min(float c[3], float a[3]);
-extern LIB3DSAPI void lib3ds_vector_max(float c[3], float a[3]);
-extern LIB3DSAPI void lib3ds_vector_transform(float c[3], const Math::Matrix4 &m, float a[3]);
+extern LIB3DSAPI void lib3ds_vector_neg(Math::Vector3d &c);
+extern LIB3DSAPI void lib3ds_vector_cross(Math::Vector3d &c, const Math::Vector3d &a, const Math::Vector3d &b);
+extern LIB3DSAPI float lib3ds_vector_length(Math::Vector3d &c);
+extern LIB3DSAPI void lib3ds_vector_normal(Math::Vector3d &n, const Math::Vector3d &a, const Math::Vector3d &b, const Math::Vector3d &c);
+extern LIB3DSAPI void lib3ds_vector_min(Math::Vector3d &c, const Math::Vector3d &a);
+extern LIB3DSAPI void lib3ds_vector_max(Math::Vector3d &c, const Math::Vector3d &a);
+extern LIB3DSAPI void lib3ds_vector_transform(Math::Vector3d &c, const Math::Matrix4 &m, const Math::Vector3d &a);
 
 /** @} */
 #endif

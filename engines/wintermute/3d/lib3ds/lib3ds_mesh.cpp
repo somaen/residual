@@ -55,7 +55,8 @@ Lib3dsMesh::~Lib3dsMesh() {
 
 
 void Lib3dsMesh::resizeVertices(int nvertices, int use_texcos, int use_flags) {
-	_vertices = (float(*)[3])lib3ds_util_realloc_array(_vertices, _nVertices, nvertices, 3 * sizeof(float));
+	assert(nvertices >= _vertices.size());
+	_vertices.resize(nvertices);
 	_texCos = (float(*)[2])lib3ds_util_realloc_array(
 	                   _texCos,
 	                   _texCos ? _nVertices : 0,
@@ -87,9 +88,9 @@ void Lib3dsMesh::resizeFaces(int nfaces) {
  * \param bmin Returned bounding box
  * \param bmax Returned bounding box
  */
-void Lib3dsMesh::boundingBox(float bmin[3], float bmax[3]) {
-	bmin[0] = bmin[1] = bmin[2] = FLT_MAX;
-	bmax[0] = bmax[1] = bmax[2] = -FLT_MAX;
+void Lib3dsMesh::boundingBox(Math::Vector3d &bmin, Math::Vector3d &bmax) {
+	bmin = Math::Vector3d(FLT_MAX, FLT_MAX, FLT_MAX);
+	bmax = Math::Vector3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
 	for (int i = 0; i < _nVertices; ++i) {
 		lib3ds_vector_min(bmin, _vertices[i]);
@@ -97,26 +98,28 @@ void Lib3dsMesh::boundingBox(float bmin[3], float bmax[3]) {
 	}
 }
 
-
-void Lib3dsMesh::calculateFaceNormals(float(*face_normals)[3]) {
+Common::Array<Math::Vector3d> Lib3dsMesh::calculateFaceNormals() {
 	if (!_nFaces) {
-		return;
+		return Common::Array<Math::Vector3d>();
 	}
+	Common::Array<Math::Vector3d> faceNormals;
+	faceNormals.resize(_nFaces);
 	for (int i = 0; i < _nFaces; ++i) {
 		lib3ds_vector_normal(
-		    face_normals[i],
+		    faceNormals[i],
 		    _vertices[_faces[i].index[0]],
 		    _vertices[_faces[i].index[1]],
 		    _vertices[_faces[i].index[2]]
 		);
 	}
+	return faceNormals;
 }
 
 
 typedef struct Lib3dsFaces {
 	struct Lib3dsFaces *next;
 	int index;
-	float normal[3];
+	Math::Vector3d normal;
 } Lib3dsFaces;
 
 
@@ -124,7 +127,7 @@ typedef struct Lib3dsFaces {
  * Calculates the vertex normals corresponding to the smoothing group
  * settings for each face of a mesh.
  *
- * \param normals   A pointer to a buffer to store the calculated
+ * \return          A Common::Array containing the normals.
  *                  normals. The buffer must have the size:
  *                  3*3*sizeof(float)*mesh->nfaces.
  *
@@ -139,12 +142,12 @@ typedef struct Lib3dsFaces {
  *   normals[3*j+i]
  * \endcode
  */
-void Lib3dsMesh::calculateVertexNormals(float(*normals)[3]) {
+Common::Array<Math::Vector3d> Lib3dsMesh::calculateVertexNormals() {
 	Lib3dsFaces **fl;
 	Lib3dsFaces *fa;
 
 	if (!_nFaces) {
-		return;
+		return Common::Array<Math::Vector3d>();
 	}
 
 	fl = (Lib3dsFaces **)calloc(sizeof(Lib3dsFaces *), _nVertices);
@@ -153,30 +156,32 @@ void Lib3dsMesh::calculateVertexNormals(float(*normals)[3]) {
 	for (int i = 0; i < _nFaces; ++i) {
 		for (int j = 0; j < 3; ++j) {
 			Lib3dsFaces *l = &fa[3 * i + j];
-			float p[3], q[3], n[3];
+			Math::Vector3d p, q, n;
 			float len, weight;
 
 			l->index = i;
 			l->next = fl[_faces[i].index[j]];
 			fl[_faces[i].index[j]] = l;
 
-			lib3ds_vector_sub(p, _vertices[_faces[i].index[j < 2 ? j + 1 : 0]], _vertices[_faces[i].index[j]]);
-			lib3ds_vector_sub(q, _vertices[_faces[i].index[j > 0 ? j - 1 : 2]], _vertices[_faces[i].index[j]]);
+			p = _vertices[_faces[i].index[j < 2 ? j + 1 : 0]] - _vertices[_faces[i].index[j]];
+			q = _vertices[_faces[i].index[j > 0 ? j - 1 : 2]] - _vertices[_faces[i].index[j]];
 			lib3ds_vector_cross(n, p, q);
 			len = lib3ds_vector_length(n);
 			if (len > 0) {
-				weight = (float)atan2(len, lib3ds_vector_dot(p, q));
-				lib3ds_vector_scalar_mul(l->normal, n, weight / len);
+				weight = (float)atan2(len, p.dotProduct(q));
+				l->normal =  n * (weight / len);
 			} else {
 				lib3ds_vector_zero(l->normal);
 			}
 		}
 	}
-
+	
+	Common::Array<Math::Vector3d> normals;
+	normals.resize(3 * _nFaces);
 	for (int i = 0; i < _nFaces; ++i) {
 		Lib3dsFace *f = &_faces[i];
 		for (int j = 0; j < 3; ++j) {
-			float n[3];
+			Math::Vector3d n;
 			Lib3dsFaces *p;
 			Lib3dsFace *pf;
 
@@ -195,20 +200,22 @@ void Lib3dsMesh::calculateVertexNormals(float(*normals)[3]) {
 				for (p = fl[_faces[i].index[j]]; p; p = p->next) {
 					pf = &_faces[p->index];
 					if (smoothing_group & pf->smoothing_group) {
-						lib3ds_vector_add(n, n, p->normal);
+						n = n + p->normal;
 					}
 				}
 			} else {
 				lib3ds_vector_copy(n, fa[3 * i + j].normal);
 			}
 
-			lib3ds_vector_normalize(n);
-			lib3ds_vector_copy(normals[3 * i + j], n);
+			n.normalize();
+			lib3ds_vector_copy(normals[i + j], n);
 		}
 	}
 
 	free(fa);
 	free(fl);
+	
+	return normals;
 }
 
 
@@ -294,11 +301,9 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_MESH_MATRIX: {
-			int i, j;
-
 			lib3ds_matrix_identity(mesh->_matrix);
-			for (i = 0; i < 4; i++) {
-				for (j = 0; j < 3; j++) {
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 3; j++) {
 					mesh->_matrix.setValue(i, j, lib3ds_io_read_float(stream));
 				}
 			}
@@ -313,6 +318,7 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		case CHK_POINT_ARRAY: {
 			uint16 nvertices = stream->readUint16LE();
 			mesh->resizeVertices(nvertices, mesh->_texCos != NULL, mesh->_vFlags != NULL);
+			
 			for (int i = 0; i < mesh->_nVertices; ++i) {
 				lib3ds_io_read_vector(stream, mesh->_vertices[i]);
 			}
@@ -336,25 +342,23 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		}
 
 		case CHK_MESH_TEXTURE_INFO: {
-			int i, j;
-
 			//FIXME: mesh->map_type = lib3ds_io_read_word(io);
 
-			for (i = 0; i < 2; ++i) {
+			for (int i = 0; i < 2; ++i) {
 				mesh->_mapTile[i] = lib3ds_io_read_float(stream);
 			}
-			for (i = 0; i < 3; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				mesh->_mapPos[i] = lib3ds_io_read_float(stream);
 			}
 			mesh->_mapScale = lib3ds_io_read_float(stream);
 
 			lib3ds_matrix_identity(mesh->_mapMatrix);
-			for (i = 0; i < 4; i++) {
-				for (j = 0; j < 3; j++) {
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 3; j++) {
 					mesh->_mapMatrix.setValue(i, j, lib3ds_io_read_float(stream));
 				}
 			}
-			for (i = 0; i < 2; ++i) {
+			for (int i = 0; i < 2; ++i) {
 				mesh->_mapPlanarSize[i] = lib3ds_io_read_float(stream);
 			}
 			mesh->_mapCylinderHeight = lib3ds_io_read_float(stream);
@@ -383,7 +387,6 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		/* Flip X coordinate of vertices if mesh matrix
 		   has negative determinant */
 		Math::Matrix4 inv_matrix, M;
-		float tmp[3];
 
 		lib3ds_matrix_copy(inv_matrix, mesh->_matrix);
 		lib3ds_matrix_inv(inv_matrix);
@@ -393,6 +396,7 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 		lib3ds_matrix_mult(M, M, inv_matrix);
 
 		for (int i = 0; i < mesh->_nVertices; ++i) {
+			Math::Vector3d tmp;
 			lib3ds_vector_transform(tmp, M, mesh->_vertices[i]);
 			lib3ds_vector_copy(mesh->_vertices[i], tmp);
 		}

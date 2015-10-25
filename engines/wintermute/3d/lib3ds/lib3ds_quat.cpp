@@ -49,20 +49,20 @@ void lib3ds_quat_copy(float dest[4], float src[4]) {
  * \param axis Rotation axis
  * \param angle Angle of rotation, radians.
  */
-void lib3ds_quat_axis_angle(float c[4], float axis[3], float angle) {
+void lib3ds_quat_axis_angle(float c[4], const Math::Vector3d &axis, float angle) {
 	double omega, s;
 	double l;
 
-	l = sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
+	l = axis.getMagnitude();
 	if (l < LIB3DS_EPSILON) {
 		c[0] = c[1] = c[2] = 0.0f;
 		c[3] = 1.0f;
 	} else {
 		omega = -0.5 * angle;
 		s = sin(omega) / l;
-		c[0] = (float)s * axis[0];
-		c[1] = (float)s * axis[1];
-		c[2] = (float)s * axis[2];
+		c[0] = (float)s * axis.getValue(0);
+		c[1] = (float)s * axis.getValue(1);
+		c[2] = (float)s * axis.getValue(2);
 		c[3] = (float)cos(omega);
 	}
 }

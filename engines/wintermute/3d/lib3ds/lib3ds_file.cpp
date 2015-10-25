@@ -855,12 +855,12 @@ void Lib3dsFile::minmaxNodeId(uint16 *min_id, uint16 *max_id) {
 
 
 void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, int include_lights,
-										  float bmin[3], float bmax[3]) {
-	bmin[0] = bmin[1] = bmin[2] = FLT_MAX;
-	bmax[0] = bmax[1] = bmax[2] = -FLT_MAX;
+										  Math::Vector3d &bmin, Math::Vector3d &bmax) {
+	bmin = Math::Vector3d(FLT_MAX, FLT_MAX, FLT_MAX);
+	bmax = Math::Vector3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
 	if (include_meshes) {
-		float lmin[3], lmax[3];
+		Math::Vector3d lmin, lmax;
 		for (int i = 0; i < _nmeshes; ++i) {
 			_meshes[i]->boundingBox(lmin, lmax);
 			lib3ds_vector_min(bmin, lmin);
@@ -890,7 +890,7 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 
 static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
                                 int include_meshes, int include_cameras, int include_lights,
-                                float bmin[3], float bmax[3], Math::Matrix4 &matrix) {
+                                Math::Vector3d &bmin, Math::Vector3d &bmax, Math::Matrix4 &matrix) {
 	switch (node->type) {
 	case LIB3DS_NODE_MESH_INSTANCE:
 		if (include_meshes) {
@@ -903,13 +903,13 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 			if (index >= 0) {
 				Math::Matrix4 inv_matrix;
 				Math::Matrix4 M;
-				float v[3];
+				Math::Vector3d v;
 
 				Lib3dsMesh *mesh = file->_meshes[index];
 				lib3ds_matrix_copy(inv_matrix, mesh->_matrix);
 				lib3ds_matrix_inv(inv_matrix);
 				lib3ds_matrix_mult(M, matrix, node->matrix);
-				lib3ds_matrix_translate(M, -n->pivot[0], -n->pivot[1], -n->pivot[2]);
+				lib3ds_matrix_translate(M, -n->pivot.getValue(0), -n->pivot.getValue(1), -n->pivot.getValue(2));
 				lib3ds_matrix_mult(M, M, inv_matrix);
 
 				for (int i = 0; i < mesh->_nVertices; ++i) {
@@ -924,10 +924,10 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 	case LIB3DS_NODE_CAMERA:
 	case LIB3DS_NODE_CAMERA_TARGET:
 		if (include_cameras) {
-			float z[3], v[3];
 			Math::Matrix4 M;
 			lib3ds_matrix_mult(M, matrix, node->matrix);
-			lib3ds_vector_zero(z);
+			Math::Vector3d z(0, 0, 0);
+			Math::Vector3d v;
 			lib3ds_vector_transform(v, M, z);
 			lib3ds_vector_min(bmin, v);
 			lib3ds_vector_max(bmax, v);
@@ -938,10 +938,10 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 	case LIB3DS_NODE_SPOTLIGHT:
 	case LIB3DS_NODE_SPOTLIGHT_TARGET:
 		if (include_lights) {
-			float z[3], v[3];
 			Math::Matrix4 M;
 			lib3ds_matrix_mult(M, matrix, node->matrix);
-			lib3ds_vector_zero(z);
+			Math::Vector3d z(0, 0, 0);
+			Math::Vector3d v;
 			lib3ds_vector_transform(v, M, z);
 			lib3ds_vector_min(bmin, v);
 			lib3ds_vector_max(bmax, v);
@@ -959,14 +959,14 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 
 
 void Lib3dsFile::boundingBoxOfNodes(int include_meshes, int include_cameras, int include_lights,
-										float bmin[3], float bmax[3], const Math::Matrix4 &matrix) {
+										Math::Vector3d &bmin, Math::Vector3d &bmax, const Math::Matrix4 &matrix) {
 	Lib3dsNode *p;
 	Math::Matrix4 M;
 
 	lib3ds_matrix_copy(M, matrix);
 
-	bmin[0] = bmin[1] = bmin[2] = FLT_MAX;
-	bmax[0] = bmax[1] = bmax[2] = -FLT_MAX;
+	bmin = Math::Vector3d(FLT_MAX, FLT_MAX, FLT_MAX);
+	bmax = Math::Vector3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	p = _nodes;
 	while (p) {
 		file_bounding_box_of_nodes_impl(p, this, include_meshes, include_cameras, include_lights, bmin, bmax, M);

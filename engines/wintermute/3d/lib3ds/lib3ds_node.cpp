@@ -110,14 +110,10 @@ lib3ds_node_new(Lib3dsNodeType type) {
 }
 
 
-Lib3dsAmbientColorNode *
-lib3ds_node_new_ambient_color(float color0[3]) {
-	Lib3dsNode *node;
-	Lib3dsAmbientColorNode *n;
+Lib3dsAmbientColorNode *lib3ds_node_new_ambient_color(float color0[3]) {
+	Lib3dsNode *node = lib3ds_node_new(LIB3DS_NODE_AMBIENT_COLOR);
 
-	node = lib3ds_node_new(LIB3DS_NODE_AMBIENT_COLOR);
-
-	n = (Lib3dsAmbientColorNode *)node;
+	Lib3dsAmbientColorNode *n = (Lib3dsAmbientColorNode *)node;
 	lib3ds_track_resize(&n->color_track, 1);
 	if (color0) {
 		lib3ds_vector_copy(n->color_track.keys[0].value, color0);
@@ -153,7 +149,7 @@ Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const ch
 	if (scl0) {
 		lib3ds_vector_copy(n->scl_track.keys[0].value, scl0);
 	} else {
-		lib3ds_vector_make(n->scl_track.keys[0].value, 1, 1, 1);
+		lib3ds_vector_copy(n->scl_track.keys[0].value, Math::Vector3d(1, 1, 1));
 	}
 
 	lib3ds_track_resize(&n->rot_track, 1);
@@ -207,8 +203,7 @@ lib3ds_node_new_camera_target(Lib3dsCamera *camera) {
 }
 
 
-Lib3dsOmnilightNode *
-lib3ds_node_new_omnilight(Lib3dsLight *light) {
+Lib3dsOmnilightNode *lib3ds_node_new_omnilight(Lib3dsLight *light) {
 	Lib3dsNode *node;
 	Lib3dsOmnilightNode *n;
 
@@ -227,8 +222,7 @@ lib3ds_node_new_omnilight(Lib3dsLight *light) {
 }
 
 
-Lib3dsSpotlightNode *
-lib3ds_node_new_spotlight(Lib3dsLight *light) {
+Lib3dsSpotlightNode *lib3ds_node_new_spotlight(Lib3dsLight *light) {
 	Lib3dsNode *node;
 	Lib3dsSpotlightNode *n;
 
@@ -256,8 +250,7 @@ lib3ds_node_new_spotlight(Lib3dsLight *light) {
 }
 
 
-Lib3dsTargetNode *
-lib3ds_node_new_spotligf_target(Lib3dsLight *light) {
+Lib3dsTargetNode *lib3ds_node_new_spotligf_target(Lib3dsLight *light) {
 	Lib3dsNode *node;
 	Lib3dsTargetNode *n;
 
@@ -273,8 +266,7 @@ lib3ds_node_new_spotligf_target(Lib3dsLight *light) {
 }
 
 
-static void
-free_node_and_childs(Lib3dsNode *node) {
+static void free_node_and_childs(Lib3dsNode *node) {
 	assert(node);
 	switch (node->type) {
 	case LIB3DS_NODE_AMBIENT_COLOR: {
@@ -345,8 +337,7 @@ free_node_and_childs(Lib3dsNode *node) {
  *
  * \param node Lib3dsNode object to be freed.
  */
-void
-lib3ds_node_free(Lib3dsNode *node) {
+void lib3ds_node_free(Lib3dsNode *node) {
 	assert(node);
 	free_node_and_childs(node);
 }
@@ -361,8 +352,7 @@ lib3ds_node_free(Lib3dsNode *node) {
  * \param node Node to be evaluated.
  * \param t time value, between 0. and file->frames
  */
-void
-lib3ds_node_eval(Lib3dsNode *node, float t) {
+void lib3ds_node_eval(Lib3dsNode *node, float t) {
 	assert(node);
 	switch (node->type) {
 	case LIB3DS_NODE_AMBIENT_COLOR: {
@@ -385,14 +375,14 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
 		if (n->scl_track.nkeys) {
 			lib3ds_track_eval_vector(&n->scl_track, n->scl, t);
 		} else {
-			n->scl[0] = n->scl[1] = n->scl[2] = 1.0f;
+			n->scl = Math::Vector3d(1, 1, 1);
 		}
 		lib3ds_track_eval_bool(&n->hide_track, &n->hide, t);
 
 		lib3ds_matrix_identity(M);
-		lib3ds_matrix_translate(M, n->pos[0], n->pos[1], n->pos[2]);
+		lib3ds_matrix_translate(M, n->pos.getValue(0), n->pos.getValue(1), n->pos.getValue(2));
 		lib3ds_matrix_rotate_quat(M, n->rot);
-		lib3ds_matrix_scale(M, n->scl[0], n->scl[1], n->scl[2]);
+		lib3ds_matrix_scale(M, n->scl.getValue(0), n->scl.getValue(1), n->scl.getValue(2));
 
 		if (node->parent) {
 			lib3ds_matrix_mult(node->matrix, node->parent->matrix, M);
@@ -412,7 +402,7 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
-		lib3ds_matrix_translate(node->matrix, n->pos[0], n->pos[1], n->pos[2]);
+		lib3ds_matrix_translate(node->matrix, n->pos.getValue(0), n->pos.getValue(1), n->pos.getValue(2));
 		break;
 	}
 
@@ -424,7 +414,7 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
-		lib3ds_matrix_translate(node->matrix, n->pos[0], n->pos[1], n->pos[2]);
+		lib3ds_matrix_translate(node->matrix, n->pos.getValue(0), n->pos.getValue(1), n->pos.getValue(2));
 		break;
 	}
 
@@ -437,7 +427,7 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
-		lib3ds_matrix_translate(node->matrix, n->pos[0], n->pos[1], n->pos[2]);
+		lib3ds_matrix_translate(node->matrix, n->pos.getValue(0), n->pos.getValue(1), n->pos.getValue(2));
 		break;
 	}
 
@@ -453,7 +443,7 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
-		lib3ds_matrix_translate(node->matrix, n->pos[0], n->pos[1], n->pos[2]);
+		lib3ds_matrix_translate(node->matrix, n->pos.getValue(0), n->pos.getValue(1), n->pos.getValue(2));
 		break;
 	}
 
@@ -465,7 +455,7 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
-		lib3ds_matrix_translate(node->matrix, n->pos[0], n->pos[1], n->pos[2]);
+		lib3ds_matrix_translate(node->matrix, n->pos.getValue(0), n->pos.getValue(1), n->pos.getValue(2));
 		break;
 	}
 	}
@@ -490,8 +480,7 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
  *
  * \return A pointer to the first matching node, or NULL if not found.
  */
-Lib3dsNode *
-lib3ds_node_by_name(Lib3dsNode *node, const char *name, Lib3dsNodeType type) {
+Lib3dsNode *lib3ds_node_by_name(Lib3dsNode *node, const char *name, Lib3dsNodeType type) {
 	Lib3dsNode *p, *q;
 
 	for (p = node->childs; p != 0; p = p->next) {

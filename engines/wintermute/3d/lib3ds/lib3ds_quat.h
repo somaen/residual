@@ -38,7 +38,7 @@
 
 extern LIB3DSAPI void lib3ds_quat_identity(float c[4]);
 extern LIB3DSAPI void lib3ds_quat_copy(float dest[4], float src[4]);
-extern LIB3DSAPI void lib3ds_quat_axis_angle(float c[4], float axis[3], float angle);
+extern LIB3DSAPI void lib3ds_quat_axis_angle(float c[4], const Math::Vector3d &axis, float angle);
 extern LIB3DSAPI void lib3ds_quat_neg(float c[4]);
 extern LIB3DSAPI void lib3ds_quat_cnj(float c[4]);
 extern LIB3DSAPI void lib3ds_quat_mul(float c[4], float a[4], float b[4]);

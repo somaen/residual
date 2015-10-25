@@ -377,7 +377,7 @@ lib3ds_node_eval(Lib3dsNode *node, float t) {
 	}
 
 	case LIB3DS_NODE_MESH_INSTANCE: {
-		float M[4][4];
+		Math::Matrix4 M;
 		Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
 
 		lib3ds_track_eval_vector(&n->pos_track, n->pos, t);

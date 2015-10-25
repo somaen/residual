@@ -890,7 +890,7 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 
 static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
                                 int include_meshes, int include_cameras, int include_lights,
-                                float bmin[3], float bmax[3], float matrix[4][4]) {
+                                float bmin[3], float bmax[3], Math::Matrix4 &matrix) {
 	switch (node->type) {
 	case LIB3DS_NODE_MESH_INSTANCE:
 		if (include_meshes) {
@@ -901,7 +901,8 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 			if (index < 0)
 				index = file->meshByName(node->name);
 			if (index >= 0) {
-				float inv_matrix[4][4], M[4][4];
+				Math::Matrix4 inv_matrix;
+				Math::Matrix4 M;
 				float v[3];
 
 				Lib3dsMesh *mesh = file->_meshes[index];
@@ -924,7 +925,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 	case LIB3DS_NODE_CAMERA_TARGET:
 		if (include_cameras) {
 			float z[3], v[3];
-			float M[4][4];
+			Math::Matrix4 M;
 			lib3ds_matrix_mult(M, matrix, node->matrix);
 			lib3ds_vector_zero(z);
 			lib3ds_vector_transform(v, M, z);
@@ -938,7 +939,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 	case LIB3DS_NODE_SPOTLIGHT_TARGET:
 		if (include_lights) {
 			float z[3], v[3];
-			float M[4][4];
+			Math::Matrix4 M;
 			lib3ds_matrix_mult(M, matrix, node->matrix);
 			lib3ds_vector_zero(z);
 			lib3ds_vector_transform(v, M, z);
@@ -958,15 +959,11 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 
 
 void Lib3dsFile::boundingBoxOfNodes(int include_meshes, int include_cameras, int include_lights,
-										float bmin[3], float bmax[3], float matrix[4][4]) {
+										float bmin[3], float bmax[3], const Math::Matrix4 &matrix) {
 	Lib3dsNode *p;
-	float M[4][4];
+	Math::Matrix4 M;
 
-	if (matrix) {
-		lib3ds_matrix_copy(M, matrix);
-	} else {
-		lib3ds_matrix_identity(M);
-	}
+	lib3ds_matrix_copy(M, matrix);
 
 	bmin[0] = bmin[1] = bmin[2] = FLT_MAX;
 	bmax[0] = bmax[1] = bmax[2] = -FLT_MAX;

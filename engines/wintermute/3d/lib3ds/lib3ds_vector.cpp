@@ -187,11 +187,10 @@ void lib3ds_vector_normal(float n[3], float a[3], float b[3], float c[3]) {
  * \param m Transformation matrix.
  * \param a Input point.
  */
-void
-lib3ds_vector_transform(float c[3], float m[4][4], float a[3]) {
-	c[0] = m[0][0] * a[0] + m[1][0] * a[1] + m[2][0] * a[2] + m[3][0];
-	c[1] = m[0][1] * a[0] + m[1][1] * a[1] + m[2][1] * a[2] + m[3][1];
-	c[2] = m[0][2] * a[0] + m[1][2] * a[1] + m[2][2] * a[2] + m[3][2];
+void lib3ds_vector_transform(float c[3], const Math::Matrix4 &m, float a[3]) {
+	c[0] = m.getValue(0, 0) * a[0] + m.getValue(1, 0) * a[1] + m.getValue(2, 0) * a[2] + m.getValue(3, 0);
+	c[1] = m.getValue(0, 1) * a[0] + m.getValue(1, 1) * a[1] + m.getValue(2, 1) * a[2] + m.getValue(3, 1);
+	c[2] = m.getValue(0, 2) * a[0] + m.getValue(1, 2) * a[1] + m.getValue(2, 2) * a[2] + m.getValue(3, 2);
 }
 
 

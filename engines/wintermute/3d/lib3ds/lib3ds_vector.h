@@ -81,7 +81,7 @@ extern LIB3DSAPI void lib3ds_vector_normalize(float c[3]);
 extern LIB3DSAPI void lib3ds_vector_normal(float n[3], float a[3], float b[3], float c[3]);
 extern LIB3DSAPI void lib3ds_vector_min(float c[3], float a[3]);
 extern LIB3DSAPI void lib3ds_vector_max(float c[3], float a[3]);
-extern LIB3DSAPI void lib3ds_vector_transform(float c[3], float m[4][4], float a[3]);
+extern LIB3DSAPI void lib3ds_vector_transform(float c[3], const Math::Matrix4 &m, float a[3]);
 
 /** @} */
 #endif

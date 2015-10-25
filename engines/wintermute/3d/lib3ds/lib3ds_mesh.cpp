@@ -299,7 +299,7 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			lib3ds_matrix_identity(mesh->_matrix);
 			for (i = 0; i < 4; i++) {
 				for (j = 0; j < 3; j++) {
-					mesh->_matrix[i][j] = lib3ds_io_read_float(stream);
+					mesh->_matrix.setValue(i, j, lib3ds_io_read_float(stream));
 				}
 			}
 			break;
@@ -351,7 +351,7 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 			lib3ds_matrix_identity(mesh->_mapMatrix);
 			for (i = 0; i < 4; i++) {
 				for (j = 0; j < 3; j++) {
-					mesh->_mapMatrix[i][j] = lib3ds_io_read_float(stream);
+					mesh->_mapMatrix.setValue(i, j, lib3ds_io_read_float(stream));
 				}
 			}
 			for (i = 0; i < 2; ++i) {
@@ -382,7 +382,7 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	if (lib3ds_matrix_det(mesh->_matrix) < 0.0) {
 		/* Flip X coordinate of vertices if mesh matrix
 		   has negative determinant */
-		float inv_matrix[4][4], M[4][4];
+		Math::Matrix4 inv_matrix, M;
 		float tmp[3];
 
 		lib3ds_matrix_copy(inv_matrix, mesh->_matrix);

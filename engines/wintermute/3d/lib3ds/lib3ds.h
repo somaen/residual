@@ -22,6 +22,7 @@
 /** @file lib3ds.h
     Header file for public API defined by lib3ds */
 #include "common/stream.h"
+#include "math/matrix4.h"
 #include <stddef.h>
 
 #ifndef LIB3DSAPI
@@ -355,7 +356,7 @@ struct Lib3dsMesh {
 	char            _name[64];            /**< Mesh name. Don't use more than 8 characters  */
 	unsigned        _objectFlags;        /**< @see Lib3dsObjectFlags */
 	int             _color;               /**< Index to editor palette [0..255] */
-	float           _matrix[4][4];        /**< Transformation matrix for mesh data */
+	Math::Matrix4   _matrix;        /**< Transformation matrix for mesh data */
 	unsigned short  _nVertices;           /**< Number of vertices in vertex array (max. 65535) */
 	float(*_vertices)[3];
 	float(*_texCos)[2];
@@ -370,7 +371,7 @@ struct Lib3dsMesh {
 	char            _boxBottom[64];
 	int             _mapType;
 	float           _mapPos[3];
-	float           _mapMatrix[4][4];
+	Math::Matrix4   _mapMatrix;
 	float           _mapScale;
 	float           _mapTile[2];
 	float           _mapPlanarSize[2];
@@ -413,7 +414,7 @@ struct Lib3dsNode {
 	unsigned short      node_id;            /**< 0..65535 */
 	char                name[64];
 	unsigned            flags;
-	float               matrix[4][4];
+	Math::Matrix4       matrix;
 };
 
 enum Lib3dsKeyFlags {
@@ -620,7 +621,7 @@ struct Lib3dsFile {
     	int include_lights,
     	float bmin[3],
     	float bmax[3],
-    	float matrix[4][4]);
+    	const Math::Matrix4 &matrix);
 
 };
 

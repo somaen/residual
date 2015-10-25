@@ -36,22 +36,22 @@
 #endif
 #endif
 
-extern LIB3DSAPI void lib3ds_matrix_zero(float m[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_identity(float  m[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_copy(float dest[4][4], float src[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_neg(float m[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_transpose(float m[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_add(float m[4][4], float a[4][4], float b[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_sub(float m[4][4], float a[4][4], float b[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_mult(float m[4][4], float a[4][4], float b[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_scalar(float m[4][4], float k);
-extern LIB3DSAPI float lib3ds_matrix_det(float m[4][4]);
-extern LIB3DSAPI int lib3ds_matrix_inv(float m[4][4]);
-extern LIB3DSAPI void lib3ds_matrix_translate(float m[4][4], float x, float y, float z);
-extern LIB3DSAPI void lib3ds_matrix_scale(float m[4][4], float x, float y, float z);
-extern LIB3DSAPI void lib3ds_matrix_rotate_quat(float m[4][4], float q[4]);
-extern LIB3DSAPI void lib3ds_matrix_rotate(float m[4][4], float angle, float ax, float ay, float az);
-extern LIB3DSAPI void lib3ds_matrix_camera(float m[4][4], float pos[3], float tgt[3], float roll);
+extern LIB3DSAPI void lib3ds_matrix_zero(Math::Matrix4 &m);
+extern LIB3DSAPI void lib3ds_matrix_identity(Math::Matrix4 &m);
+extern LIB3DSAPI void lib3ds_matrix_copy(Math::Matrix4 &dest, const Math::Matrix4 &src);
+extern LIB3DSAPI void lib3ds_matrix_neg(Math::Matrix4 &m);
+extern LIB3DSAPI void lib3ds_matrix_transpose(Math::Matrix4 &m);
+extern LIB3DSAPI void lib3ds_matrix_add(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b);
+extern LIB3DSAPI void lib3ds_matrix_sub(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b);
+extern LIB3DSAPI void lib3ds_matrix_mult(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b);
+extern LIB3DSAPI void lib3ds_matrix_scalar(Math::Matrix4 &m, float k);
+extern LIB3DSAPI float lib3ds_matrix_det(Math::Matrix4 &m);
+extern LIB3DSAPI int lib3ds_matrix_inv(Math::Matrix4 &m);
+extern LIB3DSAPI void lib3ds_matrix_translate(Math::Matrix4 &m, float x, float y, float z);
+extern LIB3DSAPI void lib3ds_matrix_scale(Math::Matrix4 &m, float x, float y, float z);
+extern LIB3DSAPI void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, float q[4]);
+extern LIB3DSAPI void lib3ds_matrix_rotate(Math::Matrix4 &m, float angle, float ax, float ay, float az);
+extern LIB3DSAPI void lib3ds_matrix_camera(Math::Matrix4 &m, float pos[3], float tgt[3], float roll);
 
 /** @} */
 #endif

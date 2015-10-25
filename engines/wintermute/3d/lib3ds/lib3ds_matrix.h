@@ -38,15 +38,7 @@
 
 extern LIB3DSAPI void lib3ds_matrix_zero(Math::Matrix4 &m);
 extern LIB3DSAPI void lib3ds_matrix_identity(Math::Matrix4 &m);
-extern LIB3DSAPI void lib3ds_matrix_copy(Math::Matrix4 &dest, const Math::Matrix4 &src);
-extern LIB3DSAPI void lib3ds_matrix_neg(Math::Matrix4 &m);
-extern LIB3DSAPI void lib3ds_matrix_transpose(Math::Matrix4 &m);
-extern LIB3DSAPI void lib3ds_matrix_add(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b);
-extern LIB3DSAPI void lib3ds_matrix_sub(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b);
-extern LIB3DSAPI void lib3ds_matrix_mult(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b);
-extern LIB3DSAPI void lib3ds_matrix_scalar(Math::Matrix4 &m, float k);
 extern LIB3DSAPI float lib3ds_matrix_det(Math::Matrix4 &m);
-extern LIB3DSAPI int lib3ds_matrix_inv(Math::Matrix4 &m);
 extern LIB3DSAPI void lib3ds_matrix_translate(Math::Matrix4 &m, float x, float y, float z);
 extern LIB3DSAPI void lib3ds_matrix_scale(Math::Matrix4 &m, float x, float y, float z);
 extern LIB3DSAPI void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, float q[4]);

@@ -901,17 +901,14 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 			if (index < 0)
 				index = file->meshByName(node->name);
 			if (index >= 0) {
-				Math::Matrix4 inv_matrix;
-				Math::Matrix4 M;
-				Math::Vector3d v;
-
 				Lib3dsMesh *mesh = file->_meshes[index];
-				lib3ds_matrix_copy(inv_matrix, mesh->_matrix);
-				lib3ds_matrix_inv(inv_matrix);
-				lib3ds_matrix_mult(M, matrix, node->matrix);
+				Math::Matrix4 inv_matrix = mesh->_matrix;
+				inv_matrix.inverse();
+				Math::Matrix4 M = matrix * node->matrix;
 				lib3ds_matrix_translate(M, -n->pivot.getValue(0), -n->pivot.getValue(1), -n->pivot.getValue(2));
-				lib3ds_matrix_mult(M, M, inv_matrix);
+				M = M * inv_matrix;
 
+				Math::Vector3d v;
 				for (int i = 0; i < mesh->_nVertices; ++i) {
 					lib3ds_vector_transform(v, M, mesh->_vertices[i]);
 					lib3ds_vector_min(bmin, v);
@@ -925,7 +922,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 	case LIB3DS_NODE_CAMERA_TARGET:
 		if (include_cameras) {
 			Math::Matrix4 M;
-			lib3ds_matrix_mult(M, matrix, node->matrix);
+			M = matrix * node->matrix;
 			Math::Vector3d z(0, 0, 0);
 			Math::Vector3d v;
 			lib3ds_vector_transform(v, M, z);
@@ -938,8 +935,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 	case LIB3DS_NODE_SPOTLIGHT:
 	case LIB3DS_NODE_SPOTLIGHT_TARGET:
 		if (include_lights) {
-			Math::Matrix4 M;
-			lib3ds_matrix_mult(M, matrix, node->matrix);
+			Math::Matrix4 M = matrix * node->matrix;
 			Math::Vector3d z(0, 0, 0);
 			Math::Vector3d v;
 			lib3ds_vector_transform(v, M, z);
@@ -961,9 +957,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 void Lib3dsFile::boundingBoxOfNodes(int include_meshes, int include_cameras, int include_lights,
 										Math::Vector3d &bmin, Math::Vector3d &bmax, const Math::Matrix4 &matrix) {
 	Lib3dsNode *p;
-	Math::Matrix4 M;
-
-	lib3ds_matrix_copy(M, matrix);
+	Math::Matrix4 M = matrix;
 
 	bmin = Math::Vector3d(FLT_MAX, FLT_MAX, FLT_MAX);
 	bmax = Math::Vector3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);

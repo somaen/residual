@@ -54,69 +54,6 @@ void lib3ds_matrix_identity(Math::Matrix4 &m) {
 }
 
 
-/*!
- * Copy a matrix.
- */
-void lib3ds_matrix_copy(Math::Matrix4 &dest, const Math::Matrix4 &src) {
-	dest = src;
-}
-
-
-/*!
- * Negate a matrix -- all elements negated.
- */
-void lib3ds_matrix_neg(Math::Matrix4 &m) {
-	m *= -1;
-}
-
-
-/*!
- * Transpose a matrix in place.
- */
-void lib3ds_matrix_transpose(Math::Matrix4 &m) {
-	m.transpose();
-}
-
-
-/*!
- * Add two matrices.
- */
-void lib3ds_matrix_add(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b) {
-	m = a + b;
-}
-
-
-/*!
- * Subtract two matrices.
- *
- * \param m Result.
- * \param a Addend.
- * \param b Minuend.
- */
-void lib3ds_matrix_sub(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b) {
-	m = a - b;
-}
-
-
-/*!
- * Multiplies a matrix by a second one (m = m * n).
- */
-void lib3ds_matrix_mult(Math::Matrix4 &m, Math::Matrix4 &a, Math::Matrix4 &b) {
-	m = a * b;
-}
-
-
-/*!
- * Multiply a matrix by a scalar.
- *
- * \param m Matrix to be set.
- * \param k Scalar.
- */
-void lib3ds_matrix_scalar(Math::Matrix4 &m, float k) {
-	m *= k;
-}
-
-
 static float det2x2(float a, float b,
 					  float c, float d) {
 	return ((a) * (d) - (b) * (c));
@@ -162,20 +99,6 @@ float lib3ds_matrix_det(Math::Matrix4 &m) {
 	           c1 * det3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4) -
 	           d1 * det3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4)
 	       );
-}
-
-
-/*!
- * Invert a matrix in place.
- *
- * \param m Matrix to invert.
- *
- * \return LIB3DS_TRUE on success, LIB3DS_FALSE on failure.
- *
- * GGemsII, K.Wu, Fast Matrix Inversion
- */
-int lib3ds_matrix_inv(Math::Matrix4 &m) {
-	return m.inverse();
 }
 
 
@@ -244,7 +167,7 @@ void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, float q[4]) {
 	R.setValue(2, 3, 0.0f);
 	R.setValue(3, 3, 1.0f);
 
-	lib3ds_matrix_mult(m, m, R);
+	m = m * R;
 }
 
 
@@ -304,6 +227,6 @@ void lib3ds_matrix_camera(Math::Matrix4 &matrix, const Math::Vector3d &pos, cons
 
 	lib3ds_matrix_identity(matrix);
 	lib3ds_matrix_rotate(matrix, roll, 0, 1, 0);
-	lib3ds_matrix_mult(matrix, matrix, M);
+	matrix = matrix * M;
 	lib3ds_matrix_translate(matrix, -pos.getValue(0), -pos.getValue(1), -pos.getValue(2));
 }

@@ -386,14 +386,12 @@ void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 	if (lib3ds_matrix_det(mesh->_matrix) < 0.0) {
 		/* Flip X coordinate of vertices if mesh matrix
 		   has negative determinant */
-		Math::Matrix4 inv_matrix, M;
+		Math::Matrix4 inv_matrix = mesh->_matrix;
+		inv_matrix.inverse();
 
-		lib3ds_matrix_copy(inv_matrix, mesh->_matrix);
-		lib3ds_matrix_inv(inv_matrix);
-
-		lib3ds_matrix_copy(M, mesh->_matrix);
+		Math::Matrix4 M = mesh->_matrix;
 		lib3ds_matrix_scale(M, -1.0f, 1.0f, 1.0f);
-		lib3ds_matrix_mult(M, M, inv_matrix);
+		M = M * inv_matrix;
 
 		for (int i = 0; i < mesh->_nVertices; ++i) {
 			Math::Vector3d tmp;

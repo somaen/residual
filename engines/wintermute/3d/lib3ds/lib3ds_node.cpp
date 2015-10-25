@@ -358,7 +358,7 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
 	case LIB3DS_NODE_AMBIENT_COLOR: {
 		Lib3dsAmbientColorNode *n = (Lib3dsAmbientColorNode *)node;
 		if (node->parent) {
-			lib3ds_matrix_copy(node->matrix, node->parent->matrix);
+			node->matrix = node->parent->matrix;
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
@@ -385,9 +385,9 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
 		lib3ds_matrix_scale(M, n->scl.getValue(0), n->scl.getValue(1), n->scl.getValue(2));
 
 		if (node->parent) {
-			lib3ds_matrix_mult(node->matrix, node->parent->matrix, M);
+			node->matrix = node->parent->matrix * M;
 		} else {
-			lib3ds_matrix_copy(node->matrix, M);
+			node->matrix = M;
 		}
 		break;
 	}
@@ -398,7 +398,7 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
 		lib3ds_track_eval_float(&n->fov_track, &n->fov, t);
 		lib3ds_track_eval_float(&n->roll_track, &n->roll, t);
 		if (node->parent) {
-			lib3ds_matrix_copy(node->matrix, node->parent->matrix);
+			node->matrix = node->parent->matrix;
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
@@ -410,7 +410,7 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
 		Lib3dsTargetNode *n = (Lib3dsTargetNode *)node;
 		lib3ds_track_eval_vector(&n->pos_track, n->pos, t);
 		if (node->parent) {
-			lib3ds_matrix_copy(node->matrix, node->parent->matrix);
+			node->matrix = node->parent->matrix;
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
@@ -423,7 +423,7 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
 		lib3ds_track_eval_vector(&n->pos_track, n->pos, t);
 		lib3ds_track_eval_vector(&n->color_track, n->color, t);
 		if (node->parent) {
-			lib3ds_matrix_copy(node->matrix, node->parent->matrix);
+			node->matrix = node->parent->matrix;
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
@@ -439,7 +439,7 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
 		lib3ds_track_eval_float(&n->falloff_track, &n->falloff, t);
 		lib3ds_track_eval_float(&n->roll_track, &n->roll, t);
 		if (node->parent) {
-			lib3ds_matrix_copy(node->matrix, node->parent->matrix);
+			node->matrix = node->parent->matrix;
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}
@@ -451,7 +451,7 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
 		Lib3dsTargetNode *n = (Lib3dsTargetNode *)node;
 		lib3ds_track_eval_vector(&n->pos_track, n->pos, t);
 		if (node->parent) {
-			lib3ds_matrix_copy(node->matrix, node->parent->matrix);
+			node->matrix = node->parent->matrix;
 		} else {
 			lib3ds_matrix_identity(node->matrix);
 		}

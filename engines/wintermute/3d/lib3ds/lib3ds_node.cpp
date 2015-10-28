@@ -164,8 +164,7 @@ Lib3dsCameraNode *lib3ds_node_new_camera(Lib3dsCamera *camera) {
 }
 
 
-Lib3dsTargetNode *
-lib3ds_node_new_camera_target(Lib3dsCamera *camera) {
+Lib3dsTargetNode *lib3ds_node_new_camera_target(Lib3dsCamera *camera) {
 	Lib3dsNode *node;
 	Lib3dsTargetNode *n;
 

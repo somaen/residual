@@ -155,7 +155,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_N_DIRECT_LIGHT: {
-			light = lib3ds_light_new(name);
+			light = new Lib3dsLight(name);
 			file->insertLight(light, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_light_read(light, io);

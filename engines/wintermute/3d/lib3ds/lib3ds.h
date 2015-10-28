@@ -293,6 +293,7 @@ struct Lib3dsCamera {
 
 /** Light object */
 struct Lib3dsLight {
+	Lib3dsLight(const char *name);
 	unsigned       user_id;
 	void          *user_ptr;
 	char           name[64];
@@ -658,7 +659,6 @@ extern LIB3DSAPI Lib3dsFile *lib3ds_file_open(const char *filename);
 extern LIB3DSAPI int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io);
 
 extern LIB3DSAPI void lib3ds_material_free(Lib3dsMaterial *material);
-extern LIB3DSAPI Lib3dsLight *lib3ds_light_new(const char *name);
 extern LIB3DSAPI void lib3ds_light_free(Lib3dsLight *mesh);
 
 extern LIB3DSAPI Lib3dsNode *lib3ds_node_new(Lib3dsNodeType type);

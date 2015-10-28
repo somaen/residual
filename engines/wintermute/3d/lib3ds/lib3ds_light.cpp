@@ -21,24 +21,16 @@
 #include <assert.h>
 #include <math.h>
 
-Lib3dsLight *lib3ds_light_new(const char *name) {
-	Lib3dsLight *light;
-
+Lib3dsLight::Lib3dsLight(const char *name) {
 	assert(name);
 	assert(strlen(name) < 64);
 
-	light = (Lib3dsLight *)calloc(sizeof(Lib3dsLight), 1);
-	if (!light) {
-		return (0);
-	}
-	strcpy(light->name, name);
-	return (light);
+	strcpy(this->name, name);
 }
 
 
 void lib3ds_light_free(Lib3dsLight *light) {
-	memset(light, 0, sizeof(Lib3dsLight));
-	free(light);
+	delete light;
 }
 
 

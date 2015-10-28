@@ -320,7 +320,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_ENTRY: {
-			Lib3dsMaterial *material = lib3ds_material_new(NULL);
+			Lib3dsMaterial *material =  new Lib3dsMaterial(NULL);
 			file->insertMaterial(material, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_material_read(material, io);

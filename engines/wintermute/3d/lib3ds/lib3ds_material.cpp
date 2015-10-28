@@ -30,55 +30,45 @@ static void initialize_texture_map(Lib3dsTextureMap *map) {
 
 
 /*!
- * Creates and returns a new, empty Lib3dsMaterial object.
+ * Constructs a new, empty Lib3dsMaterial object.
  *
  * Initial value of the material is a shiny grey.
  *
  * \return A pointer to the Lib3dsMaterial structure.
  *  If the structure cannot be allocated, NULL is returned.
  */
-Lib3dsMaterial *lib3ds_material_new(const char *name) {
-	Lib3dsMaterial *mat;
-
-	mat = (Lib3dsMaterial *)calloc(sizeof(Lib3dsMaterial), 1);
-	if (!mat) {
-		return (0);
-	}
-
+Lib3dsMaterial::Lib3dsMaterial(const char *name) {
 	if (name) {
-		strcpy(mat->name, name);
+		strcpy(this->name, name);
 	}
-	mat->ambient[0] = mat->ambient[1] = mat->ambient[2] = 0.588235f;
-	mat->diffuse[0] = mat->diffuse[1] = mat->diffuse[2] = 0.588235f;
-	mat->specular[0] = mat->specular[1] = mat->specular[2] = 0.898039f;
-	mat->shininess = 0.1f;
-	mat->wire_size = 1.0f;
-	mat->shading = 3;
+	ambient[0] = ambient[1] = ambient[2] = 0.588235f;
+	diffuse[0] = diffuse[1] = diffuse[2] = 0.588235f;
+	specular[0] = specular[1] = specular[2] = 0.898039f;
+	shininess = 0.1f;
+	wire_size = 1.0f;
+	shading = 3;
 
-	initialize_texture_map(&mat->texture1_map);
-	initialize_texture_map(&mat->texture1_mask);
-	initialize_texture_map(&mat->texture2_map);
-	initialize_texture_map(&mat->texture2_mask);
-	initialize_texture_map(&mat->opacity_map);
-	initialize_texture_map(&mat->opacity_mask);
-	initialize_texture_map(&mat->bump_map);
-	initialize_texture_map(&mat->bump_mask);
-	initialize_texture_map(&mat->specular_map);
-	initialize_texture_map(&mat->specular_mask);
-	initialize_texture_map(&mat->shininess_map);
-	initialize_texture_map(&mat->shininess_mask);
-	initialize_texture_map(&mat->self_illum_map);
-	initialize_texture_map(&mat->self_illum_mask);
-	initialize_texture_map(&mat->reflection_map);
-	initialize_texture_map(&mat->reflection_mask);
-
-	return (mat);
+	initialize_texture_map(&texture1_map);
+	initialize_texture_map(&texture1_mask);
+	initialize_texture_map(&texture2_map);
+	initialize_texture_map(&texture2_mask);
+	initialize_texture_map(&opacity_map);
+	initialize_texture_map(&opacity_mask);
+	initialize_texture_map(&bump_map);
+	initialize_texture_map(&bump_mask);
+	initialize_texture_map(&specular_map);
+	initialize_texture_map(&specular_mask);
+	initialize_texture_map(&shininess_map);
+	initialize_texture_map(&shininess_mask);
+	initialize_texture_map(&self_illum_map);
+	initialize_texture_map(&self_illum_mask);
+	initialize_texture_map(&reflection_map);
+	initialize_texture_map(&reflection_mask);
 }
 
 
 void lib3ds_material_free(Lib3dsMaterial *material) {
-	memset(material, 0, sizeof(Lib3dsMaterial));
-	free(material);
+	delete material;
 }
 
 

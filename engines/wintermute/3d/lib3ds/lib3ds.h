@@ -215,6 +215,7 @@ enum Lib3dsShading {
 
 /** Material */
 struct Lib3dsMaterial {
+	Lib3dsMaterial(const char *name);
 	uint32              user_id;
 	void               *user_ptr;
 	char                name[64];           /* Material name */
@@ -656,7 +657,6 @@ struct Lib3dsFile {
 extern LIB3DSAPI Lib3dsFile *lib3ds_file_open(const char *filename);
 extern LIB3DSAPI int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io);
 
-extern LIB3DSAPI Lib3dsMaterial *lib3ds_material_new(const char *name);
 extern LIB3DSAPI void lib3ds_material_free(Lib3dsMaterial *material);
 extern LIB3DSAPI Lib3dsLight *lib3ds_light_new(const char *name);
 extern LIB3DSAPI void lib3ds_light_free(Lib3dsLight *mesh);

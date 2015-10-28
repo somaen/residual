@@ -23,6 +23,7 @@
     Header file for public API defined by lib3ds */
 #include "common/stream.h"
 #include "math/matrix4.h"
+#include "math/quat.h"
 #include "common/array.h"
 #include <stddef.h>
 
@@ -426,6 +427,7 @@ enum Lib3dsKeyFlags {
 	LIB3DS_KEY_USE_EASE_FROM    = 0x10
 };
 
+template<typename T>
 struct Lib3dsKey {
 	int         frame;
 	unsigned    flags;
@@ -434,8 +436,13 @@ struct Lib3dsKey {
 	float       bias;
 	float       ease_to;
 	float       ease_from;
-	float       value[4];
+	T           value;
 };
+
+typedef Lib3dsKey<bool> Lib3dsBoolKey;
+typedef Lib3dsKey<float> Lib3dsFloatKey;
+typedef Lib3dsKey<Math::Vector3d> Lib3dsVectorKey;
+typedef Lib3dsKey<Math::Quaternion> Lib3dsQuatKey;
 
 enum Lib3dsTrackType {
 	LIB3DS_TRACK_BOOL   = 0,
@@ -455,73 +462,93 @@ enum {
 	LIB3DS_TRACK_UNLINK_Z = 0x0400
 };
 
+template<typename T>
 struct Lib3dsTrack {
+public:
+	Lib3dsTrack();
 	unsigned        flags;
-	Lib3dsTrackType type;
 	int             nkeys;
-	Lib3dsKey      *keys;
+	void resize(int newSize) {
+		keys.reserve(newSize);
+	}
+	Common::Array<T> keys;
+	Lib3dsTrackType _type;
 };
 
+template<> Lib3dsTrack<Lib3dsBoolKey>::Lib3dsTrack();
+typedef Lib3dsTrack<Lib3dsBoolKey> Lib3dsBoolTrack;
+
+template<> Lib3dsTrack<Lib3dsFloatKey>::Lib3dsTrack();
+typedef Lib3dsTrack<Lib3dsFloatKey> Lib3dsFloatTrack;
+
+template<> Lib3dsTrack<Lib3dsVectorKey>::Lib3dsTrack();
+typedef Lib3dsTrack<Lib3dsVectorKey> Lib3dsVectorTrack;
+
+template<> Lib3dsTrack<Lib3dsQuatKey>::Lib3dsTrack();
+typedef Lib3dsTrack<Lib3dsQuatKey> Lib3dsQuatTrack;
+
 struct Lib3dsAmbientColorNode {
-	Lib3dsNode      base;
-	Math::Vector3d  color;
-	Lib3dsTrack     color_track;
+	Lib3dsNode            base;
+	Math::Vector3d        color;
+	Lib3dsVectorTrack     color_track;
 };
 
 struct Lib3dsMeshInstanceNode {
-	Lib3dsNode      base;
-	Math::Vector3d  pivot;
-	char            instance_name[64];
-	Math::Vector3d  bbox_min;
-	Math::Vector3d  bbox_max;
-	int             hide;
-	Math::Vector3d  pos;
-	float           rot[4];
-	Math::Vector3d  scl;
-	float           morph_smooth;
-	char            morph[64];
-	Lib3dsTrack     pos_track;
-	Lib3dsTrack     rot_track;
-	Lib3dsTrack     scl_track;
-	Lib3dsTrack     hide_track;
+	Lib3dsNode            base;
+	Math::Vector3d        pivot;
+	char                  instance_name[64];
+	Math::Vector3d        bbox_min;
+	Math::Vector3d        bbox_max;
+	int                   hide;
+	Math::Vector3d        pos;
+	Math::Quaternion      rot;
+	Math::Vector3d        scl;
+	float                 morph_smooth;
+	char                  morph[64];
+	Lib3dsVectorTrack     pos_track;
+	Lib3dsQuatTrack       rot_track;
+	Lib3dsVectorTrack     scl_track;
+	Lib3dsBoolTrack       hide_track;
 };
 
 struct Lib3dsCameraNode {
-	Lib3dsNode      base;
-	Math::Vector3d  pos;
-	float           fov;
-	float           roll;
-	Lib3dsTrack     pos_track;
-	Lib3dsTrack     fov_track;
-	Lib3dsTrack     roll_track;
+	Lib3dsNode      	  base;
+	Math::Vector3d  	  pos;
+	float           	  fov;
+	float           	  roll;
+	Lib3dsVectorTrack     pos_track;
+	Lib3dsFloatTrack      fov_track;
+	Lib3dsFloatTrack      roll_track;
 };
 
 struct Lib3dsTargetNode {
-	Lib3dsNode      base;
-	Math::Vector3d  pos;
-	Lib3dsTrack     pos_track;
+	Lib3dsNode            base;
+	Math::Vector3d        pos;
+	Lib3dsVectorTrack     pos_track;
 };
 
 struct Lib3dsOmnilightNode {
-	Lib3dsNode      base;
-	Math::Vector3d  pos;
-	Math::Vector3d  color;
-	Lib3dsTrack     pos_track;
-	Lib3dsTrack     color_track;
+	Lib3dsNode            base;
+	Math::Vector3d        pos;
+	Math::Vector3d        color;
+	Lib3dsVectorTrack     pos_track;
+	Lib3dsVectorTrack     color_track;
 };
 
+		
+
 struct Lib3dsSpotlightNode {
-	Lib3dsNode      base;
-	Math::Vector3d  pos;
-	Math::Vector3d  color;
-	float           hotspot;
-	float           falloff;
-	float           roll;
-	Lib3dsTrack     pos_track;
-	Lib3dsTrack     color_track;
-	Lib3dsTrack     hotspot_track;
-	Lib3dsTrack     falloff_track;
-	Lib3dsTrack     roll_track;
+	Lib3dsNode            base;
+	Math::Vector3d        pos;
+	Math::Vector3d        color;
+	float                 hotspot;
+	float                 falloff;
+	float                 roll;
+	Lib3dsVectorTrack     pos_track;
+	Lib3dsVectorTrack     color_track;
+	Lib3dsFloatTrack      hotspot_track;
+	Lib3dsFloatTrack      falloff_track;
+	Lib3dsFloatTrack      roll_track;
 };
 
 struct Lib3dsFile {
@@ -647,13 +674,10 @@ extern LIB3DSAPI void lib3ds_node_eval(Lib3dsNode *node, float t);
 extern LIB3DSAPI Lib3dsNode *lib3ds_node_by_name(Lib3dsNode *node, const char *name, Lib3dsNodeType type);
 extern LIB3DSAPI Lib3dsNode *lib3ds_node_by_id(Lib3dsNode *node, unsigned short node_id);
 
-extern LIB3DSAPI Lib3dsTrack *lib3ds_track_new(Lib3dsTrackType type, int nkeys);
-extern LIB3DSAPI void lib3ds_track_free(Lib3dsTrack *track);
-extern LIB3DSAPI void lib3ds_track_resize(Lib3dsTrack *track, int nkeys);
-extern LIB3DSAPI void lib3ds_track_eval_bool(Lib3dsTrack *track, int *b, float t);
-extern LIB3DSAPI void lib3ds_track_eval_float(Lib3dsTrack *track, float *f, float t);
-extern LIB3DSAPI void lib3ds_track_eval_vector(Lib3dsTrack *track, Math::Vector3d &v, float t);
-extern LIB3DSAPI void lib3ds_track_eval_quat(Lib3dsTrack *track, float q[4], float t);
+extern LIB3DSAPI void lib3ds_track_eval_bool(Lib3dsTrack<Lib3dsBoolKey> *track, int *b, float t);
+extern LIB3DSAPI void lib3ds_track_eval_float(Lib3dsTrack<Lib3dsFloatKey> *track, float *f, float t);
+extern LIB3DSAPI void lib3ds_track_eval_vector(Lib3dsTrack<Lib3dsVectorKey> *track, Math::Vector3d &v, float t);
+extern LIB3DSAPI void lib3ds_track_eval_quat(Lib3dsTrack<Lib3dsQuatKey> *track, Math::Quaternion &q, float t);
 
 template<typename T>
 void lib3ds_util_reserve_array_delete(T ***ptr, int *n, int *size, int new_size, int force) {

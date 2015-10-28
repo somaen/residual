@@ -32,68 +32,50 @@
  *
  * \return Lib3dsNode
  */
-Lib3dsNode *
-lib3ds_node_new(Lib3dsNodeType type) {
+Lib3dsNode *lib3ds_node_new(Lib3dsNodeType type) {
 	Lib3dsNode *node;
 	switch (type) {
 	case LIB3DS_NODE_AMBIENT_COLOR: {
-		Lib3dsAmbientColorNode *n = (Lib3dsAmbientColorNode *)calloc(sizeof(Lib3dsAmbientColorNode), 1);
+		Lib3dsAmbientColorNode *n = new Lib3dsAmbientColorNode;
 		node = (Lib3dsNode *)n;
 		strcpy(node->name, "$AMBIENT$");
-		n->color_track.type = LIB3DS_TRACK_VECTOR;
 		break;
 	}
 
 	case LIB3DS_NODE_MESH_INSTANCE: {
-		Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)calloc(sizeof(Lib3dsMeshInstanceNode), 1);
+		Lib3dsMeshInstanceNode *n = new Lib3dsMeshInstanceNode;
 		node = (Lib3dsNode *)n;
 		strcpy(node->name, "$$$DUMMY");
-		n->pos_track.type = LIB3DS_TRACK_VECTOR;
-		n->scl_track.type = LIB3DS_TRACK_VECTOR;
-		n->rot_track.type = LIB3DS_TRACK_QUAT;
-		n->hide_track.type = LIB3DS_TRACK_BOOL;
 		break;
 	}
 
 	case LIB3DS_NODE_CAMERA: {
-		Lib3dsCameraNode *n = (Lib3dsCameraNode *)calloc(sizeof(Lib3dsCameraNode), 1);
+		Lib3dsCameraNode *n = new Lib3dsCameraNode;
 		node = (Lib3dsNode *)n;
-		n->pos_track.type = LIB3DS_TRACK_VECTOR;
-		n->fov_track.type = LIB3DS_TRACK_FLOAT;
-		n->roll_track.type = LIB3DS_TRACK_FLOAT;
 		break;
 	}
 
 	case LIB3DS_NODE_CAMERA_TARGET: {
-		Lib3dsTargetNode *n = (Lib3dsTargetNode *)calloc(sizeof(Lib3dsTargetNode), 1);
+		Lib3dsTargetNode *n = new Lib3dsTargetNode;
 		node = (Lib3dsNode *)n;
-		n->pos_track.type = LIB3DS_TRACK_VECTOR;
 		break;
 	}
 
 	case LIB3DS_NODE_OMNILIGHT: {
-		Lib3dsOmnilightNode *n = (Lib3dsOmnilightNode *)calloc(sizeof(Lib3dsOmnilightNode), 1);
+		Lib3dsOmnilightNode *n = new Lib3dsOmnilightNode;
 		node = (Lib3dsNode *)n;
-		n->pos_track.type = LIB3DS_TRACK_VECTOR;
-		n->color_track.type = LIB3DS_TRACK_VECTOR;
 		break;
 	}
 
 	case LIB3DS_NODE_SPOTLIGHT: {
-		Lib3dsSpotlightNode *n = (Lib3dsSpotlightNode *)calloc(sizeof(Lib3dsSpotlightNode), 1);
+		Lib3dsSpotlightNode *n = new Lib3dsSpotlightNode;
 		node = (Lib3dsNode *)n;
-		n->pos_track.type = LIB3DS_TRACK_VECTOR;
-		n->color_track.type = LIB3DS_TRACK_VECTOR;
-		n->hotspot_track.type = LIB3DS_TRACK_FLOAT;
-		n->falloff_track.type = LIB3DS_TRACK_FLOAT;
-		n->roll_track.type = LIB3DS_TRACK_FLOAT;
 		break;
 	}
 
 	case LIB3DS_NODE_SPOTLIGHT_TARGET: {
-		Lib3dsTargetNode *n = (Lib3dsTargetNode *)calloc(sizeof(Lib3dsTargetNode), 1);
+		Lib3dsTargetNode *n = new Lib3dsTargetNode;
 		node = (Lib3dsNode *)n;
-		n->pos_track.type = LIB3DS_TRACK_VECTOR;
 		break;
 	}
 
@@ -114,7 +96,7 @@ Lib3dsAmbientColorNode *lib3ds_node_new_ambient_color(float color0[3]) {
 	Lib3dsNode *node = lib3ds_node_new(LIB3DS_NODE_AMBIENT_COLOR);
 
 	Lib3dsAmbientColorNode *n = (Lib3dsAmbientColorNode *)node;
-	lib3ds_track_resize(&n->color_track, 1);
+	n->color_track.resize(1);
 	if (color0) {
 		lib3ds_vector_copy(n->color_track.keys[0].value, color0);
 	} else {
@@ -125,7 +107,7 @@ Lib3dsAmbientColorNode *lib3ds_node_new_ambient_color(float color0[3]) {
 }
 
 
-Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instance_name, float pos0[3], float scl0[3], float rot0[4]) {
+Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instance_name, float pos0[3], float scl0[3], const Math::Quaternion &rot0) {
 	Lib3dsMeshInstanceNode *n;
 
 	Lib3dsNode *node = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
@@ -140,31 +122,27 @@ Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const ch
 		strcpy(n->instance_name, instance_name);
 	}
 
-	lib3ds_track_resize(&n->pos_track, 1);
+	n->pos_track.resize(1);
 	if (pos0) {
 		lib3ds_vector_copy(n->pos_track.keys[0].value, pos0);
 	}
 
-	lib3ds_track_resize(&n->scl_track, 1);
+	n->scl_track.resize(1);
 	if (scl0) {
 		lib3ds_vector_copy(n->scl_track.keys[0].value, scl0);
 	} else {
 		lib3ds_vector_copy(n->scl_track.keys[0].value, Math::Vector3d(1, 1, 1));
 	}
 
-	lib3ds_track_resize(&n->rot_track, 1);
-	if (rot0) {
-		for (int i = 0; i < 4; ++i) n->rot_track.keys[0].value[i] = rot0[i];
-	} else {
-		for (int i = 0; i < 4; ++i) n->rot_track.keys[0].value[i] = 0;
-	}
+	n->rot_track.resize(1);
+
+	n->rot_track.keys[0].value = rot0;
 
 	return n;
 }
 
 
-Lib3dsCameraNode *
-lib3ds_node_new_camera(Lib3dsCamera *camera) {
+Lib3dsCameraNode *lib3ds_node_new_camera(Lib3dsCamera *camera) {
 	Lib3dsNode *node = lib3ds_node_new(LIB3DS_NODE_CAMERA);
 	Lib3dsCameraNode *n;
 
@@ -173,14 +151,14 @@ lib3ds_node_new_camera(Lib3dsCamera *camera) {
 	strcpy(node->name, camera->_name);
 
 	n = (Lib3dsCameraNode *)node;
-	lib3ds_track_resize(&n->pos_track, 1);
+	n->pos_track.resize(1);
 	lib3ds_vector_copy(n->pos_track.keys[0].value, camera->_position);
 
-	lib3ds_track_resize(&n->fov_track, 1);
-	n->fov_track.keys[0].value[0] = camera->_fov;
+	n->fov_track.resize(1);
+	n->fov_track.keys[0].value = camera->_fov;
 
-	lib3ds_track_resize(&n->roll_track, 1);
-	n->roll_track.keys[0].value[0] = camera->_roll;
+	n->roll_track.resize(1);
+	n->roll_track.keys[0].value = camera->_roll;
 
 	return n;
 }
@@ -196,7 +174,7 @@ lib3ds_node_new_camera_target(Lib3dsCamera *camera) {
 	strcpy(node->name, camera->_name);
 
 	n = (Lib3dsTargetNode *)node;
-	lib3ds_track_resize(&n->pos_track, 1);
+	n->pos_track.resize(1);
 	lib3ds_vector_copy(n->pos_track.keys[0].value, camera->_target);
 
 	return n;
@@ -212,10 +190,10 @@ Lib3dsOmnilightNode *lib3ds_node_new_omnilight(Lib3dsLight *light) {
 	strcpy(node->name, light->name);
 
 	n = (Lib3dsOmnilightNode *)node;
-	lib3ds_track_resize(&n->pos_track, 1);
+	n->pos_track.resize(1);
 	lib3ds_vector_copy(n->pos_track.keys[0].value, light->position);
 
-	lib3ds_track_resize(&n->color_track, 1);
+	n->color_track.resize(1);
 	lib3ds_vector_copy(n->color_track.keys[0].value, light->color);
 
 	return n;
@@ -231,20 +209,20 @@ Lib3dsSpotlightNode *lib3ds_node_new_spotlight(Lib3dsLight *light) {
 	strcpy(node->name, light->name);
 
 	n = (Lib3dsSpotlightNode *)node;
-	lib3ds_track_resize(&n->pos_track, 1);
+	n->pos_track.resize(1);
 	lib3ds_vector_copy(n->pos_track.keys[0].value, light->position);
 
-	lib3ds_track_resize(&n->color_track, 1);
+	n->color_track.resize(1);
 	lib3ds_vector_copy(n->color_track.keys[0].value, light->color);
 
-	lib3ds_track_resize(&n->hotspot_track, 1);
-	n->hotspot_track.keys[0].value[0] = light->hotspot;
+	n->hotspot_track.resize(1);
+	n->hotspot_track.keys[0].value = light->hotspot;
 
-	lib3ds_track_resize(&n->falloff_track, 1);
-	n->falloff_track.keys[0].value[0] = light->falloff;
+	n->falloff_track.resize(1);
+	n->falloff_track.keys[0].value = light->falloff;
 
-	lib3ds_track_resize(&n->roll_track, 1);
-	n->roll_track.keys[0].value[0] = light->roll;
+	n->roll_track.resize(1);
+	n->roll_track.keys[0].value = light->roll;
 
 	return n;
 }
@@ -259,7 +237,7 @@ Lib3dsTargetNode *lib3ds_node_new_spotligf_target(Lib3dsLight *light) {
 	strcpy(node->name, light->name);
 
 	n = (Lib3dsTargetNode *)node;
-	lib3ds_track_resize(&n->pos_track, 1);
+	n->pos_track.resize(1);
 	lib3ds_vector_copy(n->pos_track.keys[0].value, light->target);
 
 	return n;
@@ -271,53 +249,53 @@ static void free_node_and_childs(Lib3dsNode *node) {
 	switch (node->type) {
 	case LIB3DS_NODE_AMBIENT_COLOR: {
 		Lib3dsAmbientColorNode *n = (Lib3dsAmbientColorNode *)node;
-		lib3ds_track_resize(&n->color_track, 0);
+		n->color_track.resize(0);
 		break;
 	}
 
 	case LIB3DS_NODE_MESH_INSTANCE: {
 		Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-		lib3ds_track_resize(&n->pos_track, 0);
-		lib3ds_track_resize(&n->rot_track, 0);
-		lib3ds_track_resize(&n->scl_track, 0);
-		lib3ds_track_resize(&n->hide_track, 0);
+		n->pos_track.resize(0);
+		n->rot_track.resize(0);
+		n->scl_track.resize(0);
+		n->hide_track.resize(0);
 		break;
 	}
 
 	case LIB3DS_NODE_CAMERA: {
 		Lib3dsCameraNode *n = (Lib3dsCameraNode *)node;
-		lib3ds_track_resize(&n->pos_track, 0);
-		lib3ds_track_resize(&n->fov_track, 0);
-		lib3ds_track_resize(&n->roll_track, 0);
+		n->pos_track.resize(0);
+		n->fov_track.resize(0);
+		n->roll_track.resize(0);
 		break;
 	}
 
 	case LIB3DS_NODE_CAMERA_TARGET: {
 		Lib3dsTargetNode *n = (Lib3dsTargetNode *)node;
-		lib3ds_track_resize(&n->pos_track, 0);
+		n->pos_track.resize(0);
 		break;
 	}
 
 	case LIB3DS_NODE_OMNILIGHT: {
 		Lib3dsOmnilightNode *n = (Lib3dsOmnilightNode *)node;
-		lib3ds_track_resize(&n->pos_track, 0);
-		lib3ds_track_resize(&n->color_track, 0);
+		n->pos_track.resize(0);
+		n->color_track.resize(0);
 		break;
 	}
 
 	case LIB3DS_NODE_SPOTLIGHT: {
 		Lib3dsSpotlightNode *n = (Lib3dsSpotlightNode *)node;
-		lib3ds_track_resize(&n->pos_track, 0);
-		lib3ds_track_resize(&n->color_track, 0);
-		lib3ds_track_resize(&n->hotspot_track, 0);
-		lib3ds_track_resize(&n->falloff_track, 0);
-		lib3ds_track_resize(&n->roll_track, 0);
+		n->pos_track.resize(0);
+		n->color_track.resize(0);
+		n->hotspot_track.resize(0);
+		n->falloff_track.resize(0);
+		n->roll_track.resize(0);
 		break;
 	}
 
 	case LIB3DS_NODE_SPOTLIGHT_TARGET: {
 		Lib3dsTargetNode *n = (Lib3dsTargetNode *)node;
-		lib3ds_track_resize(&n->pos_track, 0);
+		n->pos_track.resize(0);
 		break;
 	}
 	}
@@ -600,7 +578,7 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		}
 
 		case CHK_COL_TRACK_TAG: {
-			Lib3dsTrack *track = 0;
+			Lib3dsVectorTrack *track = 0;
 			switch (node->type) {
 			case LIB3DS_NODE_AMBIENT_COLOR: {
 				Lib3dsAmbientColorNode *n = (Lib3dsAmbientColorNode *)node;
@@ -627,7 +605,7 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		}
 
 		case CHK_POS_TRACK_TAG: {
-			Lib3dsTrack *track = 0;
+			Lib3dsVectorTrack *track = 0;
 			switch (node->type) {
 			case LIB3DS_NODE_MESH_INSTANCE: {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
@@ -671,7 +649,6 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_ROT_TRACK_TAG: {
 			if (node->type == LIB3DS_NODE_MESH_INSTANCE) {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-				n->rot_track.type = LIB3DS_TRACK_QUAT;
 				lib3ds_track_read(&n->rot_track, io);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
@@ -682,7 +659,6 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_SCL_TRACK_TAG: {
 			if (node->type == LIB3DS_NODE_MESH_INSTANCE) {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-				n->scl_track.type = LIB3DS_TRACK_VECTOR;
 				lib3ds_track_read(&n->scl_track, io);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
@@ -693,7 +669,6 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_FOV_TRACK_TAG: {
 			if (node->type == LIB3DS_NODE_CAMERA) {
 				Lib3dsCameraNode *n = (Lib3dsCameraNode *)node;
-				n->fov_track.type = LIB3DS_TRACK_FLOAT;
 				lib3ds_track_read(&n->fov_track, io);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
@@ -704,7 +679,6 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_HOT_TRACK_TAG: {
 			if (node->type == LIB3DS_NODE_SPOTLIGHT) {
 				Lib3dsSpotlightNode *n = (Lib3dsSpotlightNode *)node;
-				n->hotspot_track.type = LIB3DS_TRACK_FLOAT;
 				lib3ds_track_read(&n->hotspot_track, io);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
@@ -715,7 +689,6 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_FALL_TRACK_TAG: {
 			if (node->type == LIB3DS_NODE_SPOTLIGHT) {
 				Lib3dsSpotlightNode *n = (Lib3dsSpotlightNode *)node;
-				n->falloff_track.type = LIB3DS_TRACK_FLOAT;
 				lib3ds_track_read(&n->falloff_track, io);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
@@ -727,13 +700,11 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 			switch (node->type) {
 			case LIB3DS_NODE_CAMERA: {
 				Lib3dsCameraNode *n = (Lib3dsCameraNode *)node;
-				n->roll_track.type = LIB3DS_TRACK_FLOAT;
 				lib3ds_track_read(&n->roll_track, io);
 				break;
 			}
 			case LIB3DS_NODE_SPOTLIGHT: {
 				Lib3dsSpotlightNode *n = (Lib3dsSpotlightNode *)node;
-				n->roll_track.type = LIB3DS_TRACK_FLOAT;
 				lib3ds_track_read(&n->roll_track, io);
 				break;
 			}
@@ -746,7 +717,6 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_HIDE_TRACK_TAG: {
 			if (node->type == LIB3DS_NODE_MESH_INSTANCE) {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-				n->hide_track.type = LIB3DS_TRACK_BOOL;
 				lib3ds_track_read(&n->hide_track, io);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);

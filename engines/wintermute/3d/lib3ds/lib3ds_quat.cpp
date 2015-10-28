@@ -20,25 +20,30 @@
     Quaternion mathematics implementation */
 
 #include "lib3ds_impl.h"
+#include "math/quat.h"
 #include <stdio.h>
 #include <math.h>
 
 /*!
  * Set a quaternion to Identity
  */
-void lib3ds_quat_identity(float c[4]) {
-	c[0] = c[1] = c[2] = 0.0f;
-	c[3] = 1.0f;
+void lib3ds_quat_identity(Math::Quaternion &c) {
+	c = Math::Quaternion();
 }
 
 
 /*!
  * Copy a quaternion.
  */
-void lib3ds_quat_copy(float dest[4], float src[4]) {
-	for (int i = 0; i < 4; ++i) {
-		dest[i] = src[i];
-	}
+void lib3ds_quat_copy(Math::Quaternion &dest, const Math::Quaternion &src) {
+	dest = src;
+}
+
+/*!
+ * Copy a quaternion.
+ */
+void lib3ds_quat_copy(Math::Quaternion &dest, float src[4]) {
+	dest = Math::Quaternion(src[0], src[1], src[2], src[3]);
 }
 
 
@@ -49,41 +54,43 @@ void lib3ds_quat_copy(float dest[4], float src[4]) {
  * \param axis Rotation axis
  * \param angle Angle of rotation, radians.
  */
-void lib3ds_quat_axis_angle(float c[4], const Math::Vector3d &axis, float angle) {
+void lib3ds_quat_axis_angle(Math::Quaternion &c, const Math::Vector3d &axis, float angle) {
 	double omega, s;
 	double l;
 
 	l = axis.getMagnitude();
 	if (l < LIB3DS_EPSILON) {
-		c[0] = c[1] = c[2] = 0.0f;
-		c[3] = 1.0f;
+		c = Math::Quaternion();
 	} else {
 		omega = -0.5 * angle;
 		s = sin(omega) / l;
-		c[0] = (float)s * axis.getValue(0);
-		c[1] = (float)s * axis.getValue(1);
-		c[2] = (float)s * axis.getValue(2);
-		c[3] = (float)cos(omega);
+		c.setValue(0, (float)s * axis.getValue(0));
+		c.setValue(1, (float)s * axis.getValue(1));
+		c.setValue(2, (float)s * axis.getValue(2));
+		c.setValue(3, (float)cos(omega));
 	}
+}
+
+void lib3ds_quat_axis_angle(Math::Quaternion &c, const Math::Quaternion &axis, float angle) {
+	Math::Vector3d temp(axis.getValue(0), axis.getValue(1), axis.getValue(2));
+	lib3ds_quat_axis_angle(c, temp, angle);
 }
 
 
 /*!
  * Negate a quaternion
  */
-void lib3ds_quat_neg(float c[4]) {
-	for (int i = 0; i < 4; ++i) {
-		c[i] = -c[i];
-	}
+void lib3ds_quat_neg(Math::Quaternion &c) {
+	c = c * -1;
 }
 
 
 /*!
  * Compute the conjugate of a quaternion
  */
-void lib3ds_quat_cnj(float c[4]) {
+void lib3ds_quat_cnj(Math::Quaternion &c) {
 	for (int i = 0; i < 3; ++i) {
-		c[i] = -c[i];
+		c.setValue(i, -c.getValue(i));
 	}
 }
 
@@ -94,42 +101,28 @@ void lib3ds_quat_cnj(float c[4]) {
  * \param c Result
  * \param a,b Inputs
  */
-void lib3ds_quat_mul(float c[4], float a[4], float b[4]) {
-	float qa[4], qb[4];
-	lib3ds_quat_copy(qa, a);
-	lib3ds_quat_copy(qb, b);
-	c[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] - qa[2] * qb[1];
-	c[1] = qa[3] * qb[1] + qa[1] * qb[3] + qa[2] * qb[0] - qa[0] * qb[2];
-	c[2] = qa[3] * qb[2] + qa[2] * qb[3] + qa[0] * qb[1] - qa[1] * qb[0];
-	c[3] = qa[3] * qb[3] - qa[0] * qb[0] - qa[1] * qb[1] - qa[2] * qb[2];
+void lib3ds_quat_mul(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &b) {
+	c = a * b;
 }
 
 
 /*!
  * Multiply a quaternion by a scalar.
  */
-void lib3ds_quat_scalar(float c[4], float k) {
-	for (int i = 0; i < 4; ++i) {
-		c[i] *= k;
-	}
+void lib3ds_quat_scalar(Math::Quaternion &c, float k) {
+	c = c * k;
 }
 
 
 /*!
  * Normalize a quaternion.
  */
-void lib3ds_quat_normalize(float c[4]) {
-	double l, m;
-
-	l = sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2] + c[3] * c[3]);
+void lib3ds_quat_normalize(Math::Quaternion &c) {
+	double l =  c.getMagnitude();
 	if (fabs(l) < LIB3DS_EPSILON) {
-		c[0] = c[1] = c[2] = 0.0f;
-		c[3] = 1.0f;
+		c = Math::Quaternion();
 	} else {
-		m = 1.0f / l;
-		for (int i = 0; i < 4; ++i) {
-			c[i] = (float)(c[i] * m);
-		}
+		c.normalize();
 	}
 }
 
@@ -137,19 +130,12 @@ void lib3ds_quat_normalize(float c[4]) {
 /*!
  * Compute the inverse of a quaternion.
  */
-void lib3ds_quat_inv(float c[4]) {
-	double l, m;
-
-	l = sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2] + c[3] * c[3]);
+void lib3ds_quat_inv(Math::Quaternion &c) {
+	double l =  c.getMagnitude();
 	if (fabs(l) < LIB3DS_EPSILON) {
-		c[0] = c[1] = c[2] = 0.0f;
-		c[3] = 1.0f;
+		c = Math::Quaternion();
 	} else {
-		m = 1.0f / l;
-		c[0] = (float)(-c[0] * m);
-		c[1] = (float)(-c[1] * m);
-		c[2] = (float)(-c[2] * m);
-		c[3] = (float)(c[3] * m);
+		c = c.inverse();
 	}
 }
 
@@ -157,68 +143,63 @@ void lib3ds_quat_inv(float c[4]) {
 /*!
  * Compute the dot-product of a quaternion.
  */
-float lib3ds_quat_dot(float a[4], float b[4]) {
-	return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]);
+float lib3ds_quat_dot(const Math::Quaternion &a, const Math::Quaternion &b) {
+	return a.dotProduct(b);
 }
 
 
-float lib3ds_quat_norm(float c[4]) {
-	return (c[0] * c[0] + c[1] * c[1] + c[2] * c[2] + c[3] * c[3]);
+float lib3ds_quat_norm(Math::Quaternion &c) {
+	return c.x() * c.x() + c.y() * c.y() + c.z() * c.z() + c.w() * c.w();
 }
 
 
-void lib3ds_quat_ln(float c[4]) {
-	double om, s, t;
+void lib3ds_quat_ln(Math::Quaternion &c) {
+	double t;
 
-	s = sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]);
-	om = atan2(s, (double)c[3]);
+	double s = sqrt(c.x() * c.x() + c.y() * c.y() + c.z() * c.z());
+	double om = atan2(s, (double)c.w());
 	if (fabs(s) < LIB3DS_EPSILON) {
 		t = 0.0f;
 	} else {
 		t = om / s;
 	}
 	{
-		for (int i = 0; i < 3; ++i) {
-			c[i] = (float)(c[i] * t);
-		}
-		c[3] = 0.0f;
+		c = c * t;
+		c.w() = 0.0f;
 	}
 }
 
 
-void lib3ds_quat_ln_dif(float c[4], float a[4], float b[4]) {
-	float invp[4];
+void lib3ds_quat_ln_dif(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &b) {
+	Math::Quaternion invp = a;;
 
-	lib3ds_quat_copy(invp, a);
 	lib3ds_quat_inv(invp);
 	lib3ds_quat_mul(c, invp, b);
 	lib3ds_quat_ln(c);
 }
 
 
-void lib3ds_quat_exp(float c[4]) {
+void lib3ds_quat_exp(Math::Quaternion &c) {
 	double om, sinom;
 
-	om = sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]);
+	om = sqrt(c.x() * c.x() + c.y() * c.y() + c.z() * c.z());
 	if (fabs(om) < LIB3DS_EPSILON) {
 		sinom = 1.0f;
 	} else {
 		sinom = sin(om) / om;
 	}
 	{
-		for (int i = 0; i < 3; ++i) {
-			c[i] = (float)(c[i] * sinom);
-		}
-		c[3] = (float)cos(om);
+		c = c * sinom;
+		c.w() = (float)cos(om);
 	}
 }
 
 
-void lib3ds_quat_slerp(float c[4], float a[4], float b[4], float t) {
+void lib3ds_quat_slerp(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &b, float t) {
 	double sp, sq;
 	float flip = 1.0f;
 
-	double l = a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
+	double l = a.x() * b.x() + a.y() * b.y() + a.z() * b.z() + a.w() * b.w();
 	if (l < 0) {
 		flip = -1.0f;
 		l = -l;
@@ -235,14 +216,13 @@ void lib3ds_quat_slerp(float c[4], float a[4], float b[4], float t) {
 	}
 	sq *= flip;
 	for (int i = 0; i < 4; ++i) {
-		c[i] = (float)(sp * a[i] + sq * b[i]);
+		c.setValue(i, (float)(sp * a.getValue(i) + sq * b.getValue(i)));
 	}
 }
 
 
-void lib3ds_quat_squad(float c[4], float a[4], float p[4], float q[4], float b[4], float t) {
-	float ab[4];
-	float pq[4];
+void lib3ds_quat_squad(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &p, const Math::Quaternion &q, const Math::Quaternion &b, float t) {
+	Math::Quaternion ab, pq;
 
 	lib3ds_quat_slerp(ab, a, b, t);
 	lib3ds_quat_slerp(pq, p, q, t);
@@ -250,21 +230,21 @@ void lib3ds_quat_squad(float c[4], float a[4], float p[4], float q[4], float b[4
 }
 
 
-void lib3ds_quat_tangent(float c[4], float p[4], float q[4], float n[4]) {
-	float dn[4], dp[4], x[4];
+void lib3ds_quat_tangent(Math::Quaternion &c, const Math::Quaternion &p, const Math::Quaternion &q, const Math::Quaternion &n) {
+	Math::Quaternion dn, dp, x;
 
 	lib3ds_quat_ln_dif(dn, q, n);
 	lib3ds_quat_ln_dif(dp, q, p);
 
 	for (int i = 0; i < 4; i++) {
-		x[i] = -1.0f / 4.0f * (dn[i] + dp[i]);
+		x.setValue(i, -1.0f / 4.0f * (dn.getValue(i) + dp.getValue(i)));
 	}
 	lib3ds_quat_exp(x);
 	lib3ds_quat_mul(c, q, x);
 }
 
 
-void lib3ds_quat_dump(float q[4]) {
-	printf("%f %f %f %f\n", q[0], q[1], q[2], q[3]);
+void lib3ds_quat_dump(const Math::Quaternion &q) {
+	printf("%f %f %f %f\n", q.x(), q.y(), q.z(), q.w());
 }
 

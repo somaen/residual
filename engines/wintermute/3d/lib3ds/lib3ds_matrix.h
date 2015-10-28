@@ -22,6 +22,7 @@
 /** @file lib3ds.h
     Header file for public API defined by lib3ds */
 #include "common/scummsys.h"
+#include "math/quat.h"
 #include <stddef.h>
 
 #ifndef LIB3DSAPI
@@ -41,7 +42,7 @@ extern LIB3DSAPI void lib3ds_matrix_identity(Math::Matrix4 &m);
 extern LIB3DSAPI float lib3ds_matrix_det(Math::Matrix4 &m);
 extern LIB3DSAPI void lib3ds_matrix_translate(Math::Matrix4 &m, float x, float y, float z);
 extern LIB3DSAPI void lib3ds_matrix_scale(Math::Matrix4 &m, float x, float y, float z);
-extern LIB3DSAPI void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, float q[4]);
+extern LIB3DSAPI void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, const Math::Quaternion &q);
 extern LIB3DSAPI void lib3ds_matrix_rotate(Math::Matrix4 &m, float angle, float ax, float ay, float az);
 extern LIB3DSAPI void lib3ds_matrix_camera(Math::Matrix4 &m, float pos[3], float tgt[3], float roll);
 

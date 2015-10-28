@@ -126,29 +126,29 @@ void lib3ds_matrix_scale(Math::Matrix4 &m, float x, float y, float z) {
 /*!
  * Apply a rotation about an arbitrary axis to a matrix.
  */
-void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, float q[4]) {
+void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, const Math::Quaternion &q) {
 	float s, xs, ys, zs, wx, wy, wz, xx, xy, xz, yy, yz, zz, l;
 	Math::Matrix4 R;
 
-	l = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
+	l = q.getSquareMagnitude();
 	if (fabs(l) < LIB3DS_EPSILON) {
 		s = 1.0f;
 	} else {
 		s = 2.0f / l;
 	}
 
-	xs = q[0] * s;
-	ys = q[1] * s;
-	zs = q[2] * s;
-	wx = q[3] * xs;
-	wy = q[3] * ys;
-	wz = q[3] * zs;
-	xx = q[0] * xs;
-	xy = q[0] * ys;
-	xz = q[0] * zs;
-	yy = q[1] * ys;
-	yz = q[1] * zs;
-	zz = q[2] * zs;
+	xs = q.getValue(0) * s;
+	ys = q.getValue(1) * s;
+	zs = q.getValue(2) * s;
+	wx = q.getValue(3) * xs;
+	wy = q.getValue(3) * ys;
+	wz = q.getValue(3) * zs;
+	xx = q.getValue(0) * xs;
+	xy = q.getValue(0) * ys;
+	xz = q.getValue(0) * zs;
+	yy = q.getValue(1) * ys;
+	yz = q.getValue(1) * zs;
+	zz = q.getValue(2) * zs;
 
 	R.setValue(0, 0, 1.0f - (yy + zz));
 	R.setValue(1, 0, xy - wz);
@@ -175,7 +175,7 @@ void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, float q[4]) {
  * Apply a rotation about an arbitrary axis to a matrix.
  */
 void lib3ds_matrix_rotate(Math::Matrix4 &m, float angle, float ax, float ay, float az) {
-	float q[4];
+	Math::Quaternion q;
 
 	Math::Vector3d axis(ax, ay, az);
 	lib3ds_quat_axis_angle(q, axis, angle);

@@ -22,6 +22,7 @@
 /** @file lib3ds.h
     Header file for public API defined by lib3ds */
 #include "common/stream.h"
+#include "math/quat.h"
 #include <stddef.h>
 
 #ifndef LIB3DSAPI
@@ -36,23 +37,25 @@
 #endif
 #endif
 
-extern LIB3DSAPI void lib3ds_quat_identity(float c[4]);
-extern LIB3DSAPI void lib3ds_quat_copy(float dest[4], float src[4]);
-extern LIB3DSAPI void lib3ds_quat_axis_angle(float c[4], const Math::Vector3d &axis, float angle);
-extern LIB3DSAPI void lib3ds_quat_neg(float c[4]);
-extern LIB3DSAPI void lib3ds_quat_cnj(float c[4]);
-extern LIB3DSAPI void lib3ds_quat_mul(float c[4], float a[4], float b[4]);
-extern LIB3DSAPI void lib3ds_quat_scalar(float c[4], float k);
-extern LIB3DSAPI void lib3ds_quat_normalize(float c[4]);
-extern LIB3DSAPI void lib3ds_quat_inv(float c[4]);
-extern LIB3DSAPI float lib3ds_quat_dot(float a[4], float b[4]);
-extern LIB3DSAPI float lib3ds_quat_norm(float c[4]);
-extern LIB3DSAPI void lib3ds_quat_ln(float c[4]);
-extern LIB3DSAPI void lib3ds_quat_ln_dif(float c[4], float a[4], float b[4]);
-extern LIB3DSAPI void lib3ds_quat_exp(float c[4]);
-extern LIB3DSAPI void lib3ds_quat_slerp(float c[4], float a[4], float b[4], float t);
-extern LIB3DSAPI void lib3ds_quat_squad(float c[4], float a[4], float p[4], float q[4], float b[4], float t);
-extern LIB3DSAPI void lib3ds_quat_tangent(float c[4], float p[4], float q[4], float n[4]);
+extern LIB3DSAPI void lib3ds_quat_identity(Math::Quaternion &c);
+extern LIB3DSAPI void lib3ds_quat_copy(Math::Quaternion &dest, const Math::Quaternion &src);
+extern LIB3DSAPI void lib3ds_quat_copy(Math::Quaternion &dest, float src[4]);
+extern LIB3DSAPI void lib3ds_quat_axis_angle(Math::Quaternion &c, const Math::Quaternion &axis, float angle);
+extern LIB3DSAPI void lib3ds_quat_axis_angle(Math::Quaternion &c, const Math::Vector3d &axis, float angle);
+extern LIB3DSAPI void lib3ds_quat_neg(Math::Quaternion &c);
+extern LIB3DSAPI void lib3ds_quat_cnj(Math::Quaternion &c);
+extern LIB3DSAPI void lib3ds_quat_mul(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &b);
+extern LIB3DSAPI void lib3ds_quat_scalar(Math::Quaternion &c, float k);
+extern LIB3DSAPI void lib3ds_quat_normalize(Math::Quaternion &c);
+extern LIB3DSAPI void lib3ds_quat_inv(Math::Quaternion &c);
+extern LIB3DSAPI float lib3ds_quat_dot(const Math::Quaternion &a, const Math::Quaternion &b);
+extern LIB3DSAPI float lib3ds_quat_norm(Math::Quaternion &c);
+extern LIB3DSAPI void lib3ds_quat_ln(Math::Quaternion &c);
+extern LIB3DSAPI void lib3ds_quat_ln_dif(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &b);
+extern LIB3DSAPI void lib3ds_quat_exp(Math::Quaternion &c);
+extern LIB3DSAPI void lib3ds_quat_slerp(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &b, float t);
+extern LIB3DSAPI void lib3ds_quat_squad(Math::Quaternion &c, const Math::Quaternion &a, const Math::Quaternion &p, const Math::Quaternion &q, const Math::Quaternion &b, float t);
+extern LIB3DSAPI void lib3ds_quat_tangent(Math::Quaternion &c, float p[4], float q[4], float n[4]);
 
 /** @} */
 #endif

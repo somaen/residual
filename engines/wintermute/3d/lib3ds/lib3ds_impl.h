@@ -281,7 +281,10 @@ extern void lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io);
 extern void lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io);
 extern void lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io);
 extern void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io);
-extern void lib3ds_track_read(Lib3dsTrack *track, Lib3dsIo *io);
+extern void lib3ds_track_read(Lib3dsTrack<Lib3dsBoolKey> *track, Lib3dsIo *io);
+extern void lib3ds_track_read(Lib3dsTrack<Lib3dsFloatKey> *track, Lib3dsIo *io);
+extern void lib3ds_track_read(Lib3dsTrack<Lib3dsVectorKey> *track, Lib3dsIo *io);
+extern void lib3ds_track_read(Lib3dsTrack<Lib3dsQuatKey> *track, Lib3dsIo *io);
 extern void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io);
 
 typedef void (*Lib3dsFreeFunc)(void *ptr);

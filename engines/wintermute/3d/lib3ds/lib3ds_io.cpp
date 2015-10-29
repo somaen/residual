@@ -156,3 +156,10 @@ void lib3ds_io_read_string(Lib3dsIo *io, char *s, int buflen) {
 	}
 }
 
+void lib3ds_io_read_string(Lib3dsIo *io, Common::String &s, int buflen) {
+	char *tmp = new char[buflen + 1];
+	lib3ds_io_read_string(io, tmp, buflen);
+	s = tmp;
+	delete[] tmp;
+}
+

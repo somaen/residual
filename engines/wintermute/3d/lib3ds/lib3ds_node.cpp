@@ -38,14 +38,14 @@ Lib3dsNode *lib3ds_node_new(Lib3dsNodeType type) {
 	case LIB3DS_NODE_AMBIENT_COLOR: {
 		Lib3dsAmbientColorNode *n = new Lib3dsAmbientColorNode;
 		node = (Lib3dsNode *)n;
-		strcpy(node->name, "$AMBIENT$");
+		node->_name = "$AMBIENT$";
 		break;
 	}
 
 	case LIB3DS_NODE_MESH_INSTANCE: {
 		Lib3dsMeshInstanceNode *n = new Lib3dsMeshInstanceNode;
 		node = (Lib3dsNode *)n;
-		strcpy(node->name, "$$$DUMMY");
+		node->_name = "$$$DUMMY";
 		break;
 	}
 
@@ -112,9 +112,9 @@ Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const ch
 
 	Lib3dsNode *node = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
 	if (mesh) {
-		strcpy(node->name, mesh->_name);
+		node->_name = mesh->_name;
 	} else {
-		strcpy(node->name, "$$$DUMMY");
+		node->_name = "$$$DUMMY";
 	}
 
 	n = (Lib3dsMeshInstanceNode *)node;
@@ -148,7 +148,7 @@ Lib3dsCameraNode *lib3ds_node_new_camera(Lib3dsCamera *camera) {
 
 	assert(camera);
 	node = lib3ds_node_new(LIB3DS_NODE_CAMERA);
-	strcpy(node->name, camera->_name);
+	node->_name = camera->_name;
 
 	n = (Lib3dsCameraNode *)node;
 	n->pos_track.resize(1);
@@ -170,7 +170,7 @@ Lib3dsTargetNode *lib3ds_node_new_camera_target(Lib3dsCamera *camera) {
 
 	assert(camera);
 	node = lib3ds_node_new(LIB3DS_NODE_CAMERA_TARGET);
-	strcpy(node->name, camera->_name);
+	node->_name = camera->_name;
 
 	n = (Lib3dsTargetNode *)node;
 	n->pos_track.resize(1);
@@ -186,7 +186,7 @@ Lib3dsOmnilightNode *lib3ds_node_new_omnilight(Lib3dsLight *light) {
 
 	assert(light);
 	node = lib3ds_node_new(LIB3DS_NODE_OMNILIGHT);
-	strcpy(node->name, light->name);
+	node->_name = light->name;
 
 	n = (Lib3dsOmnilightNode *)node;
 	n->pos_track.resize(1);
@@ -205,7 +205,7 @@ Lib3dsSpotlightNode *lib3ds_node_new_spotlight(Lib3dsLight *light) {
 
 	assert(light);
 	node = lib3ds_node_new(LIB3DS_NODE_SPOTLIGHT);
-	strcpy(node->name, light->name);
+	node->_name = light->name;
 
 	n = (Lib3dsSpotlightNode *)node;
 	n->pos_track.resize(1);
@@ -233,7 +233,7 @@ Lib3dsTargetNode *lib3ds_node_new_spotligf_target(Lib3dsLight *light) {
 
 	assert(light);
 	node = lib3ds_node_new(LIB3DS_NODE_SPOTLIGHT_TARGET);
-	strcpy(node->name, light->name);
+	node->_name = light->name;
 
 	n = (Lib3dsTargetNode *)node;
 	n->pos_track.resize(1);
@@ -404,11 +404,11 @@ void lib3ds_node_eval(Lib3dsNode *node, float t) {
  *
  * \return A pointer to the first matching node, or NULL if not found.
  */
-Lib3dsNode *lib3ds_node_by_name(Lib3dsNode *node, const char *name, Lib3dsNodeType type) {
+Lib3dsNode *lib3ds_node_by_name(Lib3dsNode *node, const Common::String &name, Lib3dsNodeType type) {
 	Lib3dsNode *p, *q;
 
 	for (p = node->childs; p != 0; p = p->next) {
-		if ((p->type == type) && (strcmp(p->name, name) == 0)) {
+		if ((p->type == type) && (p->_name == name)) {
 			return (p);
 		}
 		q = lib3ds_node_by_name(p, name, type);
@@ -480,13 +480,13 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		}
 
 		case CHK_NODE_HDR: {
-			lib3ds_io_read_string(io, node->name, 64);
+			lib3ds_io_read_string(io, node->_name, 64);
 			node->flags = stream->readUint16LE();
 			node->flags |= ((uint32)stream->readUint16LE()) << 16;
 			node->user_id = stream->readUint16LE();
 
 			lib3ds_io_log_indent(io, 1);
-			lib3ds_io_log(io, LIB3DS_LOG_INFO, "NAME=%s", node->name);
+			lib3ds_io_log(io, LIB3DS_LOG_INFO, "NAME=%s", node->_name.c_str());
 			lib3ds_io_log(io, LIB3DS_LOG_INFO, "PARENT=%d", (short)node->user_id);
 			lib3ds_io_log_indent(io, -1);
 			break;

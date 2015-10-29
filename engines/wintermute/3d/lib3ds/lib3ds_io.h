@@ -45,5 +45,6 @@ float lib3ds_io_read_float(Common::SeekableReadStream *stream);
 void lib3ds_io_read_vector(Common::SeekableReadStream *stream, Math::Vector3d &);
 void lib3ds_io_read_rgb(Common::SeekableReadStream *stream, float rgb[3]);
 void lib3ds_io_read_string(Lib3dsIo *io, char *s, int buflen);
+void lib3ds_io_read_string(Lib3dsIo *io, Common::String &s, int buflen);
 
 #endif

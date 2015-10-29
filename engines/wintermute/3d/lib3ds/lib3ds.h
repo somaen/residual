@@ -416,7 +416,7 @@ struct Lib3dsNode {
 	struct Lib3dsNode  *parent;
 	Lib3dsNodeType      type;
 	unsigned short      node_id;            /**< 0..65535 */
-	char                name[64];
+	Common::String      _name;
 	unsigned            flags;
 	Math::Matrix4       matrix;
 };
@@ -602,8 +602,8 @@ struct Lib3dsFile {
 	int materialByName(const char *name);
 	int cameraByName(const char *name);
 	int lightByName(const char *name);
-	int meshByName(const char *name);
-	Lib3dsNode *nodeByName(const char *name, Lib3dsNodeType type);
+	int meshByName(const Common::String &name);
+	Lib3dsNode *nodeByName(const Common::String &name, Lib3dsNodeType type);
 
 	Lib3dsMesh *meshForNode(Lib3dsNode *node);
 	Lib3dsNode *nodeById(unsigned short node_id);
@@ -665,7 +665,7 @@ extern LIB3DSAPI Lib3dsSpotlightNode *lib3ds_node_new_spotlight(Lib3dsLight *lig
 extern LIB3DSAPI Lib3dsTargetNode *lib3ds_node_new_spotlight_target(Lib3dsLight *light);
 extern LIB3DSAPI void lib3ds_node_free(Lib3dsNode *node);
 extern LIB3DSAPI void lib3ds_node_eval(Lib3dsNode *node, float t);
-extern LIB3DSAPI Lib3dsNode *lib3ds_node_by_name(Lib3dsNode *node, const char *name, Lib3dsNodeType type);
+extern LIB3DSAPI Lib3dsNode *lib3ds_node_by_name(Lib3dsNode *node, const Common::String &name, Lib3dsNodeType type);
 extern LIB3DSAPI Lib3dsNode *lib3ds_node_by_id(Lib3dsNode *node, unsigned short node_id);
 
 extern LIB3DSAPI void lib3ds_track_eval_bool(Lib3dsTrack<Lib3dsBoolKey> *track, int *b, float t);

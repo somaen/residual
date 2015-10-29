@@ -644,10 +644,10 @@ void Lib3dsFile::removeMesh(int index) {
 }
 
 
-int Lib3dsFile::meshByName(const char *name) {
+int Lib3dsFile::meshByName(const Common::String &name) {
 	for (int i = 0; i < _nmeshes; ++i) {
-		if (strcmp(_meshes[i]->_name, name) == 0) {
-			return (i);
+		if (_meshes[i]->_name == name) {
+			return i;
 		}
 	}
 	return -1;
@@ -662,7 +662,7 @@ Lib3dsMesh *Lib3dsFile::meshForNode(Lib3dsNode *node) {
 		return NULL;
 	n = (Lib3dsMeshInstanceNode *)node;
 
-	index = meshByName(node->name);
+	index = meshByName(node->_name);
 
 	return (index >= 0) ? _meshes[index] : NULL;
 }
@@ -682,14 +682,12 @@ Lib3dsMesh *Lib3dsFile::meshForNode(Lib3dsNode *node) {
  *
  * \see lib3ds_node_by_name
  */
-Lib3dsNode *Lib3dsFile::nodeByName(const char *name, Lib3dsNodeType type) {
-	Lib3dsNode *p, *q;
-
-	for (p = _nodes; p != 0; p = p->next) {
-		if ((p->type == type) && (strcmp(p->name, name) == 0)) {
+Lib3dsNode *Lib3dsFile::nodeByName(const Common::String &name, Lib3dsNodeType type) {
+	for (Lib3dsNode *p = _nodes; p != 0; p = p->next) {
+		if ((p->type == type) && (p->_name == name)) {
 			return (p);
 		}
-		q = lib3ds_node_by_name(p, name, type);
+		Lib3dsNode *q = lib3ds_node_by_name(p, name, type);
 		if (q) {
 			return (q);
 		}
@@ -899,7 +897,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 
 			index = file->meshByName(n->instance_name);
 			if (index < 0)
-				index = file->meshByName(node->name);
+				index = file->meshByName(node->_name);
 			if (index >= 0) {
 				Lib3dsMesh *mesh = file->_meshes[index];
 				Math::Matrix4 inv_matrix = mesh->_matrix;
@@ -975,7 +973,7 @@ void Lib3dsFile::createNodesForMeshes() {
 	for (int i = 0; i < _nmeshes; ++i) {
 		Lib3dsMesh *mesh = _meshes[i];
 		p = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
-		strcpy(p->name, mesh->_name);
+		p->_name = mesh->_name;
 		insertNode(p, NULL);
 	}
 }

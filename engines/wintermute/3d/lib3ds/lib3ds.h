@@ -287,6 +287,8 @@ struct Lib3dsCamera {
 	~Lib3dsCamera();
 };
 
+typedef Common::SharedPtr<Lib3dsCamera> Lib3dsCameraPtr;
+
 /** Light object */
 struct Lib3dsLight {
 	Lib3dsLight(const char *name);
@@ -420,46 +422,44 @@ struct Lib3dsNode {
 };
 
 struct Lib3dsFile {
-	unsigned                      _userId;
-	void                         *_userPtr;
-	unsigned                      _meshVersion;
-	unsigned                      _keyfRevision;
-	Common::String                _name;
-	float                         _masterScale;
-	float                         _constructionPlane[3];
-	float                         _ambient[3];
-	Lib3dsShadow                  _shadow;
-	Lib3dsBackground              _background;
-	Lib3dsAtmosphere              _atmosphere;
-	Lib3dsViewport                _viewport;
-	Lib3dsViewport                _viewportKeyf;
-	int                           _frames;
-	int                           _segmentFrom;
-	int                           _segmentTo;
-	int                           _currentFrame;
-	int                           _materialsSize;
-	int                           _nmaterials;
-	Lib3dsMaterial              **_materials;
-	int                           _camerasSize;
-	int                           _ncameras;
-	Lib3dsCamera                **_cameras;
-	int                           _lightsSize;
-	int                           _nlights;
-	Lib3dsLight                 **_lights;
-	int                           _meshesSize;
-	int                           _nmeshes;
-	Common::Array<Lib3dsMeshPtr>  _meshes;
-	Lib3dsNode                   *_nodes;
+	unsigned                           _userId;
+	void                              *_userPtr;
+	unsigned                           _meshVersion;
+	unsigned                           _keyfRevision;
+	Common::String                     _name;
+	float                              _masterScale;
+	float                              _constructionPlane[3];
+	float                              _ambient[3];
+	Lib3dsShadow                       _shadow;
+	Lib3dsBackground                   _background;
+	Lib3dsAtmosphere                   _atmosphere;
+	Lib3dsViewport                     _viewport;
+	Lib3dsViewport                     _viewportKeyf;
+	int                                _frames;
+	int                                _segmentFrom;
+	int                                _segmentTo;
+	int                                _currentFrame;
+	int                                _materialsSize;
+	int                                _nmaterials;
+	Lib3dsMaterial                   **_materials;
+	int                                _camerasSize;
+	Common::Array<Lib3dsCameraPtr>     _cameras;
+	int                                _lightsSize;
+	int                                _nlights;
+	Lib3dsLight                      **_lights;
+	int                                _meshesSize;
+	int                                _nmeshes;
+	Common::Array<Lib3dsMeshPtr>       _meshes;
+	Lib3dsNode                        *_nodes;
 	
 	Lib3dsFile();
 	~Lib3dsFile();
 	
 	void reserveMaterials(int size, int force);
-	void reserveCameras(int size, int force);
 	void reserveLights(int size, int force);
 
 	void insertMaterial(Lib3dsMaterial *material, int index);
-	void insertCamera(Lib3dsCamera *camera, int index);
+	void insertCamera(Lib3dsCameraPtr camera, int index);
 	void insertLight(Lib3dsLight *light, int index);
 	void insertMesh(Lib3dsMeshPtr mesh, int index);
 	void insertNode(Lib3dsNode *node, Lib3dsNode *at);

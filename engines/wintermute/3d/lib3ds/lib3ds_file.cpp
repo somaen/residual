@@ -94,8 +94,6 @@ Lib3dsFile::Lib3dsFile() {
 	_nmaterials = 0;
 	_materials = 0;
 	_camerasSize = 0;
-	_ncameras = 0;
-	_cameras = 0;
 	_lightsSize = 0;
 	_nlights = 0;
 	_lights = 0;
@@ -115,7 +113,6 @@ Lib3dsFile::Lib3dsFile() {
  */
 Lib3dsFile::~Lib3dsFile() {
 	reserveMaterials(0, true);
-	reserveCameras(0, true);
 	reserveLights(0, true);
 	{
 		Lib3dsNode *p, *q;
@@ -148,7 +145,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	char name[64];
 	uint16 chunk;
 	Lib3dsMeshPtr mesh;
-	Lib3dsCamera *camera = NULL;
+	Lib3dsCameraPtr camera;
 	Lib3dsLight *light = NULL;
 	uint32 objectFlags;
 
@@ -170,7 +167,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_N_CAMERA: {
-			camera = new Lib3dsCamera(name);
+			camera = Lib3dsCameraPtr(new Lib3dsCamera(name));
 			file->insertCamera(camera, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_camera_read(camera, io);
@@ -601,23 +598,21 @@ int Lib3dsFile::materialByName(const char *name) {
 }
 
 
-void Lib3dsFile::reserveCameras(int size, int force) {
-	lib3ds_util_reserve_array_delete(&_cameras, &_ncameras, &_camerasSize, size, force);
-}
-
-
-void Lib3dsFile::insertCamera(Lib3dsCamera *camera, int index) {
-	lib3ds_util_insert_array((void ** *)&_cameras, &_ncameras, &_camerasSize, camera, index);
+void Lib3dsFile::insertCamera(Lib3dsCameraPtr camera, int index) {
+	if (_cameras.size() <= index) {
+		_cameras.resize(index + 1);
+	}
+	_cameras[index] = camera;
 }
 
 
 void Lib3dsFile::removeCamera(int index) {
-	lib3ds_util_remove_array_delete(&_cameras, &_ncameras, index);
+	_cameras.remove_at(index);
 }
 
 
 int Lib3dsFile::cameraByName(const char *name) {
-	for (int i = 0; i < _ncameras; ++i) {
+	for (int i = 0; i < _cameras.size(); ++i) {
 		if (strcmp(_cameras[i]->_name, name) == 0) {
 			return (i);
 		}
@@ -887,7 +882,7 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 		}
 	}
 	if (include_cameras) {
-		for (int i = 0; i < _ncameras; ++i) {
+		for (int i = 0; i < _cameras.size(); ++i) {
 			lib3ds_vector_min(bmin, _cameras[i]->_position);
 			lib3ds_vector_max(bmax, _cameras[i]->_position);
 			lib3ds_vector_min(bmin, _cameras[i]->_target);
@@ -895,7 +890,7 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 		}
 	}
 	if (include_lights) {
-		for (int i = 0; i < _ncameras; ++i) {
+		for (int i = 0; i < _nlights; ++i) {
 			lib3ds_vector_min(bmin, _lights[i]->position);
 			lib3ds_vector_max(bmax, _lights[i]->position);
 			if (_lights[i]->spot_light) {

@@ -58,7 +58,7 @@ Lib3dsCamera::~Lib3dsCamera() {
  *
  * \see lib3ds_file_read
  */
-void lib3ds_camera_read(Lib3dsCamera *camera, Lib3dsIo *io) {
+void lib3ds_camera_read(Lib3dsCameraPtr camera, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 

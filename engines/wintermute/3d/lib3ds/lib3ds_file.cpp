@@ -93,8 +93,6 @@ Lib3dsFile::Lib3dsFile() {
 	_materialsSize = 0;
 	_camerasSize = 0;
 	_lightsSize = 0;
-	_nlights = 0;
-	_lights = 0;
 	_meshesSize = 0;
 	_nodes = 0;
 	
@@ -109,7 +107,6 @@ Lib3dsFile::Lib3dsFile() {
  * Free a Lib3dsFile object and all of its resources.
  */
 Lib3dsFile::~Lib3dsFile() {
-	reserveLights(0, true);
 	{
 		Lib3dsNode *p, *q;
 
@@ -142,7 +139,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	uint16 chunk;
 	Lib3dsMeshPtr mesh;
 	Lib3dsCameraPtr camera;
-	Lib3dsLight *light = NULL;
+	Lib3dsLightPtr light;
 	uint32 objectFlags;
 
 	lib3ds_chunk_read_start(&c, CHK_NAMED_OBJECT, io);
@@ -171,7 +168,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_N_DIRECT_LIGHT: {
-			light = new Lib3dsLight(name);
+			light = Lib3dsLightPtr(new Lib3dsLight(name));
 			file->insertLight(light, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_light_read(light, io);
@@ -614,24 +611,22 @@ int Lib3dsFile::cameraByName(const char *name) {
 }
 
 
-void Lib3dsFile::reserveLights(int size, int force) {
-	lib3ds_util_reserve_array((void ** *)&_lights, &_nlights, &_lightsSize,
-	                          size, force, (Lib3dsFreeFunc)lib3ds_light_free);
-}
 
-
-void Lib3dsFile::insertLight(Lib3dsLight *light, int index) {
-	lib3ds_util_insert_array((void ** *)&_lights, &_nlights, &_lightsSize, light, index);
+void Lib3dsFile::insertLight(Lib3dsLightPtr light, int index) {
+	if (_lights.size() <= index) {
+		_lights.resize(index + 1);
+	}
+	_lights[index] = light;
 }
 
 
 void Lib3dsFile::removeLight(int index) {
-	lib3ds_util_remove_array((void ** *)&_lights, &_nlights, index, (Lib3dsFreeFunc)lib3ds_light_free);
+	_lights.remove_at(index);
 }
 
 
 int Lib3dsFile::lightByName(const char *name) {
-	for (int i = 0; i < _nlights; ++i) {
+	for (int i = 0; i < _lights.size(); ++i) {
 		if (strcmp(_lights[i]->name, name) == 0) {
 			return (i);
 		}
@@ -883,7 +878,7 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 		}
 	}
 	if (include_lights) {
-		for (int i = 0; i < _nlights; ++i) {
+		for (int i = 0; i < _lights.size(); ++i) {
 			lib3ds_vector_min(bmin, _lights[i]->position);
 			lib3ds_vector_max(bmax, _lights[i]->position);
 			if (_lights[i]->spot_light) {

@@ -34,7 +34,7 @@ void lib3ds_light_free(Lib3dsLight *light) {
 }
 
 
-static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
+static void spotlight_read(Lib3dsLightPtr light, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 
@@ -113,7 +113,7 @@ static void spotlight_read(Lib3dsLight *light, Lib3dsIo *io) {
 }
 
 
-void lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io) {
+void lib3ds_light_read(Lib3dsLightPtr light, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 

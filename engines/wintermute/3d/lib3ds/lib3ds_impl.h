@@ -282,7 +282,7 @@ extern void lib3ds_shadow_read(Lib3dsShadow *shadow, Lib3dsIo *io);
 extern void lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io);;
 extern void lib3ds_material_read(Lib3dsMaterialPtr material, Lib3dsIo *io);
 extern void lib3ds_camera_read(Lib3dsCameraPtr camera, Lib3dsIo *io);
-extern void lib3ds_light_read(Lib3dsLight *light, Lib3dsIo *io);
+extern void lib3ds_light_read(Lib3dsLightPtr light, Lib3dsIo *io);
 extern void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMeshPtr mesh, Lib3dsIo *io);
 extern void lib3ds_track_read(Lib3dsTrack<Lib3dsBoolKey> *track, Lib3dsIo *io);
 extern void lib3ds_track_read(Lib3dsTrack<Lib3dsFloatKey> *track, Lib3dsIo *io);

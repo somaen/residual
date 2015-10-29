@@ -325,6 +325,8 @@ struct Lib3dsLight {
 	float          falloff;
 };
 
+typedef Common::SharedPtr<Lib3dsLight> Lib3dsLightPtr;
+
 /* Texture map projection */
 enum {
 	LIB3DS_MAP_NONE           = -1,
@@ -446,8 +448,7 @@ struct Lib3dsFile {
 	int                                _camerasSize;
 	Common::Array<Lib3dsCameraPtr>     _cameras;
 	int                                _lightsSize;
-	int                                _nlights;
-	Lib3dsLight                      **_lights;
+	Common::Array<Lib3dsLightPtr>      _lights;
 	int                                _meshesSize;
 	Common::Array<Lib3dsMeshPtr>       _meshes;
 	Lib3dsNode                        *_nodes;
@@ -455,11 +456,9 @@ struct Lib3dsFile {
 	Lib3dsFile();
 	~Lib3dsFile();
 
-	void reserveLights(int size, int force);
-
 	void insertMaterial(Lib3dsMaterialPtr material, int index);
 	void insertCamera(Lib3dsCameraPtr camera, int index);
-	void insertLight(Lib3dsLight *light, int index);
+	void insertLight(Lib3dsLightPtr light, int index);
 	void insertMesh(Lib3dsMeshPtr mesh, int index);
 	void insertNode(Lib3dsNode *node, Lib3dsNode *at);
 

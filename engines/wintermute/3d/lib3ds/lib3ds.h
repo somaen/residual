@@ -653,6 +653,7 @@ struct Lib3dsFile {
 };
 
 extern LIB3DSAPI Lib3dsFile *lib3ds_file_open(const char *filename);
+extern LIB3DSAPI Lib3dsFile *lib3ds_file_open(Common::SeekableReadStream *stream);
 extern LIB3DSAPI int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io);
 
 extern LIB3DSAPI void lib3ds_material_free(Lib3dsMaterial *material);

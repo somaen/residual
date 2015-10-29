@@ -265,6 +265,8 @@ struct Lib3dsChunk {
 	uint32 cur;
 };
 
+struct Lib3dsIo;
+
 extern void lib3ds_chunk_read(Lib3dsChunk *c, Lib3dsIo *io);
 extern void lib3ds_chunk_read_start(Lib3dsChunk *c, uint16 chunk, Lib3dsIo *io);
 extern void lib3ds_chunk_read_tell(Lib3dsChunk *c, Lib3dsIo *io);

@@ -25,6 +25,8 @@
 #include <assert.h>
 #include <math.h>
 
+int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io);
+
 /*!
  * Loads a .3DS file from disk into memory.
  *

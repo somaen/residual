@@ -472,7 +472,7 @@ public:
 	unsigned        flags;
 	int             nkeys;
 	void resize(int newSize) {
-		keys.reserve(newSize);
+		keys.resize(newSize);
 	}
 	Common::Array<T> keys;
 	Lib3dsTrackType _type;

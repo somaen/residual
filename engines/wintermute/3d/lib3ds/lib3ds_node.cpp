@@ -245,59 +245,6 @@ Lib3dsTargetNode *lib3ds_node_new_spotligf_target(Lib3dsLight *light) {
 
 static void free_node_and_childs(Lib3dsNode *node) {
 	assert(node);
-	switch (node->type) {
-	case LIB3DS_NODE_AMBIENT_COLOR: {
-		Lib3dsAmbientColorNode *n = (Lib3dsAmbientColorNode *)node;
-		n->color_track.resize(0);
-		break;
-	}
-
-	case LIB3DS_NODE_MESH_INSTANCE: {
-		Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-		n->pos_track.resize(0);
-		n->rot_track.resize(0);
-		n->scl_track.resize(0);
-		n->hide_track.resize(0);
-		break;
-	}
-
-	case LIB3DS_NODE_CAMERA: {
-		Lib3dsCameraNode *n = (Lib3dsCameraNode *)node;
-		n->pos_track.resize(0);
-		n->fov_track.resize(0);
-		n->roll_track.resize(0);
-		break;
-	}
-
-	case LIB3DS_NODE_CAMERA_TARGET: {
-		Lib3dsTargetNode *n = (Lib3dsTargetNode *)node;
-		n->pos_track.resize(0);
-		break;
-	}
-
-	case LIB3DS_NODE_OMNILIGHT: {
-		Lib3dsOmnilightNode *n = (Lib3dsOmnilightNode *)node;
-		n->pos_track.resize(0);
-		n->color_track.resize(0);
-		break;
-	}
-
-	case LIB3DS_NODE_SPOTLIGHT: {
-		Lib3dsSpotlightNode *n = (Lib3dsSpotlightNode *)node;
-		n->pos_track.resize(0);
-		n->color_track.resize(0);
-		n->hotspot_track.resize(0);
-		n->falloff_track.resize(0);
-		n->roll_track.resize(0);
-		break;
-	}
-
-	case LIB3DS_NODE_SPOTLIGHT_TARGET: {
-		Lib3dsTargetNode *n = (Lib3dsTargetNode *)node;
-		n->pos_track.resize(0);
-		break;
-	}
-	}
 	{
 		Lib3dsNode *p, *q;
 		for (p = node->childs; p; p = q) {
@@ -305,7 +252,7 @@ static void free_node_and_childs(Lib3dsNode *node) {
 			free_node_and_childs(p);
 		}
 	}
-	free(node);
+	delete node;
 }
 
 

@@ -17,7 +17,43 @@
 */
 #include "lib3ds_impl.h"
 #include "lib3ds_io.h"
-#include <string.h>
+
+Lib3dsView::Lib3dsView() {
+	type = 0;
+	axis_lock = 0;
+	zoom = 0;
+	horiz_angle = 0;
+	vert_angle = 0;
+	for (int i = 0; i < 2; i++) {
+		position[i] = 0;
+		size[i] = 0;
+	}
+	for (int i = 0; i < 11; i++) {
+		camera[i] = 0;
+	}
+}
+
+Lib3dsViewport::Lib3dsViewport() {
+	layout_style = 0;
+	layout_active = 0;
+	layout_swap = 0;
+	layout_swap_prior = 0;
+	layout_swap_view = 0;
+	layout_nviews = 0;
+	default_type = 0;
+	default_width = 0;
+	default_horiz_angle = 0;
+	default_vert_angle = 0;
+	default_roll_angle = 0;
+
+	for (int i = 0; i < 64; i++) {
+		default_camera[i] = 0;
+	}
+	for (int i = 0; i < 2; i++) {
+		layout_position[i] = 0;
+		layout_size[i] = 0;
+	}
+}
 
 void lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 	Lib3dsChunk c;
@@ -25,7 +61,6 @@ void lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 
 	Common::SeekableReadStream *stream = io->stream;
 
-	memset(viewport, 0, sizeof(*viewport));
 	lib3ds_chunk_read_start(&c, 0, io);
 	switch (c.chunk) {
 	case CHK_VIEWPORT_LAYOUT: {

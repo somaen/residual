@@ -116,6 +116,7 @@ enum Lib3dsLayoutStyle {
 
 /* Layout view settings */
 struct Lib3dsView {
+	Lib3dsView();
 	int         type;
 	unsigned    axis_lock;
 	short       position[2];
@@ -131,6 +132,7 @@ struct Lib3dsView {
 
 /* Viewport and default view settings */
 struct Lib3dsViewport {
+	Lib3dsViewport();
 	int             layout_style;
 	int             layout_active;
 	int             layout_swap;

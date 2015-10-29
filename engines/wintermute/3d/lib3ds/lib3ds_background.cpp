@@ -17,11 +17,9 @@
 */
 #include "lib3ds_impl.h"
 #include "lib3ds_io.h"
-#include <string.h>
 #include <math.h>
 
-static void
-solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {
+static void solid_bgnd_read(Lib3dsBackground *background, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 	int have_lin = false;

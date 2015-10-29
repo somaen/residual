@@ -20,7 +20,6 @@
  */
 
 #include "math/quat.h"
-#include <stddef.h>
 
 void lib3ds_quat_identity(Math::Quaternion &c);
 void lib3ds_quat_copy(Math::Quaternion &dest, const Math::Quaternion &src);

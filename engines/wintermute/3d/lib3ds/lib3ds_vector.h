@@ -20,8 +20,6 @@
  */
 
 #include "common/stream.h"
-#include <stddef.h>
-
 
 /**
     Sets all components of a vector to zero.

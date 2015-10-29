@@ -23,7 +23,6 @@
     Header file for public API defined by lib3ds */
 #include "common/scummsys.h"
 #include "math/quat.h"
-#include <stddef.h>
 
 void lib3ds_matrix_zero(Math::Matrix4 &m);
 void lib3ds_matrix_identity(Math::Matrix4 &m);

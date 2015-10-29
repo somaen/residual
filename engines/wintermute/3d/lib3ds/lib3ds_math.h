@@ -22,7 +22,6 @@
 /** @file lib3ds.h
     Header file for public API defined by lib3ds */
 #include "common/stream.h"
-#include <stddef.h>
 
 /**
     Calculates the ease in/out function. See Lib3dsKey for details.

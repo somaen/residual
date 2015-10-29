@@ -19,8 +19,7 @@
 #include "lib3ds_io.h"
 #include <string.h>
 
-void
-lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
+void lib3ds_viewport_read(Lib3dsViewport *viewport, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 

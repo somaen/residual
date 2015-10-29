@@ -27,7 +27,6 @@
 #include "math/quat.h"
 #include "common/array.h"
 #include "common/ptr.h"
-#include <stddef.h>
 
 /** @defgroup api API
     lib3ds public API. */

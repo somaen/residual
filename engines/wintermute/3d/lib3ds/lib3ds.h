@@ -198,10 +198,10 @@ enum Lib3dsShading {
 
 /** Material */
 struct Lib3dsMaterial {
-	Lib3dsMaterial(const char *name);
+	Lib3dsMaterial(const Common::String &name);
 	uint32              user_id;
 	void               *user_ptr;
-	char                name[64];           /* Material name */
+	Common::String     _name;           /* Material name */
 	float               ambient[3];         /* Material ambient reflectivity */
 	float               diffuse[3];         /* Material diffuse reflectivity */
 	float               specular[3];        /* Material specular reflectivity */
@@ -260,19 +260,19 @@ enum Lib3dsObjectFlags {
 
 /** Camera object */
 struct Lib3dsCamera {
-	unsigned    _userId;
-	void       *_userPtr;
-	char        _name[64];
-	unsigned    _objectFlags; /*< @see Lib3dsObjectFlags */
-	float       _position[3];
-	float       _target[3];
-	float       _roll;
-	float       _fov;
-	int         _seeCone;
-	float       _nearRange;
-	float       _farRange;
+	unsigned        _userId;
+	void           *_userPtr;
+	Common::String  _name;
+	unsigned        _objectFlags; /*< @see Lib3dsObjectFlags */
+	float           _position[3];
+	float           _target[3];
+	float           _roll;
+	float           _fov;
+	int             _seeCone;
+	float           _nearRange;
+	float           _farRange;
 	
-	Lib3dsCamera(const char *name);
+	Lib3dsCamera(const Common::String &name);
 	~Lib3dsCamera();
 };
 
@@ -280,36 +280,36 @@ typedef Common::SharedPtr<Lib3dsCamera> Lib3dsCameraPtr;
 
 /** Light object */
 struct Lib3dsLight {
-	Lib3dsLight(const char *name);
-	unsigned       user_id;
-	void          *user_ptr;
-	char           name[64];
-	unsigned       object_flags;
-	int            spot_light;     /* bool */
-	int            see_cone;
-	float          color[3];
-	float          position[3];
-	Math::Vector3d target;
-	float          roll;
-	int            off;              /* bool */
-	float          outer_range;
-	float          inner_range;
-	float          multiplier;
-	/*const char**  excludes;*/
-	float          attenuation;
-	int            rectangular_spot;   /* bool */
-	int            shadowed;           /* bool */
-	float          shadow_bias;
-	float          shadow_filter;
-	int            shadow_size;
-	float          spot_aspect;
-	int            use_projector;
-	char           projector[64];
-	int            spot_overshoot;      /* bool */
-	int            ray_shadows;         /* bool */
-	float          ray_bias;
-	float          hotspot;
-	float          falloff;
+	Lib3dsLight(const Common::String &name);
+	unsigned            user_id;
+	void               *user_ptr;
+	Common::String     _name;
+	unsigned            object_flags;
+	int                 spot_light;     /* bool */
+	int                 see_cone;
+	float               color[3];
+	float               position[3];
+	Math::Vector3d      target;
+	float               roll;
+	int                 off;              /* bool */
+	float               outer_range;
+	float               inner_range;
+	float               multiplier;
+	/*const char**       excludes;*/
+	float               attenuation;
+	int                 rectangular_spot;   /* bool */
+	int                 shadowed;           /* bool */
+	float               shadow_bias;
+	float               shadow_filter;
+	int                 shadow_size;
+	float               spot_aspect;
+	int                 use_projector;
+	char                projector[64];
+	int                 spot_overshoot;      /* bool */
+	int                 ray_shadows;         /* bool */
+	float               ray_bias;
+	float               hotspot;
+	float               falloff;
 };
 
 typedef Common::SharedPtr<Lib3dsLight> Lib3dsLightPtr;

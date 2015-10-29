@@ -108,7 +108,7 @@ Lib3dsAmbientColorNode *lib3ds_node_new_ambient_color(float color0[3]) {
 }
 
 
-Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instance_name, float pos0[3], float scl0[3], const Math::Quaternion &rot0) {
+Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const char *instanceName, float pos0[3], float scl0[3], const Math::Quaternion &rot0) {
 	Lib3dsMeshInstanceNode *n;
 
 	Lib3dsNode *node = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
@@ -119,8 +119,8 @@ Lib3dsMeshInstanceNode *lib3ds_node_new_mesh_instance(Lib3dsMesh *mesh, const ch
 	}
 
 	n = (Lib3dsMeshInstanceNode *)node;
-	if (instance_name) {
-		strcpy(n->instance_name, instance_name);
+	if (instanceName) {
+		n->_instanceName = instanceName;
 	}
 
 	n->pos_track.resize(1);
@@ -187,7 +187,7 @@ Lib3dsOmnilightNode *lib3ds_node_new_omnilight(Lib3dsLight *light) {
 
 	assert(light);
 	node = lib3ds_node_new(LIB3DS_NODE_OMNILIGHT);
-	node->_name = light->name;
+	node->_name = light->_name;
 
 	n = (Lib3dsOmnilightNode *)node;
 	n->pos_track.resize(1);
@@ -206,7 +206,7 @@ Lib3dsSpotlightNode *lib3ds_node_new_spotlight(Lib3dsLight *light) {
 
 	assert(light);
 	node = lib3ds_node_new(LIB3DS_NODE_SPOTLIGHT);
-	node->_name = light->name;
+	node->_name = light->_name;
 
 	n = (Lib3dsSpotlightNode *)node;
 	n->pos_track.resize(1);
@@ -234,7 +234,7 @@ Lib3dsTargetNode *lib3ds_node_new_spotligf_target(Lib3dsLight *light) {
 
 	assert(light);
 	node = lib3ds_node_new(LIB3DS_NODE_SPOTLIGHT_TARGET);
-	node->_name = light->name;
+	node->_name = light->_name;
 
 	n = (Lib3dsTargetNode *)node;
 	n->pos_track.resize(1);
@@ -506,7 +506,7 @@ void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io) {
 		case CHK_INSTANCE_NAME: {
 			if (node->type == LIB3DS_NODE_MESH_INSTANCE) {
 				Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
-				lib3ds_io_read_string(io, n->instance_name, 64);
+				lib3ds_io_read_string(io, n->_instanceName, 64);
 			} else {
 				lib3ds_chunk_unknown(chunk, io);
 			}

@@ -21,11 +21,7 @@
 #include <assert.h>
 #include <math.h>
 
-Lib3dsLight::Lib3dsLight(const char *name) {
-	assert(name);
-	assert(strlen(name) < 64);
-
-	strcpy(this->name, name);
+Lib3dsLight::Lib3dsLight(const Common::String &name) : _name(name) {
 }
 
 

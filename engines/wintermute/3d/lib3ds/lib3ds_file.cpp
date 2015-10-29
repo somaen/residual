@@ -329,7 +329,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_ENTRY: {
-			Lib3dsMaterialPtr material(new Lib3dsMaterial(NULL));
+			Lib3dsMaterialPtr material(new Lib3dsMaterial(""));
 			file->pushMaterial(material);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_material_read(material, io);
@@ -562,7 +562,7 @@ void Lib3dsFile::pushMaterial(Lib3dsMaterialPtr material) {
 
 int Lib3dsFile::materialByName(const char *name) {
 	for (int i = 0; i < _materials.size(); ++i) {
-		if (strcmp(_materials[i]->name, name) == 0) {
+		if (_materials[i]->_name == name) {
 			return (i);
 		}
 	}
@@ -577,7 +577,7 @@ void Lib3dsFile::pushCamera(Lib3dsCameraPtr camera) {
 
 int Lib3dsFile::cameraByName(const char *name) {
 	for (int i = 0; i < _cameras.size(); ++i) {
-		if (strcmp(_cameras[i]->_name, name) == 0) {
+		if (_cameras[i]->_name == name) {
 			return (i);
 		}
 	}
@@ -593,7 +593,7 @@ void Lib3dsFile::pushLight(Lib3dsLightPtr light) {
 
 int Lib3dsFile::lightByName(const char *name) {
 	for (int i = 0; i < _lights.size(); ++i) {
-		if (strcmp(_lights[i]->name, name) == 0) {
+		if (_lights[i]->_name == name) {
 			return (i);
 		}
 	}
@@ -857,7 +857,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 			int index;
 			Lib3dsMeshInstanceNode *n = (Lib3dsMeshInstanceNode *)node;
 
-			index = file->meshByName(n->instance_name);
+			index = file->meshByName(n->_instanceName);
 			if (index < 0)
 				index = file->meshByName(node->_name);
 			if (index >= 0) {

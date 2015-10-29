@@ -31,12 +31,7 @@
  *
  * \return Lib3dsCamera object or NULL on failure.
  */
-Lib3dsCamera::Lib3dsCamera(const char *name) {
-	assert(name);
-	assert(strlen(name) < 64);
-
-	strcpy(this->_name, name);
-	_fov = 45.0f;
+Lib3dsCamera::Lib3dsCamera(const Common::String &name) : _name(name), _fov(45.0f) {
 }
 
 

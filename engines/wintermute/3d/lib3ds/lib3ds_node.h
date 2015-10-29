@@ -26,7 +26,7 @@ struct Lib3dsAmbientColorNode : public Lib3dsNode {
 
 struct Lib3dsMeshInstanceNode : public Lib3dsNode {
 	Math::Vector3d        pivot;
-	char                  instance_name[64];
+	Common::String       _instanceName;
 	Math::Vector3d        bbox_min;
 	Math::Vector3d        bbox_max;
 	int                   hide;

@@ -37,10 +37,7 @@ static void initialize_texture_map(Lib3dsTextureMap *map) {
  * \return A pointer to the Lib3dsMaterial structure.
  *  If the structure cannot be allocated, NULL is returned.
  */
-Lib3dsMaterial::Lib3dsMaterial(const char *name) {
-	if (name) {
-		strcpy(this->name, name);
-	}
+Lib3dsMaterial::Lib3dsMaterial(const Common::String &name) : _name(name) {
 	ambient[0] = ambient[1] = ambient[2] = 0.588235f;
 	diffuse[0] = diffuse[1] = diffuse[2] = 0.588235f;
 	specular[0] = specular[1] = specular[2] = 0.898039f;
@@ -257,8 +254,8 @@ void lib3ds_material_read(Lib3dsMaterialPtr material, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_MAT_NAME: {
-			lib3ds_io_read_string(io, material->name, 64);
-			lib3ds_io_log(io, LIB3DS_LOG_INFO, "  NAME=%s", material->name);
+			lib3ds_io_read_string(io, material->_name, 64);
+			lib3ds_io_log(io, LIB3DS_LOG_INFO, "  NAME=%s", material->_name.c_str());
 			break;
 		}
 

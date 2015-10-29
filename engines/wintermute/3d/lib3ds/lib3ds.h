@@ -443,13 +443,9 @@ struct Lib3dsFile {
 	int                                _segmentFrom;
 	int                                _segmentTo;
 	int                                _currentFrame;
-	int                                _materialsSize;
 	Common::Array<Lib3dsMaterialPtr>   _materials;
-	int                                _camerasSize;
 	Common::Array<Lib3dsCameraPtr>     _cameras;
-	int                                _lightsSize;
 	Common::Array<Lib3dsLightPtr>      _lights;
-	int                                _meshesSize;
 	Common::Array<Lib3dsMeshPtr>       _meshes;
 	Lib3dsNode                        *_nodes;
 	

@@ -90,10 +90,6 @@ Lib3dsFile::Lib3dsFile() {
 	_segmentFrom = 0;
 	_segmentTo = 0;
 	_currentFrame = 0;
-	_materialsSize = 0;
-	_camerasSize = 0;
-	_lightsSize = 0;
-	_meshesSize = 0;
 	_nodes = 0;
 	
 	for (int i = 0; i < 3; i++) {

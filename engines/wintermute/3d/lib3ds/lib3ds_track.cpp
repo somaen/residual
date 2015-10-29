@@ -20,7 +20,6 @@
 #include "lib3ds_vector.h"
 #include "lib3ds_quat.h"
 #include "lib3ds_math.h"
-#include <string.h>
 #include <assert.h>
 #include <math.h>
 

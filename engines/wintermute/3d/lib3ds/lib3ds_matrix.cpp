@@ -24,7 +24,6 @@
 #include "lib3ds_vector.h"
 #include "lib3ds_quat.h"
 #include "math/vector3d.h"
-#include <string.h>
 #include <math.h>
 
 /*!

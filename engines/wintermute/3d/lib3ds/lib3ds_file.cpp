@@ -21,7 +21,6 @@
 #include "lib3ds_node.h"
 #include "lib3ds_vector.h"
 #include <float.h>
-#include <string.h>
 #include <assert.h>
 #include <math.h>
 

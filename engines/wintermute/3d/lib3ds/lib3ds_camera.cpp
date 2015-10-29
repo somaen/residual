@@ -17,8 +17,6 @@
 */
 #include "lib3ds_impl.h"
 #include "lib3ds_io.h"
-#include <string.h>
-#include <assert.h>
 #include <math.h>
 
 /*!

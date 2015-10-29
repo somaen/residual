@@ -17,8 +17,6 @@
 */
 #include "lib3ds_impl.h"
 #include "lib3ds_io.h"
-#include <string.h>
-#include <assert.h>
 #include <math.h>
 
 Lib3dsLight::Lib3dsLight(const Common::String &name) : _name(name) {

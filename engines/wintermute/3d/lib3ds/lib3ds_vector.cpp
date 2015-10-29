@@ -167,7 +167,3 @@ void lib3ds_vector_max(Math::Vector3d &c, const Math::Vector3d &a) {
 }
 
 
-void lib3ds_vector_dump(Math::Vector3d &c) {
-	fprintf(stderr, "%f %f %f\n", c.getValue(0), c.getValue(1), c.getValue(2));
-}
-

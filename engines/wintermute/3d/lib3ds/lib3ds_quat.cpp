@@ -21,7 +21,6 @@
 
 #include "lib3ds_impl.h"
 #include "math/quat.h"
-#include <stdio.h>
 #include <math.h>
 
 /*!
@@ -242,9 +241,3 @@ void lib3ds_quat_tangent(Math::Quaternion &c, const Math::Quaternion &p, const M
 	lib3ds_quat_exp(x);
 	lib3ds_quat_mul(c, q, x);
 }
-
-
-void lib3ds_quat_dump(const Math::Quaternion &q) {
-	printf("%f %f %f %f\n", q.x(), q.y(), q.z(), q.w());
-}
-

@@ -206,7 +206,7 @@ Common::Array<Math::Vector3d> Lib3dsMesh::calculateVertexNormals() {
 }
 
 
-static void face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
+static void face_array_read(Lib3dsFile *file, Lib3dsMeshPtr mesh, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 	uint16 nfaces;
@@ -277,7 +277,7 @@ static void face_array_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
 }
 
 
-void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMesh *mesh, Lib3dsIo *io) {
+void lib3ds_mesh_read(Lib3dsFile *file, Lib3dsMeshPtr mesh, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 

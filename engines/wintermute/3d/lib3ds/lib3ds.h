@@ -26,6 +26,7 @@
 #include "math/vector2d.h"
 #include "math/quat.h"
 #include "common/array.h"
+#include "common/ptr.h"
 #include <stddef.h>
 
 #ifndef LIB3DSAPI
@@ -391,6 +392,8 @@ struct Lib3dsMesh {
 	Common::Array<Math::Vector3d> calculateVertexNormals();
 };
 
+typedef Common::SharedPtr<Lib3dsMesh> Lib3dsMeshPtr;
+
 enum Lib3dsNodeType {
 	LIB3DS_NODE_AMBIENT_COLOR   = 0,
 	LIB3DS_NODE_MESH_INSTANCE   = 1,
@@ -549,36 +552,36 @@ struct Lib3dsSpotlightNode : public Lib3dsNode  {
 };
 
 struct Lib3dsFile {
-	unsigned            _userId;
-	void               *_userPtr;
-	unsigned            _meshVersion;
-	unsigned            _keyfRevision;
-	Common::String      _name;
-	float               _masterScale;
-	float               _constructionPlane[3];
-	float               _ambient[3];
-	Lib3dsShadow        _shadow;
-	Lib3dsBackground    _background;
-	Lib3dsAtmosphere    _atmosphere;
-	Lib3dsViewport      _viewport;
-	Lib3dsViewport      _viewportKeyf;
-	int                 _frames;
-	int                 _segmentFrom;
-	int                 _segmentTo;
-	int                 _currentFrame;
-	int                 _materialsSize;
-	int                 _nmaterials;
-	Lib3dsMaterial    **_materials;
-	int                 _camerasSize;
-	int                 _ncameras;
-	Lib3dsCamera      **_cameras;
-	int                 _lightsSize;
-	int                 _nlights;
-	Lib3dsLight       **_lights;
-	int                 _meshesSize;
-	int                 _nmeshes;
-	Lib3dsMesh        **_meshes;
-	Lib3dsNode         *_nodes;
+	unsigned                      _userId;
+	void                         *_userPtr;
+	unsigned                      _meshVersion;
+	unsigned                      _keyfRevision;
+	Common::String                _name;
+	float                         _masterScale;
+	float                         _constructionPlane[3];
+	float                         _ambient[3];
+	Lib3dsShadow                  _shadow;
+	Lib3dsBackground              _background;
+	Lib3dsAtmosphere              _atmosphere;
+	Lib3dsViewport                _viewport;
+	Lib3dsViewport                _viewportKeyf;
+	int                           _frames;
+	int                           _segmentFrom;
+	int                           _segmentTo;
+	int                           _currentFrame;
+	int                           _materialsSize;
+	int                           _nmaterials;
+	Lib3dsMaterial              **_materials;
+	int                           _camerasSize;
+	int                           _ncameras;
+	Lib3dsCamera                **_cameras;
+	int                           _lightsSize;
+	int                           _nlights;
+	Lib3dsLight                 **_lights;
+	int                           _meshesSize;
+	int                           _nmeshes;
+	Common::Array<Lib3dsMeshPtr>  _meshes;
+	Lib3dsNode                   *_nodes;
 	
 	Lib3dsFile();
 	~Lib3dsFile();
@@ -586,12 +589,11 @@ struct Lib3dsFile {
 	void reserveMaterials(int size, int force);
 	void reserveCameras(int size, int force);
 	void reserveLights(int size, int force);
-	void reserveMeshes(int size, int force);
 
 	void insertMaterial(Lib3dsMaterial *material, int index);
 	void insertCamera(Lib3dsCamera *camera, int index);
 	void insertLight(Lib3dsLight *light, int index);
-	void insertMesh(Lib3dsMesh *mesh, int index);
+	void insertMesh(Lib3dsMeshPtr mesh, int index);
 	void insertNode(Lib3dsNode *node, Lib3dsNode *at);
 
 	void removeMaterial(int index);
@@ -606,7 +608,7 @@ struct Lib3dsFile {
 	int meshByName(const Common::String &name);
 	Lib3dsNode *nodeByName(const Common::String &name, Lib3dsNodeType type);
 
-	Lib3dsMesh *meshForNode(Lib3dsNode *node);
+	Lib3dsMeshPtr meshForNode(Lib3dsNode *node);
 	Lib3dsNode *nodeById(unsigned short node_id);
 	void appendNode(Lib3dsNode *node, Lib3dsNode *parent);
 	void minmaxNodeId(unsigned short *min_id, unsigned short *max_id);

@@ -98,7 +98,6 @@ Lib3dsFile::Lib3dsFile() {
 	_lights = 0;
 	_meshesSize = 0;
 	_nmeshes = 0;
-	_meshes = 0;
 	_nodes = 0;
 	
 	for (int i = 0; i < 3; i++) {
@@ -115,7 +114,6 @@ Lib3dsFile::~Lib3dsFile() {
 	reserveMaterials(0, true);
 	reserveCameras(0, true);
 	reserveLights(0, true);
-	reserveMeshes(0, true);
 	{
 		Lib3dsNode *p, *q;
 
@@ -146,7 +144,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	char name[64];
 	uint16 chunk;
-	Lib3dsMesh *mesh = NULL;
+	Lib3dsMeshPtr mesh;
 	Lib3dsCamera *camera = NULL;
 	Lib3dsLight *light = NULL;
 	uint32 objectFlags;
@@ -161,7 +159,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 	while ((chunk = lib3ds_chunk_read_next(&c, io)) != 0) {
 		switch (chunk) {
 		case CHK_N_TRI_OBJECT: {
-			mesh = new Lib3dsMesh(name);
+			Lib3dsMeshPtr mesh(new Lib3dsMesh(name));
 			file->insertMesh(mesh, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_mesh_read(file, mesh, io);
@@ -651,18 +649,16 @@ int Lib3dsFile::lightByName(const char *name) {
 }
 
 
-void Lib3dsFile::reserveMeshes(int size, int force) {
-	lib3ds_util_reserve_array_delete(&_meshes, &_nmeshes, &_meshesSize, size, force);
-}
-
-
-void Lib3dsFile::insertMesh(Lib3dsMesh *mesh, int index) {
-	lib3ds_util_insert_array((void ** *)&_meshes, &_nmeshes, &_meshesSize, mesh, index);
+void Lib3dsFile::insertMesh(Lib3dsMeshPtr mesh, int index) {
+	if (_meshes.size() <= index) {
+		_meshes.resize(index + 1);
+	}
+	_meshes[index] = mesh;
 }
 
 
 void Lib3dsFile::removeMesh(int index) {
-	lib3ds_util_remove_array_delete(&_meshes, &_nmeshes, index);
+	_meshes.remove_at(index);
 }
 
 
@@ -676,17 +672,17 @@ int Lib3dsFile::meshByName(const Common::String &name) {
 }
 
 
-Lib3dsMesh *Lib3dsFile::meshForNode(Lib3dsNode *node) {
+Lib3dsMeshPtr Lib3dsFile::meshForNode(Lib3dsNode *node) {
 	int index;
 	Lib3dsMeshInstanceNode *n;
 
 	if (node->type != LIB3DS_NODE_MESH_INSTANCE)
-		return NULL;
+		return Lib3dsMeshPtr();
 	n = (Lib3dsMeshInstanceNode *)node;
 
 	index = meshByName(node->_name);
 
-	return (index >= 0) ? _meshes[index] : NULL;
+	return (index >= 0) ? _meshes[index] : Lib3dsMeshPtr();
 }
 
 
@@ -921,7 +917,7 @@ static void file_bounding_box_of_nodes_impl(Lib3dsNode *node, Lib3dsFile *file,
 			if (index < 0)
 				index = file->meshByName(node->_name);
 			if (index >= 0) {
-				Lib3dsMesh *mesh = file->_meshes[index];
+				Lib3dsMeshPtr mesh = file->_meshes[index];
 				Math::Matrix4 inv_matrix = mesh->_matrix;
 				inv_matrix.inverse();
 				Math::Matrix4 M = matrix * node->matrix;
@@ -993,7 +989,7 @@ void Lib3dsFile::createNodesForMeshes() {
 	Lib3dsNode *p;
 
 	for (int i = 0; i < _nmeshes; ++i) {
-		Lib3dsMesh *mesh = _meshes[i];
+		Lib3dsMeshPtr mesh = _meshes[i];
 		p = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
 		p->_name = mesh->_name;
 		insertNode(p, NULL);

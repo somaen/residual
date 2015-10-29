@@ -67,7 +67,7 @@ void lib3ds_io_log(Lib3dsIo *io, Lib3dsLogLevel level, const char *format, ...) 
 	lib3ds_io_log_str(io, level, str);
 
 	if (level == LIB3DS_LOG_ERROR) {
-		longjmp(((Lib3dsIoImpl *)io->impl)->jmpbuf, 1);
+		error("LIB3DS: %s", str);
 	}
 }
 

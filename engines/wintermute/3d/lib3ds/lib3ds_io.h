@@ -34,7 +34,6 @@ struct Lib3dsIo {
 };
 
 struct Lib3dsIoImpl {
-	jmp_buf jmpbuf;
 	int log_indent;
 	void *tmp_mem;
 	Lib3dsNode *tmp_node;

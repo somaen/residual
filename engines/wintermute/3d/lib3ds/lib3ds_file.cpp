@@ -506,11 +506,6 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 	lib3ds_io_setup(io);
 	impl = (Lib3dsIoImpl *)io->impl;
 
-	if (setjmp(impl->jmpbuf) != 0) {
-		lib3ds_io_cleanup(io);
-		return false;
-	}
-
 	lib3ds_chunk_read_start(&c, 0, io);
 	switch (c.chunk) {
 	case CHK_MDATA: {
@@ -555,7 +550,6 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 	lib3ds_chunk_read_end(&c, io);
 
-	memset(impl->jmpbuf, 0, sizeof(impl->jmpbuf));
 	lib3ds_io_cleanup(io);
 	return true;
 }

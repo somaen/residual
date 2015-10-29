@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 #include "lib3ds.h"
 #include "lib3ds_track.h"
-#include <setjmp.h>
 
 #define LIB3DS_EPSILON (1e-5)
 

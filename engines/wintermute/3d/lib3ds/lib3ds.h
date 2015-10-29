@@ -516,38 +516,5 @@ extern LIB3DSAPI Lib3dsFile *lib3ds_file_open(Common::SeekableReadStream *stream
 extern LIB3DSAPI void lib3ds_material_free(Lib3dsMaterial *material);
 extern LIB3DSAPI void lib3ds_light_free(Lib3dsLight *mesh);
 
-template<typename T>
-void lib3ds_util_reserve_array_delete(T ***ptr, int *n, int *size, int new_size, int force) {
-	assert(ptr && n && size);
-	if ((*size < new_size) || force) {
-		if (force) {
-			for (int i = new_size; i < *n; ++i) {
-				delete((*ptr)[i]);
-				(*ptr)[i] = nullptr;
-			}
-		}
-		*ptr = (T **)realloc(*ptr, sizeof(T *) * new_size);
-		*size = new_size;
-		if (*n > new_size) {
-			*n = new_size;
-		}
-	}
-}
-
-template<typename T>
-void lib3ds_util_remove_array_delete(T ***ptr, int *n, int index) {
-	assert(ptr && n);
-	if ((index >= 0) && (index < *n)) {
-		assert(*ptr);
-		delete ((*ptr)[index]);
-
-		if (index < *n - 1) {
-			memmove(&(*ptr)[index], &(*ptr)[index + 1], sizeof(T *) * (*n - index - 1));
-		}
-		*n = *n - 1;
-	}
-}
-
-
 /** @} */
 #endif

@@ -17,7 +17,6 @@ MODULE_OBJS := \
 	3d/lib3ds/lib3ds_quat.o \
 	3d/lib3ds/lib3ds_shadow.o \
 	3d/lib3ds/lib3ds_track.o \
-	3d/lib3ds/lib3ds_util.o \
 	3d/lib3ds/lib3ds_vector.o \
 	3d/lib3ds/lib3ds_viewport.o \
 	ad/ad_actor.o \

@@ -290,10 +290,4 @@ extern void lib3ds_track_read(Lib3dsTrack<Lib3dsVectorKey> *track, Lib3dsIo *io)
 extern void lib3ds_track_read(Lib3dsTrack<Lib3dsQuatKey> *track, Lib3dsIo *io);
 extern void lib3ds_node_read(Lib3dsNode *node, Lib3dsIo *io);
 
-typedef void (*Lib3dsFreeFunc)(void *ptr);
-
-extern void lib3ds_util_reserve_array(void ***ptr, int *n, int *size, int new_size, int force, Lib3dsFreeFunc free_func);
-extern void lib3ds_util_insert_array(void ***ptr, int *n, int *size, void *element, int index);
-extern void lib3ds_util_remove_array(void ***ptr, int *n, int index, Lib3dsFreeFunc free_func);
-
 #endif

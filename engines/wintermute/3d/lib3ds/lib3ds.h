@@ -357,7 +357,7 @@ struct Lib3dsFace {
 struct Lib3dsMesh {
 	unsigned                       _userId;
 	void                          *_userPtr;
-	char                           _name[64];            /**< Mesh name. Don't use more than 8 characters  */
+	Common::String                 _name;            /**< Mesh name. Don't use more than 8 characters  */
 	unsigned                       _objectFlags;        /**< @see Lib3dsObjectFlags */
 	int                            _color;               /**< Index to editor palette [0..255] */
 	Math::Matrix4                  _matrix;        /**< Transformation matrix for mesh data */
@@ -381,7 +381,7 @@ struct Lib3dsMesh {
 	float                          _mapPlanarSize[2];
 	float                          _mapCylinderHeight;
 	
-	Lib3dsMesh(const char *name);
+	Lib3dsMesh(const Common::String &name);
 	~Lib3dsMesh();
 	void resizeVertices(int nvertices, int use_texcos, int use_flags);
 	void resizeFaces(int nfaces);

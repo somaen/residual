@@ -35,11 +35,8 @@
  * See Lib3dsFaceFlag for definitions of per-face flags.
  *
  */
-Lib3dsMesh::Lib3dsMesh(const char *name) {
-	assert(name);
-	assert(strlen(name) < 64);
-
-	strcpy(_name, name);
+Lib3dsMesh::Lib3dsMesh(const Common::String &name) {
+	_name = name;
 	lib3ds_matrix_identity(_matrix);
 	_mapType = LIB3DS_MAP_NONE;
 }

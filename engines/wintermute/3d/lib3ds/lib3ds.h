@@ -452,16 +452,12 @@ struct Lib3dsFile {
 	Lib3dsFile();
 	~Lib3dsFile();
 
-	void insertMaterial(Lib3dsMaterialPtr material, int index);
-	void insertCamera(Lib3dsCameraPtr camera, int index);
-	void insertLight(Lib3dsLightPtr light, int index);
-	void insertMesh(Lib3dsMeshPtr mesh, int index);
+	void pushMaterial(Lib3dsMaterialPtr material);
+	void pushCamera(Lib3dsCameraPtr camera);
+	void pushLight(Lib3dsLightPtr light);
+	void pushMesh(Lib3dsMeshPtr mesh);
 	void insertNode(Lib3dsNode *node, Lib3dsNode *at);
 
-	void removeMaterial(int index);
-	void removeCamera(int index);
-	void removeMesh(int index);
-	void removeLight(int index);
 	void removeNode(Lib3dsNode *node);
 
 	int materialByName(const char *name);

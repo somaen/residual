@@ -149,7 +149,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 		switch (chunk) {
 		case CHK_N_TRI_OBJECT: {
 			Lib3dsMeshPtr mesh(new Lib3dsMesh(name));
-			file->insertMesh(mesh, -1);
+			file->pushMesh(mesh);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_mesh_read(file, mesh, io);
 			break;
@@ -157,7 +157,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 		case CHK_N_CAMERA: {
 			camera = Lib3dsCameraPtr(new Lib3dsCamera(name));
-			file->insertCamera(camera, -1);
+			file->pushCamera(camera);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_camera_read(camera, io);
 			break;
@@ -165,7 +165,7 @@ static void named_object_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 		case CHK_N_DIRECT_LIGHT: {
 			light = Lib3dsLightPtr(new Lib3dsLight(name));
-			file->insertLight(light, -1);
+			file->pushLight(light);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_light_read(light, io);
 			break;
@@ -330,7 +330,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 		case CHK_MAT_ENTRY: {
 			Lib3dsMaterialPtr material(new Lib3dsMaterial(NULL));
-			file->insertMaterial(material, -1);
+			file->pushMaterial(material);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_material_read(material, io);
 			break;
@@ -561,16 +561,8 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 }
 
 
-void Lib3dsFile::insertMaterial(Lib3dsMaterialPtr material, int index) {
-	if (_materials.size() <= index) {
-		_materials.resize(index + 1);
-	}
-	_materials[index] = material;
-}
-
-
-void Lib3dsFile::removeMaterial(int index) {
-	_materials.remove_at(index);
+void Lib3dsFile::pushMaterial(Lib3dsMaterialPtr material) {
+	_materials.push_back(material);
 }
 
 
@@ -584,16 +576,8 @@ int Lib3dsFile::materialByName(const char *name) {
 }
 
 
-void Lib3dsFile::insertCamera(Lib3dsCameraPtr camera, int index) {
-	if (_cameras.size() <= index) {
-		_cameras.resize(index + 1);
-	}
-	_cameras[index] = camera;
-}
-
-
-void Lib3dsFile::removeCamera(int index) {
-	_cameras.remove_at(index);
+void Lib3dsFile::pushCamera(Lib3dsCameraPtr camera) {
+	_cameras.push_back(camera);
 }
 
 
@@ -608,16 +592,8 @@ int Lib3dsFile::cameraByName(const char *name) {
 
 
 
-void Lib3dsFile::insertLight(Lib3dsLightPtr light, int index) {
-	if (_lights.size() <= index) {
-		_lights.resize(index + 1);
-	}
-	_lights[index] = light;
-}
-
-
-void Lib3dsFile::removeLight(int index) {
-	_lights.remove_at(index);
+void Lib3dsFile::pushLight(Lib3dsLightPtr light) {
+	_lights.push_back(light);
 }
 
 
@@ -631,16 +607,8 @@ int Lib3dsFile::lightByName(const char *name) {
 }
 
 
-void Lib3dsFile::insertMesh(Lib3dsMeshPtr mesh, int index) {
-	if (_meshes.size() <= index) {
-		_meshes.resize(index + 1);
-	}
-	_meshes[index] = mesh;
-}
-
-
-void Lib3dsFile::removeMesh(int index) {
-	_meshes.remove_at(index);
+void Lib3dsFile::pushMesh(Lib3dsMeshPtr mesh) {
+	_meshes.push_back(mesh);
 }
 
 

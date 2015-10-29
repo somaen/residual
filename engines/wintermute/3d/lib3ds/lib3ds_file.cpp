@@ -98,7 +98,6 @@ Lib3dsFile::Lib3dsFile() {
 	_nlights = 0;
 	_lights = 0;
 	_meshesSize = 0;
-	_nmeshes = 0;
 	_nodes = 0;
 	
 	for (int i = 0; i < 3; i++) {
@@ -661,7 +660,7 @@ void Lib3dsFile::removeMesh(int index) {
 
 
 int Lib3dsFile::meshByName(const Common::String &name) {
-	for (int i = 0; i < _nmeshes; ++i) {
+	for (int i = 0; i < _meshes.size(); ++i) {
 		if (_meshes[i]->_name == name) {
 			return i;
 		}
@@ -875,7 +874,7 @@ void Lib3dsFile::boundingBoxOfObjects(int include_meshes, int include_cameras, i
 
 	if (include_meshes) {
 		Math::Vector3d lmin, lmax;
-		for (int i = 0; i < _nmeshes; ++i) {
+		for (int i = 0; i < _meshes.size(); ++i) {
 			_meshes[i]->boundingBox(lmin, lmax);
 			lib3ds_vector_min(bmin, lmin);
 			lib3ds_vector_max(bmax, lmax);
@@ -986,7 +985,7 @@ void Lib3dsFile::boundingBoxOfNodes(int include_meshes, int include_cameras, int
 void Lib3dsFile::createNodesForMeshes() {
 	Lib3dsNode *p;
 
-	for (int i = 0; i < _nmeshes; ++i) {
+	for (int i = 0; i < _meshes.size(); ++i) {
 		Lib3dsMeshPtr mesh = _meshes[i];
 		p = lib3ds_node_new(LIB3DS_NODE_MESH_INSTANCE);
 		p->_name = mesh->_name;

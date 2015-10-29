@@ -448,7 +448,6 @@ struct Lib3dsFile {
 	int                                _nlights;
 	Lib3dsLight                      **_lights;
 	int                                _meshesSize;
-	int                                _nmeshes;
 	Common::Array<Lib3dsMeshPtr>       _meshes;
 	Lib3dsNode                        *_nodes;
 	

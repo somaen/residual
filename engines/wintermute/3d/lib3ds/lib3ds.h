@@ -23,6 +23,7 @@
     Header file for public API defined by lib3ds */
 #include "common/stream.h"
 #include "math/matrix4.h"
+#include "math/vector2d.h"
 #include "math/quat.h"
 #include "common/array.h"
 #include <stddef.h>
@@ -356,17 +357,17 @@ struct Lib3dsFace {
 /* Triangular mesh object */
 struct Lib3dsMesh {
 	unsigned                       _userId;
-	void                          *_userPtr;
 	Common::String                 _name;            /**< Mesh name. Don't use more than 8 characters  */
 	unsigned                       _objectFlags;        /**< @see Lib3dsObjectFlags */
 	int                            _color;               /**< Index to editor palette [0..255] */
 	Math::Matrix4                  _matrix;        /**< Transformation matrix for mesh data */
 	unsigned short                 _nVertices;           /**< Number of vertices in vertex array (max. 65535) */
 	Common::Array<Math::Vector3d>  _vertices;
-	float                        (*_texCos)[2];
-	unsigned short                *_vFlags;
+	Common::Array<Math::Vector2d>  _texCos;
+	// TODO: This is allocated in 2 * sizeof(float)-fashion
+	Common::Array<uint16>          _vFlags;
 	unsigned short                 _nFaces;              /**< Number of faces in face array (max. 65535) */
-	Lib3dsFace                    *_faces;
+	Common::Array<Lib3dsFace>      _faces;
 	char                           _boxFront[64];
 	char                           _boxBack[64];
 	char                           _boxLeft[64];

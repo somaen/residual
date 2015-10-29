@@ -67,11 +67,6 @@ Lib3dsMaterial::Lib3dsMaterial(const char *name) {
 }
 
 
-void lib3ds_material_free(Lib3dsMaterial *material) {
-	delete material;
-}
-
-
 static void color_read(float rgb[3], Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;

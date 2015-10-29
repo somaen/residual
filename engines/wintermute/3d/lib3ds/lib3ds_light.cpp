@@ -29,11 +29,6 @@ Lib3dsLight::Lib3dsLight(const char *name) {
 }
 
 
-void lib3ds_light_free(Lib3dsLight *light) {
-	delete light;
-}
-
-
 static void spotlight_read(Lib3dsLightPtr light, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;

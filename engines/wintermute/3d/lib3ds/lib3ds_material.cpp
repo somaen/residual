@@ -250,7 +250,7 @@ static void texture_map_read(Lib3dsTextureMap *map, Lib3dsIo *io) {
 }
 
 
-void lib3ds_material_read(Lib3dsMaterial *material, Lib3dsIo *io) {
+void lib3ds_material_read(Lib3dsMaterialPtr material, Lib3dsIo *io) {
 	Lib3dsChunk c;
 	uint16 chunk;
 

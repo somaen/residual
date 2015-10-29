@@ -91,8 +91,6 @@ Lib3dsFile::Lib3dsFile() {
 	_segmentTo = 0;
 	_currentFrame = 0;
 	_materialsSize = 0;
-	_nmaterials = 0;
-	_materials = 0;
 	_camerasSize = 0;
 	_lightsSize = 0;
 	_nlights = 0;
@@ -111,7 +109,6 @@ Lib3dsFile::Lib3dsFile() {
  * Free a Lib3dsFile object and all of its resources.
  */
 Lib3dsFile::~Lib3dsFile() {
-	reserveMaterials(0, true);
 	reserveLights(0, true);
 	{
 		Lib3dsNode *p, *q;
@@ -339,7 +336,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		}
 
 		case CHK_MAT_ENTRY: {
-			Lib3dsMaterial *material =  new Lib3dsMaterial(NULL);
+			Lib3dsMaterialPtr material(new Lib3dsMaterial(NULL));
 			file->insertMaterial(material, -1);
 			lib3ds_chunk_read_reset(&c, io);
 			lib3ds_material_read(material, io);
@@ -571,24 +568,21 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 }
 
 
-void Lib3dsFile::reserveMaterials(int size, int force) {
-	lib3ds_util_reserve_array((void ** *)&_materials, &_nmaterials, &_materialsSize,
-	                          size, force, (Lib3dsFreeFunc)lib3ds_material_free);
-}
-
-
-void Lib3dsFile::insertMaterial(Lib3dsMaterial *material, int index) {
-	lib3ds_util_insert_array((void ** *)&_materials, &_nmaterials, &_materialsSize, material, index);
+void Lib3dsFile::insertMaterial(Lib3dsMaterialPtr material, int index) {
+	if (_materials.size() <= index) {
+		_materials.resize(index + 1);
+	}
+	_materials[index] = material;
 }
 
 
 void Lib3dsFile::removeMaterial(int index) {
-	lib3ds_util_remove_array((void ** *)&_materials, &_nmaterials, index, (Lib3dsFreeFunc)lib3ds_material_free);
+	_materials.remove_at(index);
 }
 
 
 int Lib3dsFile::materialByName(const char *name) {
-	for (int i = 0; i < _nmaterials; ++i) {
+	for (int i = 0; i < _materials.size(); ++i) {
 		if (strcmp(_materials[i]->name, name) == 0) {
 			return (i);
 		}

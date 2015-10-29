@@ -258,6 +258,8 @@ struct Lib3dsMaterial {
 	int32               autorefl_map_frame_step;
 };
 
+typedef Common::SharedPtr<Lib3dsMaterial> Lib3dsMaterialPtr;
+
 /** Object flags for cameras, lights and meshes */
 enum Lib3dsObjectFlags {
 	LIB3DS_OBJECT_HIDDEN          = 0x01,
@@ -440,8 +442,7 @@ struct Lib3dsFile {
 	int                                _segmentTo;
 	int                                _currentFrame;
 	int                                _materialsSize;
-	int                                _nmaterials;
-	Lib3dsMaterial                   **_materials;
+	Common::Array<Lib3dsMaterialPtr>   _materials;
 	int                                _camerasSize;
 	Common::Array<Lib3dsCameraPtr>     _cameras;
 	int                                _lightsSize;
@@ -453,11 +454,10 @@ struct Lib3dsFile {
 	
 	Lib3dsFile();
 	~Lib3dsFile();
-	
-	void reserveMaterials(int size, int force);
+
 	void reserveLights(int size, int force);
 
-	void insertMaterial(Lib3dsMaterial *material, int index);
+	void insertMaterial(Lib3dsMaterialPtr material, int index);
 	void insertCamera(Lib3dsCameraPtr camera, int index);
 	void insertLight(Lib3dsLight *light, int index);
 	void insertMesh(Lib3dsMeshPtr mesh, int index);

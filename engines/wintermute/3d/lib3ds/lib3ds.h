@@ -553,10 +553,10 @@ struct Lib3dsFile {
 	void               *_userPtr;
 	unsigned            _meshVersion;
 	unsigned            _keyfRevision;
-	char                name[12 + 1];
+	Common::String      _name;
 	float               _masterScale;
-	float               constructionPlane[3];
-	float               ambient[3];
+	float               _constructionPlane[3];
+	float               _ambient[3];
 	Lib3dsShadow        _shadow;
 	Lib3dsBackground    _background;
 	Lib3dsAtmosphere    _atmosphere;

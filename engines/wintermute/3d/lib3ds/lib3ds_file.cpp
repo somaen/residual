@@ -75,12 +75,36 @@ Lib3dsFile::Lib3dsFile() {
 	_meshVersion = 3;
 	_masterScale = 1.0f;
 	_keyfRevision = 5;
-	strcpy(name, "LIB3DS");
+	_name = "LIB3DS";
 
 	_frames = 100;
 	_segmentFrom = 0;
 	_segmentTo = 100;
 	_currentFrame = 0;
+	_userId = 0;
+	_userPtr = 0;
+	_frames = 0;
+	_segmentFrom = 0;
+	_segmentTo = 0;
+	_currentFrame = 0;
+	_materialsSize = 0;
+	_nmaterials = 0;
+	_materials = 0;
+	_camerasSize = 0;
+	_ncameras = 0;
+	_cameras = 0;
+	_lightsSize = 0;
+	_nlights = 0;
+	_lights = 0;
+	_meshesSize = 0;
+	_nmeshes = 0;
+	_meshes = 0;
+	_nodes = 0;
+	
+	for (int i = 0; i < 3; i++) {
+		_constructionPlane[i] = 0;
+		_ambient[i] = 0;
+	}
 }
 
 
@@ -112,9 +136,7 @@ Lib3dsFile::~Lib3dsFile() {
  * \see lib3ds_node_eval
  */
 void lib3ds_file_eval(Lib3dsFile *file, float t) {
-	Lib3dsNode *p;
-
-	for (p = file->_nodes; p != 0; p = p->next) {
+	for (Lib3dsNode *p = file->_nodes; p != 0; p = p->next) {
 		lib3ds_node_eval(p, t);
 	}
 }
@@ -219,7 +241,7 @@ static void ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 		switch (chunk) {
 		case CHK_LIN_COLOR_F: {
 			for (int i = 0; i < 3; ++i) {
-				file->ambient[i] = lib3ds_io_read_float(stream);
+				file->_ambient[i] = lib3ds_io_read_float(stream);
 			}
 			have_lin = true;
 			break;
@@ -230,7 +252,7 @@ static void ambient_read(Lib3dsFile *file, Lib3dsIo *io) {
 			   replaced in 3ds R3 by LIN_COLOR_24 */
 			if (!have_lin) {
 				for (int i = 0; i < 3; ++i) {
-					file->ambient[i] = lib3ds_io_read_float(stream);
+					file->_ambient[i] = lib3ds_io_read_float(stream);
 				}
 			}
 			break;
@@ -286,7 +308,7 @@ static void mdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 		case CHK_O_CONSTS: {
 			for (int i = 0; i < 3; ++i) {
-				file->constructionPlane[i] = lib3ds_io_read_float(stream);
+				file->_constructionPlane[i] = lib3ds_io_read_float(stream);
 			}
 			break;
 		}
@@ -366,7 +388,7 @@ static void kfdata_read(Lib3dsFile *file, Lib3dsIo *io) {
 		switch (chunk) {
 		case CHK_KFHDR: {
 			file->_keyfRevision = stream->readUint16LE();
-			lib3ds_io_read_string(io, file->name, 12 + 1);
+			lib3ds_io_read_string(io, file->_name, 12 + 1);
 			file->_frames = stream->readSint32LE();
 			break;
 		}

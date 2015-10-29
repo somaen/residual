@@ -489,14 +489,12 @@ typedef Lib3dsTrack<Lib3dsVectorKey> Lib3dsVectorTrack;
 template<> Lib3dsTrack<Lib3dsQuatKey>::Lib3dsTrack();
 typedef Lib3dsTrack<Lib3dsQuatKey> Lib3dsQuatTrack;
 
-struct Lib3dsAmbientColorNode {
-	Lib3dsNode            base;
+struct Lib3dsAmbientColorNode : public Lib3dsNode {
 	Math::Vector3d        color;
 	Lib3dsVectorTrack     color_track;
 };
 
-struct Lib3dsMeshInstanceNode {
-	Lib3dsNode            base;
+struct Lib3dsMeshInstanceNode : public Lib3dsNode {
 	Math::Vector3d        pivot;
 	char                  instance_name[64];
 	Math::Vector3d        bbox_min;
@@ -513,8 +511,7 @@ struct Lib3dsMeshInstanceNode {
 	Lib3dsBoolTrack       hide_track;
 };
 
-struct Lib3dsCameraNode {
-	Lib3dsNode      	  base;
+struct Lib3dsCameraNode : public Lib3dsNode {
 	Math::Vector3d  	  pos;
 	float           	  fov;
 	float           	  roll;
@@ -523,14 +520,12 @@ struct Lib3dsCameraNode {
 	Lib3dsFloatTrack      roll_track;
 };
 
-struct Lib3dsTargetNode {
-	Lib3dsNode            base;
+struct Lib3dsTargetNode : public Lib3dsNode  {
 	Math::Vector3d        pos;
 	Lib3dsVectorTrack     pos_track;
 };
 
-struct Lib3dsOmnilightNode {
-	Lib3dsNode            base;
+struct Lib3dsOmnilightNode : public Lib3dsNode  {
 	Math::Vector3d        pos;
 	Math::Vector3d        color;
 	Lib3dsVectorTrack     pos_track;
@@ -539,8 +534,7 @@ struct Lib3dsOmnilightNode {
 
 		
 
-struct Lib3dsSpotlightNode {
-	Lib3dsNode            base;
+struct Lib3dsSpotlightNode : public Lib3dsNode  {
 	Math::Vector3d        pos;
 	Math::Vector3d        color;
 	float                 hotspot;

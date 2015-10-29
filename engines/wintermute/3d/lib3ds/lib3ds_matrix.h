@@ -25,26 +25,14 @@
 #include "math/quat.h"
 #include <stddef.h>
 
-#ifndef LIB3DSAPI
-#if defined(_MSC_VER) && !defined(LIB3DS_STATIC)
-#ifdef LIB3DS_EXPORTS
-#define LIB3DSAPI __declspec(dllexport)
-#else
-#define LIB3DSAPI __declspec(dllimport)
-#endif
-#else
-#define LIB3DSAPI
-#endif
-#endif
-
-extern LIB3DSAPI void lib3ds_matrix_zero(Math::Matrix4 &m);
-extern LIB3DSAPI void lib3ds_matrix_identity(Math::Matrix4 &m);
-extern LIB3DSAPI float lib3ds_matrix_det(Math::Matrix4 &m);
-extern LIB3DSAPI void lib3ds_matrix_translate(Math::Matrix4 &m, float x, float y, float z);
-extern LIB3DSAPI void lib3ds_matrix_scale(Math::Matrix4 &m, float x, float y, float z);
-extern LIB3DSAPI void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, const Math::Quaternion &q);
-extern LIB3DSAPI void lib3ds_matrix_rotate(Math::Matrix4 &m, float angle, float ax, float ay, float az);
-extern LIB3DSAPI void lib3ds_matrix_camera(Math::Matrix4 &m, float pos[3], float tgt[3], float roll);
+void lib3ds_matrix_zero(Math::Matrix4 &m);
+void lib3ds_matrix_identity(Math::Matrix4 &m);
+float lib3ds_matrix_det(Math::Matrix4 &m);
+void lib3ds_matrix_translate(Math::Matrix4 &m, float x, float y, float z);
+void lib3ds_matrix_scale(Math::Matrix4 &m, float x, float y, float z);
+void lib3ds_matrix_rotate_quat(Math::Matrix4 &m, const Math::Quaternion &q);
+void lib3ds_matrix_rotate(Math::Matrix4 &m, float angle, float ax, float ay, float az);
+void lib3ds_matrix_camera(Math::Matrix4 &m, float pos[3], float tgt[3], float roll);
 
 /** @} */
 #endif

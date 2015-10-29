@@ -29,18 +29,6 @@
 #include "common/ptr.h"
 #include <stddef.h>
 
-#ifndef LIB3DSAPI
-#if defined(_MSC_VER) && !defined(LIB3DS_STATIC)
-#ifdef LIB3DS_EXPORTS
-#define LIB3DSAPI __declspec(dllexport)
-#else
-#define LIB3DSAPI __declspec(dllimport)
-#endif
-#else
-#define LIB3DSAPI
-#endif
-#endif
-
 /** @defgroup api API
     lib3ds public API. */
 /** @{ */

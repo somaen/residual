@@ -24,18 +24,6 @@
 #include "common/stream.h"
 #include <stddef.h>
 
-#ifndef LIB3DSAPI
-#if defined(_MSC_VER) && !defined(LIB3DS_STATIC)
-#ifdef LIB3DS_EXPORTS
-#define LIB3DSAPI __declspec(dllexport)
-#else
-#define LIB3DSAPI __declspec(dllimport)
-#endif
-#else
-#define LIB3DSAPI
-#endif
-#endif
-
 /**
     Calculates the ease in/out function. See Lib3dsKey for details.
 
@@ -45,7 +33,7 @@
     \param ease_from    Ease in value [0, 1.0]
     \param ease_to      Ease out value [0, 1.0]
 */
-extern LIB3DSAPI float lib3ds_math_ease(
+float lib3ds_math_ease(
     float fp,
     float fc,
     float fn,
@@ -69,7 +57,7 @@ extern LIB3DSAPI float lib3ds_math_ease(
     \param t
         [in] Parameter value [0...1]
 */
-extern LIB3DSAPI void lib3ds_math_cubic_interp(
+void lib3ds_math_cubic_interp(
     float *v,
     float *a,
     float *p,

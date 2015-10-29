@@ -54,7 +54,6 @@ Lib3dsFile *lib3ds_file_open(Common::SeekableReadStream *stream) {
 	}
 
 	Lib3dsIo io;
-	memset(&io, 0, sizeof(io));
 	
 	io.stream = stream;
 	io.log_func = NULL;
@@ -65,8 +64,6 @@ Lib3dsFile *lib3ds_file_open(Common::SeekableReadStream *stream) {
 		return NULL;
 	}
 
-	// Not sure we should do this
-	delete stream;
 	return file;
 }
 
@@ -503,7 +500,7 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 	Common::SeekableReadStream *stream = io->stream;
 
-	lib3ds_io_setup(io);
+	io->setup();
 	impl = (Lib3dsIoImpl *)io->impl;
 
 	lib3ds_chunk_read_start(&c, 0, io);
@@ -550,7 +547,7 @@ int lib3ds_file_read(Lib3dsFile *file, Lib3dsIo *io) {
 
 	lib3ds_chunk_read_end(&c, io);
 
-	lib3ds_io_cleanup(io);
+	io->cleanup();
 	return true;
 }
 

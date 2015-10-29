@@ -27,20 +27,22 @@
 
 struct Lib3dsNode;
 
-struct Lib3dsIo {
-	void   *impl;
-	Common::SeekableReadStream *stream;
-	void (*log_func)(Common::SeekableReadStream *self, Lib3dsLogLevel level, int indent, const char *msg);
-};
-
 struct Lib3dsIoImpl {
+	Lib3dsIoImpl();
 	int log_indent;
-	void *tmp_mem;
 	Lib3dsNode *tmp_node;
 };
 
-void lib3ds_io_setup(Lib3dsIo *io);
-void lib3ds_io_cleanup(Lib3dsIo *io);
+struct Lib3dsIo {
+	Lib3dsIoImpl *impl;
+	Common::SeekableReadStream *stream;
+	void (*log_func)(Common::SeekableReadStream *self, Lib3dsLogLevel level, int indent, const char *msg);
+	
+	Lib3dsIo();
+	~Lib3dsIo();
+	void setup();
+	void cleanup();
+};
 
 void lib3ds_io_log(Lib3dsIo *io, Lib3dsLogLevel level, const char *format, ...);
 void lib3ds_io_log_indent(Lib3dsIo *io, int indent);

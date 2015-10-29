@@ -25,26 +25,35 @@ typedef union {
 	float float_value;
 } Lib3dsDwordFloat;
 
+Lib3dsIoImpl::Lib3dsIoImpl() {
+	log_indent = 0;
+	tmp_node = nullptr;
+}
 
-void lib3ds_io_setup(Lib3dsIo *io) {
-	assert(io);
-	io->impl = calloc(sizeof(Lib3dsIoImpl), 1);
+Lib3dsIo::Lib3dsIo() {
+	impl = nullptr;
+	stream = nullptr;
+	log_func = nullptr;
+}
+
+Lib3dsIo::~Lib3dsIo() {
+	cleanup();
+}
+
+void Lib3dsIo::setup() {
+	impl = new Lib3dsIoImpl;
 }
 
 
-void lib3ds_io_cleanup(Lib3dsIo *io) {
-	Lib3dsIoImpl *impl;
-	assert(io);
-	impl = (Lib3dsIoImpl *)io->impl;
-	if (impl->tmp_mem) {
-		free(impl->tmp_mem);
-		impl->tmp_mem = NULL;
-	}
-	if (impl->tmp_node) {
+void Lib3dsIo::cleanup() {
+	if (impl && impl->tmp_node) {
 		lib3ds_node_free(impl->tmp_node);
 		impl->tmp_node = NULL;
 	}
-	free(impl);
+	delete impl;
+	impl = nullptr;
+	delete stream;
+	stream = nullptr;
 }
 
 static void lib3ds_io_log_str(Lib3dsIo *io, Lib3dsLogLevel level, const char *str) {

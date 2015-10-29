@@ -18,6 +18,7 @@
 #include "lib3ds_impl.h"
 #include "lib3ds_io.h"
 #include "lib3ds_math.h"
+#include "lib3ds_node.h"
 #include "lib3ds_vector.h"
 #include "lib3ds_matrix.h"
 #include <string.h>

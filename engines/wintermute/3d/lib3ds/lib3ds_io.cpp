@@ -16,6 +16,7 @@
     along with  this program; If not, see <http://www.gnu.org/licenses/>.
 */
 #include "lib3ds_io.h"
+#include "lib3ds_node.h"
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>

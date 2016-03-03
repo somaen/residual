@@ -38,6 +38,7 @@
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_sentence.h"
+#include "engines/wintermute/ad/3d/ad_actor_3d.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/base_object.h"
@@ -385,6 +386,23 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		} else {
 			delete act;
 			act = nullptr;
+			stack->pushNULL();
+		}
+		return STATUS_OK;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////
+	// LoadActor3D
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "LoadActor3D") == 0) {
+		stack->correctParams(1);
+		Common::String filename = stack->pop()->getString();
+		warning("TODO: LoadActor3D: %s", filename.c_str());
+		AdActor3d *act3d = new AdActor3d(_gameRef);
+		if (act3d && DID_SUCCEED(act3d->loadFile(filename.c_str()))) {
+			addObject(act3d);
+			stack->pushNative(act3d, true);
+		} else {
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1303,6 +1321,7 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 	bool itemFound = false, itemsFound = false;
 
 	while (cmd > 0 && (cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
+	warning("AdGane: %d %s", cmd, commands[cmd].token);
 		switch (cmd) {
 		case TOKEN_GAME:
 			if (DID_FAIL(BaseGame::loadBuffer(params, false))) {
@@ -1560,6 +1579,7 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 		switch (cmd) {
 		case TOKEN_ITEM: {
 			AdItem *item = new AdItem(_gameRef);
+			warning("ITEM: %s", item->getName());
 			if (item && !DID_FAIL(item->loadBuffer(params, false))) {
 				// delete item with the same name, if exists
 				if (merge) {

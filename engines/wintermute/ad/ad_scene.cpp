@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/3d/lib3ds/lib3ds.h"
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_actor.h"
 #include "engines/wintermute/ad/ad_entity.h"
@@ -41,6 +42,7 @@
 #include "engines/wintermute/ad/ad_scene_state.h"
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/ad/ad_waypoint_group.h"
+#include "engines/wintermute/ad/3d/ad_actor_3d.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
@@ -559,6 +561,12 @@ bool AdScene::loadFile(const char *filename) {
 	return ret;
 }
 
+void loadGeometry(const char *name) {
+	Common::SeekableReadStream *stream = BaseFileManager::getEngineInstance()->openFile(name);
+	Lib3dsFile *geometry = lib3ds_file_open(stream);
+	warning("nMeshes: %d", geometry->_meshes.size());
+}
+
 
 TOKEN_DEF_START
 TOKEN_DEF(SCENE)
@@ -598,6 +606,12 @@ TOKEN_DEF(VIEWPORT)
 TOKEN_DEF(PERSISTENT_STATE_SPRITES)
 TOKEN_DEF(PERSISTENT_STATE)
 TOKEN_DEF(EDITOR_PROPERTY)
+// 3D:
+TOKEN_DEF(GEOMETRY)
+TOKEN_DEF(MAX_SHADOW_TYPE)
+TOKEN_DEF(EDITOR_RESOLUTION_WIDTH)
+TOKEN_DEF(EDITOR_RESOLUTION_HEIGHT)
+TOKEN_DEF(EDITOR_SHOW_GEOMETRY)
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::loadBuffer(char *buffer, bool complete) {
@@ -639,6 +653,12 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(PERSISTENT_STATE_SPRITES)
 	TOKEN_TABLE(PERSISTENT_STATE)
 	TOKEN_TABLE(EDITOR_PROPERTY)
+// 3D:
+	TOKEN_TABLE(GEOMETRY)
+	TOKEN_TABLE(MAX_SHADOW_TYPE)
+	TOKEN_TABLE(EDITOR_RESOLUTION_WIDTH)
+	TOKEN_TABLE(EDITOR_RESOLUTION_HEIGHT)
+	TOKEN_TABLE(EDITOR_SHOW_GEOMETRY)
 	TOKEN_TABLE_END
 
 	cleanup();
@@ -877,11 +897,14 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_EDITOR_PROPERTY:
 			parseEditorProperty(params, false);
 			break;
-
+		case TOKEN_GEOMETRY:
+			loadGeometry(params);
+			error("Geometry(%s)", params);
+			break;
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in SCENE definition");
+		_gameRef->LOG(0, "Syntax error in SCENE definition: %s", parser._lastOffender);
 		return STATUS_FAILED;
 	}
 
@@ -1352,6 +1375,32 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 		return STATUS_OK;
 	}
+    //////////////////////////////////////////////////////////////////////////
+	// LoadActor3D
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(name, "LoadActor3D") == 0) {
+		stack->correctParams(1);
+		AdActor3d *act3d = new AdActor3d(_gameRef);
+		Common::String filename = stack->pop()->getString();
+#if 0
+		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
+			addObject(act);
+			stack->pushNative(act, true);
+#endif
+		if (true) {
+			// TODO:
+			warning("Scene::LoadActor3d(%s)", filename.c_str());
+			addObject(act3d);
+			stack->pushNative(act3d, true);
+		} else {
+			delete act3d;
+			act3d = nullptr;
+			stack->pushNULL();
+		}
+		return STATUS_OK;
+	}
+	
+	
 
 	//////////////////////////////////////////////////////////////////////////
 	// LoadEntity

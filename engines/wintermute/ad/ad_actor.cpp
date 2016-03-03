@@ -792,7 +792,8 @@ bool AdActor::update() {
 		}
 		break;
 	default:
-		error("AdActor::Update - Unhandled enum");
+		// Should be error
+		warning("AdActor::Update - Unhandled enum");
 	}
 
 

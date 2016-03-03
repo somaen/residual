@@ -49,6 +49,7 @@ BaseSurface::BaseSurface(BaseGame *inGame) : BaseClass(inGame) {
 
 	_lastUsedTime = 0;
 	_valid = false;
+	_rotation = 0;
 }
 
 
@@ -69,14 +70,65 @@ bool BaseSurface::isTransparentAt(int x, int y) {
 	return false;
 }
 
-//////////////////////////////////////////////////////////////////////
-bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
-	return STATUS_FAILED;
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurface::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY,  mirrorX, mirrorY));
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseSurface::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, blendMode, alpha, mirrorX, mirrorY));
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurface::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr,  Graphics::TransformStruct(Graphics::kDefaultZoomX, Graphics::kDefaultZoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha, mirrorX, mirrorY, offsetX, offsetY));
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurface::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	_rotation = 0;
+	return drawSprite(x, y, &rect, nullptr, Graphics::TransformStruct((int32)zoomX, (int32)zoomY, blendMode, alpha, mirrorX, mirrorY));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurface::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	_rotation = 0;
+	Graphics::TransformStruct transform;
+	if (transparent) {
+		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
+	} else {
+		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, mirrorX, mirrorY);
+	}
+	return drawSprite(x, y, &rect, nullptr, transform);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseSurface::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
-	return displayTransform(x, y, rect, newRect, transform);
+	_rotation = (uint32)transform._angle;
+	if (transform._angle < 0.0f) {
+		warning("Negative rotation: %d %d", transform._angle, _rotation);
+		_rotation = (uint32)(360.0f + transform._angle);
+		warning("Negative post rotation: %d %d", transform._angle, _rotation);
+	}
+	return drawSprite(x, y, &rect, &newRect, transform);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSurface::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
+	assert(numTimesX > 0 && numTimesY > 0);
+	Graphics::TransformStruct transform(numTimesX, numTimesY);
+	return drawSprite(x, y, &rect, nullptr, transform);
+}
+
+//////////////////////////////////////////////////////////////////////
+bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
+	return STATUS_FAILED;
 }
 
 //////////////////////////////////////////////////////////////////////////

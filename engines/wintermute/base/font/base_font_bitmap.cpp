@@ -354,7 +354,7 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 	int expandWidth = 0;
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
-
+		warning("BaseFontBitmap: %d %s", cmd, commands[cmd].token);
 		switch (cmd) {
 		case TOKEN_IMAGE:
 			surfaceFile = params;
@@ -438,10 +438,14 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 	if (surfaceFile != nullptr && !_sprite) {
 		_subframe = new BaseSubFrame(_gameRef);
+		bool success;
 		if (custoTrans) {
-			_subframe->setSurface(surfaceFile, false, r, g, b);
+			success = _subframe->setSurface(surfaceFile, false, r, g, b);
 		} else {
-			_subframe->setSurface(surfaceFile);
+			success = _subframe->setSurface(surfaceFile);
+		}
+		if (DID_FAIL(success)) {
+			error("Failed to set surface '%s' for font", surfaceFile);
 		}
 	}
 

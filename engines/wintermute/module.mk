@@ -45,6 +45,8 @@ MODULE_OBJS := \
 	ad/ad_talk_holder.o \
 	ad/ad_talk_node.o \
 	ad/ad_waypoint_group.o \
+	ad/3d/ad_actor_3d.o \
+	ad/3d/x_parser.o \
 	base/scriptables/script.o \
 	base/scriptables/script_engine.o \
 	base/scriptables/script_stack.o \
@@ -68,6 +70,10 @@ MODULE_OBJS := \
 	base/gfx/base_image.o \
 	base/gfx/base_renderer.o \
 	base/gfx/base_surface.o \
+	base/gfx/opengl/base_surface_opengl.o \
+	base/gfx/opengl/base_render_opengl.o \
+	base/gfx/opengl/texture.o \
+	base/gfx/opengl/textured_rect.o \
 	base/gfx/osystem/base_surface_osystem.o \
 	base/gfx/osystem/base_render_osystem.o \
 	base/gfx/osystem/render_ticket.o \

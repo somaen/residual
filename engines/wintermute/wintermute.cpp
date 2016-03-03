@@ -106,11 +106,14 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 Common::Error WintermuteEngine::run() {
 	// Initialize graphics using following:
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#if 0
 	initGraphics(800, 600, true, &format);
 	if (g_system->getScreenFormat() != format) {
 		error("Wintermute currently REQUIRES 32bpp");
 	}
-
+#else
+	
+#endif
 	// Create debugger console. It requires GFX to be initialized
 	_debugger = new Console(this);
 

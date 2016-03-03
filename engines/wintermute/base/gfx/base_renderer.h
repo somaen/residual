@@ -64,8 +64,10 @@ public:
 	virtual bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0);
 	virtual bool setViewport(int left, int top, int right, int bottom);
 	virtual bool setViewport(Rect32 *rect);
-	virtual Rect32 getViewPort() = 0;
+	virtual Rect32 getViewPort();
 	virtual bool setScreenViewport();
+
+	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 	/**
@@ -103,7 +105,8 @@ public:
 	 */
 	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) = 0;
 	virtual void onWindowChange();
-	virtual bool initRenderer(int width, int height, bool windowed);
+	virtual bool initRenderer(int width, int height, bool windowed, const Graphics::PixelFormat &screenFormat);
+	virtual bool initRenderer(int width, int height, bool windowed) = 0;
 	/**
 	 * Flip the backbuffer onto the screen-buffer
 	 * The screen will NOT be updated before calling this function.
@@ -189,9 +192,17 @@ public:
 
 	int32 getWidth() const { return _width; }
 	int32 getHeight() const { return _height; }
+	
+	virtual void pointFromScreen(Point32 *point);
+	virtual void pointToScreen(Point32 *point);
+	
+	void modTargetRect(Common::Rect *rect);
 protected:
 	int32 _height;
 	int32 _width;
+
+	float _ratioX;
+	float _ratioY;
 
 	bool _windowed;
 	int32 _bPP;
@@ -221,11 +232,16 @@ protected:
 	Rect32 _viewportRect;
 	Rect32 _screenRect;
 	Rect32 _monitorRect;
+	Rect32 _borderRect;
+	Common::Rect _renderRect;
+	
+	Graphics::PixelFormat _screenFormat;
 private:
 	Common::Array<BaseActiveRect *> _rectList;
 };
 
-BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
+BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in base_renderer_osystem.cpp
+BaseRenderer *makeOpenGLRenderer(BaseGame *inGame); // Implemented in base_renderer_opengl.cpp
 
 } // End of namespace Wintermute
 

@@ -34,6 +34,8 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/math/math_util.h"
+#include "common/config-manager.h"
 
 namespace Wintermute {
 
@@ -79,6 +81,47 @@ BaseRenderer::~BaseRenderer() {
 	delete _saveLoadImage;
 }
 
+bool BaseRenderer::initRenderer(int width, int height, bool windowed, const Graphics::PixelFormat &screenFormat) {
+	_width = width;
+	_height = height;
+	_renderRect.setWidth(_width);
+	_renderRect.setHeight(_height);
+
+	_realWidth = width;
+	_realHeight = height;
+
+	//TODO: Tiny resolution-displays might want to do some resolution-selection logic here
+
+	//_realWidth = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResWidth", _width);
+	//_realHeight = BaseEngine::instance().getRegistry()->readInt("Debug", "ForceResHeight", _height);
+
+	float origAspect = (float)_width / (float)_height;
+	float realAspect = (float)_realWidth / (float)_realHeight;
+
+	float ratio;
+	if (origAspect < realAspect) {
+		// normal to wide
+		ratio = (float)_realHeight / (float)_height;
+	} else {
+		// wide to normal
+		ratio = (float)_realWidth / (float)_width;
+	}
+
+	_borderRect.left = (int)((_realWidth - (_width * ratio)) / 2);
+	_borderRect.right = (int)(_realWidth - (_width * ratio) - _borderRect.left);
+
+	_borderRect.top = (int)((_realHeight - (_height * ratio)) / 2);
+	_borderRect.bottom = (int)(_realHeight - (_height * ratio) - _borderRect.top);
+
+	_ratioX = (float)(_realWidth - _borderRect.left - _borderRect.right) / (float)_width;
+	_ratioY = (float)(_realHeight - _borderRect.top - _borderRect.bottom) / (float)_height;
+
+	_windowed = !ConfMan.getBool("fullscreen");
+
+	_screenFormat = screenFormat;
+
+	return STATUS_OK;
+}
 
 //////////////////////////////////////////////////////////////////////
 void BaseRenderer::initLoop() {
@@ -234,12 +277,6 @@ void BaseRenderer::deleteRectList() {
 }
 
 //////////////////////////////////////////////////////////////////////
-bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
-	return STATUS_FAILED;
-}
-
-
-//////////////////////////////////////////////////////////////////////
 void BaseRenderer::onWindowChange() {
 }
 
@@ -282,7 +319,24 @@ bool BaseRenderer::drawRect(int x1, int y1, int x2, int y2, uint32 color, int wi
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
-	return STATUS_FAILED;
+	Common::Rect rect;
+	// TODO: Hopefully this is the same logic that ScummVM uses.
+	rect.left = (int16)(left + _borderRect.left);
+	rect.top = (int16)(top + _borderRect.top);
+	rect.setWidth((int16)((right - left) * _ratioX));
+	rect.setHeight((int16)((bottom - top) * _ratioY));
+
+	_renderRect = rect;
+	return STATUS_OK;
+}
+
+Rect32 BaseRenderer::getViewPort() {
+	Rect32 ret;
+	ret.top = _renderRect.top;
+	ret.bottom = _renderRect.bottom;
+	ret.left = _renderRect.left;
+	ret.right = _renderRect.right;
+	return ret;
 }
 
 
@@ -298,6 +352,30 @@ bool BaseRenderer::setViewport(Rect32 *rect) {
 	                   rect->top + _drawOffsetY,
 	                   rect->right + _drawOffsetX,
 	                   rect->bottom + _drawOffsetY);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseRenderer::modTargetRect(Common::Rect *rect) {
+	return;
+	int newWidth = (int16)MathUtil::roundUp(rect->width() * _ratioX);
+	int newHeight = (int16)MathUtil::roundUp(rect->height() * _ratioY);
+	rect->left = (int16)MathUtil::round(rect->left * _ratioX + _borderRect.left);
+	rect->top = (int16)MathUtil::round(rect->top * _ratioY + _borderRect.top);
+	rect->setWidth(newWidth);
+	rect->setHeight(newHeight);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseRenderer::pointFromScreen(Point32 *point) {
+	point->x = (int16)(point->x / _ratioX - _borderRect.left / _ratioX + _renderRect.left);
+	point->y = (int16)(point->y / _ratioY - _borderRect.top / _ratioY + _renderRect.top);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void BaseRenderer::pointToScreen(Point32 *point) {
+	point->x = (int16)MathUtil::roundUp(point->x * _ratioX) + _borderRect.left - _renderRect.left;
+	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderRect.top - _renderRect.top;
 }
 
 

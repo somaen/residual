@@ -444,7 +444,11 @@ bool BaseGame::initialize1() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
+#if 0
 	_renderer = makeOSystemRenderer(this);
+#else
+	_renderer = makeOpenGLRenderer(this);
+#endif
 	if (_renderer == nullptr) {
 		return STATUS_FAILED;
 	}
